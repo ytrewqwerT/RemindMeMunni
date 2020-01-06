@@ -1,0 +1,13 @@
+package com.example.remindmemunni
+
+import androidx.room.Embedded
+import androidx.room.Relation
+
+data class AggregatedSeries (
+    @Embedded val series: Series,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "seriesId"
+    )
+    val items: List<Item>
+)
