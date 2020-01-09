@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">RemindMeMunni</string>
+    <string name="main_column_items">Items</string>
+    <string name="main_column_series">Series</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

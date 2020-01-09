@@ -7,11 +7,11 @@ import java.time.OffsetDateTime
 
 @Entity(tableName = "item_table")
 data class Item (
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val seriesId: Int,
-    val name: String,
-    val cost: Double,
-    val time: Long
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val seriesId: Int = 0,
+    val name: String = "",
+    val cost: Double = 0.0,
+    val time: Long = 0
 ) {
 
     override fun toString(): String {

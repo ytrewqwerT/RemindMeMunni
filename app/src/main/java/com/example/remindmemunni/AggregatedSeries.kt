@@ -10,4 +10,10 @@ data class AggregatedSeries (
         entityColumn = "seriesId"
     )
     val items: List<Item>
-)
+) {
+
+    override fun toString(): String {
+        return series.toString()
+    }
+
+}
