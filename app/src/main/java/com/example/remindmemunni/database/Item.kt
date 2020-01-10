@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

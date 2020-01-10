@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.database
 
 import android.content.Context
 import androidx.room.Database
@@ -19,7 +19,8 @@ abstract class ItemRoomDatabase : RoomDatabase() {
         private var INSTANCE: ItemRoomDatabase? = null
 
         fun getDatabase(context: Context, scope: CoroutineScope): ItemRoomDatabase {
-            val tempInstance = INSTANCE
+            val tempInstance =
+                INSTANCE
             if (tempInstance != null) {
                 return tempInstance
             }
@@ -29,7 +30,11 @@ abstract class ItemRoomDatabase : RoomDatabase() {
                     context.applicationContext,
                     ItemRoomDatabase::class.java,
                     "item_database"
-                ).addCallback(ItemDatabaseCallback(scope)).build()
+                ).addCallback(
+                    ItemDatabaseCallback(
+                        scope
+                    )
+                ).build()
                 INSTANCE = instance
                 return instance
             }
@@ -52,11 +57,35 @@ abstract class ItemRoomDatabase : RoomDatabase() {
             itemDao.deleteAllItems()
             itemDao.deleteAllSeries()
 
-            itemDao.insert(Item(seriesId = 0, name = "Hello", cost = 1.0))
-            itemDao.insert(Item(seriesId = 0, name = "World", cost = 2.0))
+            itemDao.insert(
+                Item(
+                    seriesId = 0,
+                    name = "Hello",
+                    cost = 1.0
+                )
+            )
+            itemDao.insert(
+                Item(
+                    seriesId = 0,
+                    name = "World",
+                    cost = 2.0
+                )
+            )
 
-            itemDao.insert(Series(name = "A Series", cost = 1.0, curNum = 1.0))
-            itemDao.insert(Series(name = "Has Arrived", cost = 5.5, curNum = 1.5))
+            itemDao.insert(
+                Series(
+                    name = "A Series",
+                    cost = 1.0,
+                    curNum = 1.0
+                )
+            )
+            itemDao.insert(
+                Series(
+                    name = "Has Arrived",
+                    cost = 5.5,
+                    curNum = 1.5
+                )
+            )
         }
     }
 }

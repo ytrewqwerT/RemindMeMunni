@@ -1,9 +1,10 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.activitymain
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.example.remindmemunni.database.*
 import kotlinx.coroutines.launch
 
 class ItemViewModel(application: Application) : AndroidViewModel(application) {
@@ -14,7 +15,8 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(application, viewModelScope).itemDao()
-        itemRepository = ItemRepository(itemDao)
+        itemRepository =
+            ItemRepository(itemDao)
         allItems = itemRepository.allItems
         allSeries = itemRepository.allSeries
     }

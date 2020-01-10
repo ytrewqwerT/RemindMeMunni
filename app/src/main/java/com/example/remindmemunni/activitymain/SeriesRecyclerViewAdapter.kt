@@ -1,12 +1,14 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.activitymain
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.remindmemunni.R
 
-import com.example.remindmemunni.SeriesFragment.OnListFragmentInteractionListener
+import com.example.remindmemunni.activitymain.SeriesFragment.OnListFragmentInteractionListener
+import com.example.remindmemunni.database.AggregatedSeries
 
 import kotlinx.android.synthetic.main.fragment_item.view.*
 

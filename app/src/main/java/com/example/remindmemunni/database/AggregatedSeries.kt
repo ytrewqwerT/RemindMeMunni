@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.database
 
 import androidx.room.Embedded
 import androidx.room.Relation

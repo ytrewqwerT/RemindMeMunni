@@ -1,35 +1,40 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.activitymain
 
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.R
+import com.example.remindmemunni.database.AggregatedSeries
 
-class ItemsFragment : Fragment() {
+class SeriesFragment : Fragment() {
 
     private var columnCount = 1
 
     private var listener: OnListFragmentInteractionListener? = null
 
-    private lateinit var itemViewModel: ItemViewModel
-    private lateinit var itemsRecyclerViewAdapter: ItemsRecyclerViewAdapter
+    private lateinit var viewModel: ItemViewModel
+    private lateinit var seriesRecyclerViewAdapter: SeriesRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        itemViewModel = activity?.run {
+        viewModel = activity?.run {
             ViewModelProvider(this)[ItemViewModel::class.java]
         } ?: throw Exception("RIP")
-        itemsRecyclerViewAdapter = ItemsRecyclerViewAdapter(listener)
-        itemViewModel.allItems.observe(this, Observer { items ->
-            items?.let { itemsRecyclerViewAdapter.setItems(it) }
+        seriesRecyclerViewAdapter =
+            SeriesRecyclerViewAdapter(
+                listener
+            )
+        viewModel.allSeries.observe(this, Observer { series ->
+            series?.let { seriesRecyclerViewAdapter.setItems(it) }
         })
     }
 
@@ -46,7 +51,7 @@ class ItemsFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = itemsRecyclerViewAdapter
+                adapter = seriesRecyclerViewAdapter
             }
         }
         return view
@@ -73,13 +78,13 @@ class ItemsFragment : Fragment() {
      * activity.
      *
      *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
+     * See the Android Training lesson [Communicating with Other Fragments]
+     * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: Item?)
+        fun onFragmentInteraction(series: AggregatedSeries)
     }
 
     companion object {
@@ -90,7 +95,7 @@ class ItemsFragment : Fragment() {
         // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            ItemsFragment().apply {
+            SeriesFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }

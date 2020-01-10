@@ -1,7 +1,8 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.activitymain
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.remindmemunni.R
 
 class MainActivity : AppCompatActivity() {
 

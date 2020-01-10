@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.activitymain
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
+import com.example.remindmemunni.R
 
 
 class MainFragment : Fragment() {
@@ -23,7 +23,10 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        itemPagerAdapter = ItemPagerAdapter(childFragmentManager)
+        itemPagerAdapter =
+            ItemPagerAdapter(
+                childFragmentManager
+            )
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = itemPagerAdapter
     }
