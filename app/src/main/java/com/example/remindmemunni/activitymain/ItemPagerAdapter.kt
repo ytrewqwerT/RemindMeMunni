@@ -30,5 +30,4 @@ class ItemPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_
             else -> "???"
         }
     }
-
 }

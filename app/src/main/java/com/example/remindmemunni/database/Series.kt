@@ -13,7 +13,7 @@ data class Series (
 ) {
 
     override fun toString(): String {
-        return "$name: \$$cost, at $numPrefix$curNum"
+        return "$id $name: \$$cost, at $numPrefix$curNum"
     }
 
 }

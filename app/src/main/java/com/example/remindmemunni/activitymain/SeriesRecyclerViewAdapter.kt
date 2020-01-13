@@ -1,24 +1,25 @@
 package com.example.remindmemunni.activitymain
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.remindmemunni.OnSeriesListInteractionListener
 import com.example.remindmemunni.R
 
-import com.example.remindmemunni.activitymain.SeriesFragment.OnListFragmentInteractionListener
 import com.example.remindmemunni.database.AggregatedSeries
 
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [Series] and makes a call to the
- * specified [OnListFragmentInteractionListener].
+ * specified [OnSeriesListInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
 class SeriesRecyclerViewAdapter(
-    private val mListener: OnListFragmentInteractionListener?
+    private val mListener: OnSeriesListInteractionListener?
 ) : RecyclerView.Adapter<SeriesRecyclerViewAdapter.ViewHolder>() {
 
     private var series = emptyList<AggregatedSeries>()
@@ -27,9 +28,7 @@ class SeriesRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val serie = v.tag as AggregatedSeries
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onFragmentInteraction(serie)
+            mListener?.onInteraction(serie)
         }
     }
 

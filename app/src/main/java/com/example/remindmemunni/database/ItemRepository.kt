@@ -15,4 +15,5 @@ class ItemRepository(private val itemDao: ItemDao) {
         itemDao.insert(series)
     }
 
+    fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
 }

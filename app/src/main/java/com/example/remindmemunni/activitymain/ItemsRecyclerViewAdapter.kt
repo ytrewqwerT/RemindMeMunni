@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.remindmemunni.OnItemListInteractionListener
 import com.example.remindmemunni.R
 
-import com.example.remindmemunni.activitymain.ItemsFragment.OnListFragmentInteractionListener
 import com.example.remindmemunni.database.Item
 
 import kotlinx.android.synthetic.main.fragment_item.view.*
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_item.view.*
  * TODO: Replace the implementation with code for your data type.
  */
 class ItemsRecyclerViewAdapter(
-    private val mListener: OnListFragmentInteractionListener?
+    private val mListener: OnItemListInteractionListener?
 ) : RecyclerView.Adapter<ItemsRecyclerViewAdapter.ViewHolder>() {
 
     private var items = emptyList<Item>()
@@ -29,7 +29,7 @@ class ItemsRecyclerViewAdapter(
             val item = v.tag as Item
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
+            mListener?.onInteraction(item)
         }
     }
 

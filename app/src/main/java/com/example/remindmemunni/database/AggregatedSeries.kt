@@ -1,5 +1,6 @@
 package com.example.remindmemunni.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Embedded
 import androidx.room.Relation
 

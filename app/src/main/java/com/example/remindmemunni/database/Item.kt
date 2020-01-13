@@ -17,7 +17,7 @@ data class Item (
     override fun toString(): String {
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
-        return "$name: \$$cost, $date"
+        return "$id $name: \$$cost, $date"
     }
 
 }

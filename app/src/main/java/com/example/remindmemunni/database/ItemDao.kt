@@ -13,10 +13,14 @@ interface ItemDao {
     @Query("SELECT * FROM series_table ORDER BY id ASC")
     fun getSeries(): LiveData<List<AggregatedSeries>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Transaction
+    @Query("SELECT * FROM series_table WHERE (:seriesId)= id")
+    fun getSerie(seriesId: Int): LiveData<AggregatedSeries>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Item)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(series: Series)
 
     @Delete

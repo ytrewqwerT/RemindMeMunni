@@ -59,14 +59,14 @@ abstract class ItemRoomDatabase : RoomDatabase() {
 
             itemDao.insert(
                 Item(
-                    seriesId = 0,
+                    seriesId = 77,
                     name = "Hello",
                     cost = 1.0
                 )
             )
             itemDao.insert(
                 Item(
-                    seriesId = 0,
+                    seriesId = 77,
                     name = "World",
                     cost = 2.0
                 )

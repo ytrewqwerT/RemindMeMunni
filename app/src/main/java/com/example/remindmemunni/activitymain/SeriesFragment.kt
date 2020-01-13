@@ -1,24 +1,22 @@
 package com.example.remindmemunni.activitymain
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.OnSeriesListInteractionListener
 import com.example.remindmemunni.R
+import com.example.remindmemunni.activityseries.SeriesActivity
 import com.example.remindmemunni.database.AggregatedSeries
 
-class SeriesFragment : Fragment() {
-
-    private var columnCount = 1
-
-    private var listener: OnListFragmentInteractionListener? = null
+class SeriesFragment : Fragment(), OnSeriesListInteractionListener {
 
     private lateinit var viewModel: ItemViewModel
     private lateinit var seriesRecyclerViewAdapter: SeriesRecyclerViewAdapter
@@ -30,9 +28,7 @@ class SeriesFragment : Fragment() {
             ViewModelProvider(this)[ItemViewModel::class.java]
         } ?: throw Exception("RIP")
         seriesRecyclerViewAdapter =
-            SeriesRecyclerViewAdapter(
-                listener
-            )
+            SeriesRecyclerViewAdapter(this)
         viewModel.allSeries.observe(this, Observer { series ->
             series?.let { seriesRecyclerViewAdapter.setItems(it) }
         })
@@ -44,61 +40,19 @@ class SeriesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_item_list, container, false)
-
         if (view is RecyclerView) {
             with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
+                layoutManager = LinearLayoutManager(context)
                 adapter = seriesRecyclerViewAdapter
             }
         }
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-//        if (context is OnListFragmentInteractionListener) {
-//            listener = context
-//        } else {
-//            throw RuntimeException("$context must implement OnListFragmentInteractionListener")
-//        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-//        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(series: AggregatedSeries)
-    }
-
-    companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            SeriesFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
+    override fun onInteraction(series: AggregatedSeries) {
+        val intent = Intent(activity, SeriesActivity::class.java)
+        Log.d("Nice", "${series.series.id}")
+        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, series.series.id)
+        startActivity(intent)
     }
 }
