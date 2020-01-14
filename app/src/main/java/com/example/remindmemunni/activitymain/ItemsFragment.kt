@@ -1,9 +1,7 @@
 package com.example.remindmemunni.activitymain
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -11,24 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.R
 import com.example.remindmemunni.database.Item
 
 class ItemsFragment : Fragment() {
 
-    private lateinit var itemViewModel: ItemViewModel
-    private lateinit var itemsRecyclerViewAdapter: ItemsRecyclerViewAdapter
+    private lateinit var viewModel: ItemViewModel
+    private lateinit var recyclerViewAdapter: CustomRecyclerViewAdapter<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        itemViewModel = activity?.run {
+        viewModel = activity?.run {
             ViewModelProvider(this)[ItemViewModel::class.java]
         } ?: throw Exception("RIP")
-        itemsRecyclerViewAdapter =
-            ItemsRecyclerViewAdapter(null)
-        itemViewModel.allItems.observe(this, Observer { items ->
-            items?.let { itemsRecyclerViewAdapter.setItems(it) }
+        recyclerViewAdapter = CustomRecyclerViewAdapter(null)
+        viewModel.allItems.observe(this, Observer { items ->
+            items?.let { recyclerViewAdapter.setItems(it) }
         })
     }
 
@@ -41,7 +39,7 @@ class ItemsFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
-                adapter = itemsRecyclerViewAdapter
+                adapter = recyclerViewAdapter
             }
         }
         return view

@@ -11,15 +11,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.remindmemunni.OnSeriesListInteractionListener
+import com.example.remindmemunni.CustomRecyclerViewAdapter
+import com.example.remindmemunni.OnListItemInteractionListener
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activityseries.SeriesActivity
 import com.example.remindmemunni.database.AggregatedSeries
 
-class SeriesFragment : Fragment(), OnSeriesListInteractionListener {
+class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSeries> {
 
     private lateinit var viewModel: ItemViewModel
-    private lateinit var seriesRecyclerViewAdapter: SeriesRecyclerViewAdapter
+    private lateinit var recyclerViewAdapter: CustomRecyclerViewAdapter<AggregatedSeries>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +28,9 @@ class SeriesFragment : Fragment(), OnSeriesListInteractionListener {
         viewModel = activity?.run {
             ViewModelProvider(this)[ItemViewModel::class.java]
         } ?: throw Exception("RIP")
-        seriesRecyclerViewAdapter =
-            SeriesRecyclerViewAdapter(this)
+        recyclerViewAdapter = CustomRecyclerViewAdapter(this)
         viewModel.allSeries.observe(this, Observer { series ->
-            series?.let { seriesRecyclerViewAdapter.setItems(it) }
+            series?.let { recyclerViewAdapter.setItems(it) }
         })
     }
 
@@ -43,16 +43,17 @@ class SeriesFragment : Fragment(), OnSeriesListInteractionListener {
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
-                adapter = seriesRecyclerViewAdapter
+                adapter = recyclerViewAdapter
             }
         }
         return view
     }
 
-    override fun onInteraction(series: AggregatedSeries) {
+    override fun onInteraction(item: AggregatedSeries) {
         val intent = Intent(activity, SeriesActivity::class.java)
-        Log.d("Nice", "${series.series.id}")
-        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, series.series.id)
+        Log.d("Nice", "${item.series.id}")
+        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
         startActivity(intent)
     }
+
 }

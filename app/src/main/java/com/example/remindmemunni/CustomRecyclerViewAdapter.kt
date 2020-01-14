@@ -1,34 +1,23 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.remindmemunni.OnItemListInteractionListener
-import com.example.remindmemunni.R
-
-import com.example.remindmemunni.database.Item
 
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [Item] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
-class ItemsRecyclerViewAdapter(
-    private val mListener: OnItemListInteractionListener?
-) : RecyclerView.Adapter<ItemsRecyclerViewAdapter.ViewHolder>() {
+class CustomRecyclerViewAdapter<T>(
+    private val mListener: OnListItemInteractionListener<T>?
+) : RecyclerView.Adapter<CustomRecyclerViewAdapter<T>.ViewHolder>() {
 
-    private var items = emptyList<Item>()
+    private var items = emptyList<T>()
     private val mOnClickListener: View.OnClickListener
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Item
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
+            val item = v.tag as T
             mListener?.onInteraction(item)
         }
     }
@@ -52,7 +41,6 @@ class ItemsRecyclerViewAdapter(
     override fun getItemCount(): Int = items.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
         val mContentView: TextView = mView.content
 
         override fun toString(): String {
@@ -60,7 +48,7 @@ class ItemsRecyclerViewAdapter(
         }
     }
 
-    internal fun setItems(items: List<Item>) {
+    internal fun setItems(items: List<T>) {
         this.items = items
         notifyDataSetChanged()
     }

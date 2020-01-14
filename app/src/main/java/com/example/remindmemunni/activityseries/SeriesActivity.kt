@@ -1,19 +1,14 @@
 package com.example.remindmemunni.activityseries
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.view.menu.MenuView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitymain.ItemViewModel
-import com.example.remindmemunni.activitymain.ItemsRecyclerViewAdapter
+import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.database.Item
 
 class SeriesActivity : AppCompatActivity() {
@@ -30,7 +25,8 @@ class SeriesActivity : AppCompatActivity() {
         Log.d("Nice", "$seriesId")
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter = ItemsRecyclerViewAdapter(null)
+        val adapter =
+            CustomRecyclerViewAdapter<Item>(null)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
