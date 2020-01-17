@@ -4,6 +4,10 @@
     <string name="main_column_series">Series</string>
     <string name="new_object">New</string>
     <string name="done">Done</string>
+    <string-array name="cost_types_array">
+        <item>Credit</item>
+        <item>Debit</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
