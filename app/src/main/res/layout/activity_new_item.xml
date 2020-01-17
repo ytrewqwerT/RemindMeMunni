@@ -38,13 +38,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_input_layout"
-        android:hint="Cost"
+        android:hint="Cost (Optional)"
         app:prefixText="$ "
         app:prefixTextAppearance="@style/TextAppearance.AppCompat.Medium">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/cost_input_field"
-            android:minWidth="100dp"
+            android:minWidth="150dp"
             android:maxWidth="200dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,16 +65,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cost_input_layout"
-        android:hint="Date">
+        android:hint="Time (optional)">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/time_input_field"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:inputType="time"
             android:focusable="false"
-            android:maxWidth="200dp"
-            android:minWidth="100dp"
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 

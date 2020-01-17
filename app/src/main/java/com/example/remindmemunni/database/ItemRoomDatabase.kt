@@ -54,23 +54,7 @@ abstract class ItemRoomDatabase : RoomDatabase() {
         }
 
         suspend fun populateDatabase(itemDao: ItemDao) {
-            itemDao.deleteAllItems()
             itemDao.deleteAllSeries()
-
-            itemDao.insert(
-                Item(
-                    seriesId = 77,
-                    name = "Hello",
-                    cost = 1.0
-                )
-            )
-            itemDao.insert(
-                Item(
-                    seriesId = 77,
-                    name = "World",
-                    cost = 2.0
-                )
-            )
 
             itemDao.insert(
                 Series(
