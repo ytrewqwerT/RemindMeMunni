@@ -18,7 +18,7 @@ class SeriesViewModel(
     val series: LiveData<AggregatedSeries>
 
     init {
-        val itemDao = ItemRoomDatabase.getDatabase(application, viewModelScope).itemDao()
+        val itemDao = ItemRoomDatabase.getDatabase(application).itemDao()
         repository = ItemRepository(itemDao)
         series = repository.getSerie(seriesId)
     }

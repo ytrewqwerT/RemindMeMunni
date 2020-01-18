@@ -22,20 +22,19 @@ import java.time.format.DateTimeFormatter
 class NewItemActivity
     : AppCompatActivity()
     , TimePickerDialog.OnTimeSetListener
-    , DatePickerDialog.OnDateSetListener
-    , AdapterView.OnItemSelectedListener {
+    , DatePickerDialog.OnDateSetListener {
 
     private lateinit var viewModel: ItemViewModel
 
     private lateinit var nameEditText: EditText
     private lateinit var costEditText: EditText
-    private lateinit var costTypeSpinner: Spinner
+    private lateinit var costTypeSpinner: AutoCompleteTextView
     private lateinit var timeEditText: EditText
     private lateinit var seriesSpinner: AutoCompleteTextView
 
     private var time: PrimitiveDateTime? = null
     private var tempTime: PrimitiveDateTime?  = null // So that time isn't modified when date is set, but time cancelled
-    private var costIsDebit: Boolean = false
+    private var costIsDebit: Boolean = true
     private var selectedSeries: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,15 +48,15 @@ class NewItemActivity
 
         nameEditText = findViewById(R.id.name_input_field)
         costEditText = findViewById(R.id.cost_input_field)
-        costTypeSpinner = findViewById(R.id.cost_type_spinner)
+        costTypeSpinner = findViewById(R.id.cost_type_dropdown)
         timeEditText = findViewById(R.id.time_input_field)
         seriesSpinner = findViewById(R.id.series_dropdown)
 
-        val costTypeSpinnerAdapter = ArrayAdapter.createFromResource(
-            this, R.array.cost_types_array, R.layout.support_simple_spinner_dropdown_item
-        )
-        costTypeSpinner.adapter = costTypeSpinnerAdapter
-        costTypeSpinner.onItemSelectedListener = this
+        val costTypeSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item)
+        costTypeSpinner.setAdapter(costTypeSpinnerAdapter)
+        costTypeSpinner.setOnItemClickListener { _, _, position, _ ->
+            costIsDebit = costTypeSpinnerAdapter.getItem(position) == "Debit"
+        }
 
         timeEditText.setOnClickListener {
             tempTime = PrimitiveDateTime()
@@ -149,18 +148,6 @@ class NewItemActivity
         fun toLocalDateTime(): LocalDateTime?  = when (mYear) {
             0 -> null
             else -> LocalDateTime.of(mYear, mMonth+1, mDayOfMonth, mHour, mMinute)
-        }
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        when (parent) {
-            costTypeSpinner -> costIsDebit = costTypeSpinner.adapter.getItem(position) == "Debit"
-        }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        when (parent) {
-            costTypeSpinner -> costIsDebit = false
         }
     }
 }

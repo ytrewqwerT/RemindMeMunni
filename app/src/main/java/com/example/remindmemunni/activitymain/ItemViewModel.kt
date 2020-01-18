@@ -14,7 +14,7 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
     val allSeries: LiveData<List<AggregatedSeries>>
 
     init {
-        val itemDao = ItemRoomDatabase.getDatabase(application, viewModelScope).itemDao()
+        val itemDao = ItemRoomDatabase.getDatabase(application).itemDao()
         itemRepository =
             ItemRepository(itemDao)
         allItems = itemRepository.allItems
