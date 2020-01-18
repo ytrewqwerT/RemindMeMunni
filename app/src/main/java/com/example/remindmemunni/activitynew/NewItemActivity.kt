@@ -71,7 +71,6 @@ class NewItemActivity
 
             R.id.done_button -> {
                 return if (nameEditText.text.isNullOrEmpty()) {
-                    // TODO: Toast - Item needs a name
                     val toast = Toast.makeText(applicationContext, "Item needs a name!", Toast.LENGTH_SHORT)
                     toast.show()
                     false
