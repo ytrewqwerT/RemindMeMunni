@@ -9,9 +9,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activitymain.ItemViewModel
+import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.Item
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -23,14 +25,18 @@ class NewItemActivity
     , DatePickerDialog.OnDateSetListener
     , AdapterView.OnItemSelectedListener {
 
+    private lateinit var viewModel: ItemViewModel
+
     private lateinit var nameEditText: EditText
     private lateinit var costEditText: EditText
     private lateinit var costTypeSpinner: Spinner
     private lateinit var timeEditText: EditText
+    private lateinit var seriesSpinner: AutoCompleteTextView
 
-    private var costIsDebit: Boolean = false
     private var time: PrimitiveDateTime? = null
     private var tempTime: PrimitiveDateTime?  = null // So that time isn't modified when date is set, but time cancelled
+    private var costIsDebit: Boolean = false
+    private var selectedSeries: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,22 +45,36 @@ class NewItemActivity
         setSupportActionBar(findViewById(R.id.toolbar_new))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cost_types_array, R.layout.support_simple_spinner_dropdown_item)
-        costTypeSpinner = findViewById(R.id.cost_type_spinner)
-        costTypeSpinner.adapter = spinnerAdapter
-        costTypeSpinner.onItemSelectedListener = this
+        viewModel = ViewModelProvider(this)[ItemViewModel::class.java]
 
         nameEditText = findViewById(R.id.name_input_field)
         costEditText = findViewById(R.id.cost_input_field)
-
+        costTypeSpinner = findViewById(R.id.cost_type_spinner)
         timeEditText = findViewById(R.id.time_input_field)
+        seriesSpinner = findViewById(R.id.series_dropdown)
+
+        val costTypeSpinnerAdapter = ArrayAdapter.createFromResource(
+            this, R.array.cost_types_array, R.layout.support_simple_spinner_dropdown_item
+        )
+        costTypeSpinner.adapter = costTypeSpinnerAdapter
+        costTypeSpinner.onItemSelectedListener = this
+
         timeEditText.setOnClickListener {
             tempTime = PrimitiveDateTime()
             val dateDialog = DatePickerFragment()
             dateDialog.show(supportFragmentManager, "date_dialog")
         }
 
-
+        val seriesSpinnerAdapter = ArrayAdapter<AggregatedSeries>(this, R.layout.dropdown_menu_popup_item, ArrayList())
+        seriesSpinner.setAdapter(seriesSpinnerAdapter)
+        seriesSpinner.setOnItemClickListener { _, _, position, _ ->
+            selectedSeries = seriesSpinnerAdapter.getItem(position)?.series?.id ?: 0
+        }
+        // Use observer to populate adapter since LiveData starts off empty for some reason...
+        viewModel.allSeries.observe(this, Observer {series ->
+            seriesSpinnerAdapter.clear()
+            seriesSpinnerAdapter.addAll(series)
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -77,7 +97,6 @@ class NewItemActivity
                 } else {
                     val item = createItem()
                     Log.d("Nice", "$item")
-                    val viewModel = ViewModelProvider(this)[ItemViewModel::class.java]
                     viewModel.insert(item)
 
                     finish()
@@ -85,10 +104,7 @@ class NewItemActivity
                 }
             }
 
-            else -> {
-                Log.d("Nice", "NewActivity unknown button press: ${menuItem?.itemId}")
-                return super.onOptionsItemSelected(menuItem)
-            }
+            else -> return super.onOptionsItemSelected(menuItem)
         }
     }
 
@@ -101,7 +117,7 @@ class NewItemActivity
         val epochTime =
             localDateTime?.atZone(ZoneId.systemDefault())?.toEpochSecond() ?: 0
 
-        return Item(name = name, cost = cost, time = epochTime)
+        return Item(name = name, seriesId = selectedSeries, cost = cost, time = epochTime)
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
@@ -123,18 +139,6 @@ class NewItemActivity
         timeEditText.setText(retrievedTime?.format(formatter))
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        costIsDebit = when (parent?.getItemAtPosition(position)?.equals("Debit")) {
-            true -> true
-            else -> false
-
-        }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        costIsDebit = false
-    }
-
     private class PrimitiveDateTime {
         var mYear: Int = 0
         var mMonth: Int = 0
@@ -145,6 +149,18 @@ class NewItemActivity
         fun toLocalDateTime(): LocalDateTime?  = when (mYear) {
             0 -> null
             else -> LocalDateTime.of(mYear, mMonth+1, mDayOfMonth, mHour, mMinute)
+        }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        when (parent) {
+            costTypeSpinner -> costIsDebit = costTypeSpinner.adapter.getItem(position) == "Debit"
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        when (parent) {
+            costTypeSpinner -> costIsDebit = false
         }
     }
 }
