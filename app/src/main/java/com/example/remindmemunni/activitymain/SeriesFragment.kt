@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.CustomRecyclerViewAdapter
@@ -44,6 +45,7 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
             with(view) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
+                this.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
         }
         return view

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.R
 import com.example.remindmemunni.database.Item
@@ -40,6 +41,7 @@ class ItemsFragment : Fragment() {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
+                this.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
         }
         return view

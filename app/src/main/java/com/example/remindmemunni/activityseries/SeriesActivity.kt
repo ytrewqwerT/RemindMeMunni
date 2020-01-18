@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
@@ -29,6 +30,7 @@ class SeriesActivity : AppCompatActivity() {
             CustomRecyclerViewAdapter<Item>(null)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         viewModel = ViewModelProvider(this, SeriesViewModel.SeriesViewModelFactory(application, seriesId))[SeriesViewModel::class.java]
         Log.d("Nice", "${viewModel.series.value}")

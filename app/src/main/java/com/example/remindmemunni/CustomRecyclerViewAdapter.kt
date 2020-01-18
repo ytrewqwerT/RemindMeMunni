@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
-class CustomRecyclerViewAdapter<T>(
+class CustomRecyclerViewAdapter<T : ListItemViewable>(
     private val mListener: OnListItemInteractionListener<T>?
 ) : RecyclerView.Adapter<CustomRecyclerViewAdapter<T>.ViewHolder>() {
 
@@ -29,11 +28,13 @@ class CustomRecyclerViewAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.mContentView.text = item.toString()
+        val contents = items[position].getListItemContents()
+        holder.mMainView.text = contents.mMainText
+        holder.mSubLeftView.text = contents.mSubLeftText
+        holder.mSubRightView.text = contents.mSubRightText
 
         with(holder.mView) {
-            tag = item
+            tag = items[position]
             setOnClickListener(mOnClickListener)
         }
     }
@@ -41,10 +42,12 @@ class CustomRecyclerViewAdapter<T>(
     override fun getItemCount(): Int = items.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mContentView: TextView = mView.content
+        val mMainView: TextView = mView.main_text
+        val mSubLeftView: TextView = mView.sub_left_text
+        val mSubRightView: TextView = mView.sub_right_text
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + mMainView.text + "'"
         }
     }
 
