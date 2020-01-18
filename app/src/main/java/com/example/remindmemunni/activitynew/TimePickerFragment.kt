@@ -3,7 +3,6 @@ package com.example.remindmemunni.activitynew
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.text.format.DateFormat
 import androidx.fragment.app.DialogFragment
 import java.util.*
 
@@ -22,7 +21,7 @@ class TimePickerFragment : DialogFragment() {
         return TimePickerDialog(
             context, activity as TimePickerDialog.OnTimeSetListener,
             hour, minute,
-            DateFormat.is24HourFormat(activity)
+            false
         )
     }
 
