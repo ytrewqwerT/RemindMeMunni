@@ -20,16 +20,18 @@ import com.example.remindmemunni.database.AggregatedSeries
 
 class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSeries> {
 
-    private lateinit var viewModel: ItemViewModel
-    private lateinit var recyclerViewAdapter: CustomRecyclerViewAdapter<AggregatedSeries>
+    private val viewModel: ItemViewModel by lazy {
+        activity?.run { ViewModelProvider(this)[ItemViewModel::class.java] }
+            ?: ViewModelProvider(this)[ItemViewModel::class.java]
+    }
+
+    private val recyclerViewAdapter: CustomRecyclerViewAdapter<AggregatedSeries> by lazy {
+        CustomRecyclerViewAdapter(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = activity?.run {
-            ViewModelProvider(this)[ItemViewModel::class.java]
-        } ?: throw Exception("RIP")
-        recyclerViewAdapter = CustomRecyclerViewAdapter(this)
         viewModel.allSeries.observe(this, Observer { series ->
             series?.let { recyclerViewAdapter.setItems(it) }
         })
@@ -45,7 +47,8 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
             with(view) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
-                this.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+                val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                this.addItemDecoration(decoration)
             }
         }
         return view
@@ -57,5 +60,4 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
         intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
         startActivity(intent)
     }
-
 }

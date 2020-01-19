@@ -20,7 +20,9 @@ data class Item(
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
-        return ListItemViewable.ListItemContents(name, date.format(formatter), "\$$cost")
+        return ListItemViewable.ListItemContents(
+            name, date.format(formatter), "\$$cost"
+        )
     }
 
     override fun toString(): String {
@@ -28,5 +30,4 @@ data class Item(
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
         return "$id $name: \$$cost, $date"
     }
-
 }

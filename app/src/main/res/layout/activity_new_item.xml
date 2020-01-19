@@ -24,7 +24,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Name"
+        android:hint="@string/new_item_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_new">
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Cost (Optional)"
+        android:hint="@string/new_item_cost"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_input_layout"
         app:prefixText="$ "
@@ -62,7 +62,8 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:hint="Type"
+        android:hint="@string/new_item_type"
+        android:labelFor="@id/cost_type_dropdown"
         app:layout_constraintBottom_toBottomOf="@id/cost_input_layout"
         app:layout_constraintStart_toEndOf="@+id/cost_input_layout"
         app:layout_constraintTop_toTopOf="@id/cost_input_layout">
@@ -72,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
-            android:text="Debit" />
+            android:text="@string/cost_debit" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -81,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Time (optional)"
+        android:hint="@string/new_item_time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cost_input_layout">
 
@@ -101,7 +102,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Series (Optional)"
+        android:hint="@string/new_item_series"
+        android:labelFor="@id/series_dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/time_input_layout">

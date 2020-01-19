@@ -4,8 +4,15 @@
     <string name="main_column_series">Series</string>
     <string name="new_object">New</string>
     <string name="done">Done</string>
+    <string name="new_item_name">Name</string>
+    <string name="new_item_cost">Cost (Optional)</string>
+    <string name="new_item_type">Type</string>
+    <string name="cost_debit">Debit</string>
+    <string name="cost_credit">Credit</string>
+    <string name="new_item_time">Time (optional)</string>
+    <string name="new_item_series">Series (Optional)</string>
     <string-array name="cost_types_array">
-        <item>Credit</item>
-        <item>Debit</item>
+        <item>@string/cost_credit</item>
+        <item>@string/cost_debit</item>
     </string-array>
 </resources>

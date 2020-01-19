@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,16 +23,18 @@ class NewItemActivity
     , TimePickerDialog.OnTimeSetListener
     , DatePickerDialog.OnDateSetListener {
 
-    private lateinit var viewModel: ItemViewModel
+    private val viewModel: ItemViewModel by lazy {
+        ViewModelProvider(this)[ItemViewModel::class.java]
+    }
 
-    private lateinit var nameEditText: EditText
-    private lateinit var costEditText: EditText
-    private lateinit var costTypeSpinner: AutoCompleteTextView
-    private lateinit var timeEditText: EditText
-    private lateinit var seriesSpinner: AutoCompleteTextView
+    private val nameEditText by lazy { findViewById<EditText>(R.id.name_input_field) }
+    private val costEditText by lazy { findViewById<EditText>(R.id.cost_input_field) }
+    private val typeSpinner by lazy { findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown) }
+    private val timeEditText by lazy { findViewById<EditText>(R.id.time_input_field) }
+    private val seriesSpinner by lazy { findViewById<AutoCompleteTextView>(R.id.series_dropdown) }
 
     private var time: PrimitiveDateTime? = null
-    private var tempTime: PrimitiveDateTime?  = null // So that time isn't modified when date is set, but time cancelled
+    private var tempTime: PrimitiveDateTime?  = null // Ensure both dialogs complete before changing time
     private var costIsDebit: Boolean = true
     private var selectedSeries: Int = 0
 
@@ -44,18 +45,12 @@ class NewItemActivity
         setSupportActionBar(findViewById(R.id.toolbar_new))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[ItemViewModel::class.java]
-
-        nameEditText = findViewById(R.id.name_input_field)
-        costEditText = findViewById(R.id.cost_input_field)
-        costTypeSpinner = findViewById(R.id.cost_type_dropdown)
-        timeEditText = findViewById(R.id.time_input_field)
-        seriesSpinner = findViewById(R.id.series_dropdown)
-
-        val costTypeSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item)
-        costTypeSpinner.setAdapter(costTypeSpinnerAdapter)
-        costTypeSpinner.setOnItemClickListener { _, _, position, _ ->
-            costIsDebit = costTypeSpinnerAdapter.getItem(position) == "Debit"
+        val typeSpinnerAdapter = ArrayAdapter.createFromResource(
+            this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item
+        )
+        typeSpinner.setAdapter(typeSpinnerAdapter)
+        typeSpinner.setOnItemClickListener { _, _, position, _ ->
+            costIsDebit = typeSpinnerAdapter.getItem(position) == "Debit"
         }
 
         timeEditText.setOnClickListener {
@@ -64,12 +59,13 @@ class NewItemActivity
             dateDialog.show(supportFragmentManager, "date_dialog")
         }
 
-        val seriesSpinnerAdapter = ArrayAdapter<AggregatedSeries>(this, R.layout.dropdown_menu_popup_item, ArrayList())
+        val seriesSpinnerAdapter = ArrayAdapter<AggregatedSeries>(
+            this, R.layout.dropdown_menu_popup_item, ArrayList()
+        )
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
             selectedSeries = seriesSpinnerAdapter.getItem(position)?.series?.id ?: 0
         }
-        // Use observer to populate adapter since LiveData starts off empty for some reason...
         viewModel.allSeries.observe(this, Observer {series ->
             seriesSpinnerAdapter.clear()
             seriesSpinnerAdapter.addAll(series)
@@ -90,8 +86,11 @@ class NewItemActivity
 
             R.id.done_button -> {
                 return if (nameEditText.text.isNullOrEmpty()) {
-                    val toast = Toast.makeText(applicationContext, "Item needs a name!", Toast.LENGTH_SHORT)
-                    toast.show()
+                    Toast.makeText(
+                        applicationContext,
+                        "Item needs a name!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     false
                 } else {
                     val item = createItem()
@@ -113,8 +112,7 @@ class NewItemActivity
         var cost = if (costText.isNotEmpty()) costText.toDouble() else 0.0
         if (costIsDebit) cost = -cost
         val localDateTime: LocalDateTime? = time?.toLocalDateTime()
-        val epochTime =
-            localDateTime?.atZone(ZoneId.systemDefault())?.toEpochSecond() ?: 0
+        val epochTime = localDateTime?.atZone(ZoneId.systemDefault())?.toEpochSecond() ?: 0
 
         return Item(name = name, seriesId = selectedSeries, cost = cost, time = epochTime)
     }

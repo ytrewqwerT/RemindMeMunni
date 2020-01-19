@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activitynew.NewItemActivity
-import com.example.remindmemunni.activityseries.SeriesActivity
-
 
 class MainFragment : Fragment() {
 
-    private lateinit var itemPagerAdapter: ItemPagerAdapter
+    private val itemPagerAdapter: ItemPagerAdapter by lazy { ItemPagerAdapter(childFragmentManager) }
     private lateinit var viewPager: ViewPager
 
     override fun onCreateView(
@@ -26,7 +24,6 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        itemPagerAdapter = ItemPagerAdapter(childFragmentManager)
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = itemPagerAdapter
     }

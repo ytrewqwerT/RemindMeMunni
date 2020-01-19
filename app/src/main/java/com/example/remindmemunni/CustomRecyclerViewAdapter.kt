@@ -12,10 +12,8 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
 ) : RecyclerView.Adapter<CustomRecyclerViewAdapter<T>.ViewHolder>() {
 
     private var items = emptyList<T>()
-    private val mOnClickListener: View.OnClickListener
-
-    init {
-        mOnClickListener = View.OnClickListener { v ->
+    private val mOnClickListener: View.OnClickListener by lazy {
+        View.OnClickListener { v ->
             val item = v.tag as T
             mListener?.onInteraction(item)
         }

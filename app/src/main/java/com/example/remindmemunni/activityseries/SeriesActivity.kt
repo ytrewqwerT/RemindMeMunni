@@ -14,25 +14,27 @@ import com.example.remindmemunni.database.Item
 
 class SeriesActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SeriesViewModel
+    private val viewModel: SeriesViewModel by lazy {
+        ViewModelProvider(
+            this, SeriesViewModel.SeriesViewModelFactory(application, seriesId)
+        )[SeriesViewModel::class.java]
+    }
+
     private var seriesId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_series)
 
-
         seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
         Log.d("Nice", "$seriesId")
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter =
-            CustomRecyclerViewAdapter<Item>(null)
+        val adapter = CustomRecyclerViewAdapter<Item>(null)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        viewModel = ViewModelProvider(this, SeriesViewModel.SeriesViewModelFactory(application, seriesId))[SeriesViewModel::class.java]
         Log.d("Nice", "${viewModel.series.value}")
         viewModel.series.observe(this, Observer { series ->
             series?.items?.let { adapter.setItems(it) }

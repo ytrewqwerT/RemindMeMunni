@@ -31,6 +31,7 @@ class SeriesViewModel(
         private val application: Application,
         private val seriesId: Int
     ) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T = SeriesViewModel(application, seriesId) as T
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            SeriesViewModel(application, seriesId) as T
     }
 }

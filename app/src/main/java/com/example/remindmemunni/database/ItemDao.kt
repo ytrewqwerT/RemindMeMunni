@@ -34,5 +34,4 @@ interface ItemDao {
 
     @Query("DELETE FROM series_table")
     suspend fun deleteAllSeries()
-
 }

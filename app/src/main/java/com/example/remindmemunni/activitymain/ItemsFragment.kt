@@ -16,16 +16,18 @@ import com.example.remindmemunni.database.Item
 
 class ItemsFragment : Fragment() {
 
-    private lateinit var viewModel: ItemViewModel
-    private lateinit var recyclerViewAdapter: CustomRecyclerViewAdapter<Item>
+    private val viewModel: ItemViewModel by lazy {
+        activity?.run { ViewModelProvider(this)[ItemViewModel::class.java] }
+            ?: ViewModelProvider(this)[ItemViewModel::class.java]
+    }
+
+    private val recyclerViewAdapter: CustomRecyclerViewAdapter<Item> by lazy {
+        CustomRecyclerViewAdapter<Item>(null)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = activity?.run {
-            ViewModelProvider(this)[ItemViewModel::class.java]
-        } ?: throw Exception("RIP")
-        recyclerViewAdapter = CustomRecyclerViewAdapter(null)
         viewModel.allItems.observe(this, Observer { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
         })
@@ -41,7 +43,8 @@ class ItemsFragment : Fragment() {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
-                this.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+                val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                this.addItemDecoration(decoration)
             }
         }
         return view
