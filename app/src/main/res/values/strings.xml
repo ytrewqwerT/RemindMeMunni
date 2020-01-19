@@ -11,6 +11,9 @@
     <string name="cost_credit">Credit</string>
     <string name="new_item_time">Time (optional)</string>
     <string name="new_item_series">Series (Optional)</string>
+    <string name="new_series_name">Name</string>
+    <string name="new_series_cost">Cost (Optional)</string>
+    <string name="new_series_type">Type</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>

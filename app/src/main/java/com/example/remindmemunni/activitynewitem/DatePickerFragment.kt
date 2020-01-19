@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynew
+package com.example.remindmemunni.activitynewitem
 
 import android.app.DatePickerDialog
 import android.app.Dialog

@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynew
+package com.example.remindmemunni.activitynewitem
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -41,6 +41,8 @@ class NewItemActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_item)
+
+        title = "New Item"
 
         setSupportActionBar(findViewById(R.id.toolbar_new))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

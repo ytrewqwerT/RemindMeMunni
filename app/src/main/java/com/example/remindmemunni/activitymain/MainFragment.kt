@@ -8,7 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitynew.NewItemActivity
+import com.example.remindmemunni.activitynewitem.NewItemActivity
+import com.example.remindmemunni.activitynewseries.NewSeriesActivity
 
 class MainFragment : Fragment() {
 
@@ -30,9 +31,8 @@ class MainFragment : Fragment() {
 
     fun startNewActivityByPage() {
         val intent = when (viewPager.currentItem) {
-            // TODO: Placeholder activities. Replace with new item/series activity when complete.
             ItemPagerAdapter.POS_ITEMS -> Intent(activity, NewItemActivity::class.java)
-            ItemPagerAdapter.POS_SERIES -> Intent(activity, NewItemActivity::class.java)
+            ItemPagerAdapter.POS_SERIES -> Intent(activity, NewSeriesActivity::class.java)
             else -> null
         }
         startActivity(intent)
