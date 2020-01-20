@@ -4,69 +4,62 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.remindmemunni.PrimitiveDateTime
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitymain.ItemViewModel
 import com.example.remindmemunni.database.AggregatedSeries
-import com.example.remindmemunni.database.Item
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.example.remindmemunni.databinding.ActivityNewItemBinding
 
 class NewItemActivity
     : AppCompatActivity()
     , TimePickerDialog.OnTimeSetListener
     , DatePickerDialog.OnDateSetListener {
 
-    private val viewModel: ItemViewModel by lazy {
-        ViewModelProvider(this)[ItemViewModel::class.java]
+    lateinit var binding: ActivityNewItemBinding
+    private val viewModel by lazy {
+        ViewModelProvider(this)[NewItemViewModel::class.java]
     }
 
-    private val nameEditText by lazy { findViewById<EditText>(R.id.name_input_field) }
-    private val costEditText by lazy { findViewById<EditText>(R.id.cost_input_field) }
-    private val typeSpinner by lazy { findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown) }
     private val timeEditText by lazy { findViewById<EditText>(R.id.time_input_field) }
-    private val seriesSpinner by lazy { findViewById<AutoCompleteTextView>(R.id.series_dropdown) }
-
-    private var time: PrimitiveDateTime? = null
-    private var tempTime: PrimitiveDateTime?  = null // Ensure both dialogs complete before changing time
-    private var costIsDebit: Boolean = true
-    private var selectedSeries: Int = 0
+    private val time = PrimitiveDateTime()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_item)
-
         title = "New Item"
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_new_item)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         setSupportActionBar(findViewById(R.id.toolbar_new))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val typeSpinner = findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
         val typeSpinnerAdapter = ArrayAdapter.createFromResource(
             this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item
         )
         typeSpinner.setAdapter(typeSpinnerAdapter)
         typeSpinner.setOnItemClickListener { _, _, position, _ ->
-            costIsDebit = typeSpinnerAdapter.getItem(position) == "Debit"
+            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
         }
 
         timeEditText.setOnClickListener {
-            tempTime = PrimitiveDateTime()
             val dateDialog = DatePickerFragment()
             dateDialog.show(supportFragmentManager, "date_dialog")
         }
 
+        val seriesSpinner = findViewById<AutoCompleteTextView>(R.id.series_dropdown)
         val seriesSpinnerAdapter = ArrayAdapter<AggregatedSeries>(
             this, R.layout.dropdown_menu_popup_item, ArrayList()
         )
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
-            selectedSeries = seriesSpinnerAdapter.getItem(position)?.series?.id ?: 0
+            viewModel.setSeries(seriesSpinnerAdapter.getItem(position)?.series)
         }
         viewModel.allSeries.observe(this, Observer {series ->
             seriesSpinnerAdapter.clear()
@@ -80,74 +73,39 @@ class NewItemActivity
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean  {
-        when (menuItem?.itemId) {
+        return when (menuItem?.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-
             R.id.done_button -> {
-                return if (nameEditText.text.isNullOrEmpty()) {
+                val itemCreationResult = viewModel.createItem()
+                if (itemCreationResult != null) {
                     Toast.makeText(
                         applicationContext,
-                        "Item needs a name!",
+                        itemCreationResult,
                         Toast.LENGTH_SHORT
                     ).show()
-                    false
                 } else {
-                    val item = createItem()
-                    Log.d("Nice", "$item")
-                    viewModel.insert(item)
-
                     finish()
-                    true
                 }
+                true
             }
-
-            else -> return super.onOptionsItemSelected(menuItem)
+            else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
-    private fun createItem(): Item {
-        val name: String = nameEditText.text.toString()
-        val costText = costEditText.text.toString()
-        var cost = if (costText.isNotEmpty()) costText.toDouble() else 0.0
-        if (costIsDebit) cost = -cost
-        val localDateTime: LocalDateTime? = time?.toLocalDateTime()
-        val epochTime = localDateTime?.atZone(ZoneId.systemDefault())?.toEpochSecond() ?: 0
-
-        return Item(name = name, seriesId = selectedSeries, cost = cost, time = epochTime)
-    }
-
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        tempTime!!.mYear = year
-        tempTime!!.mMonth = month
-        tempTime!!.mDayOfMonth = dayOfMonth
-
+        time.mYear = year
+        time.mMonth = month
+        time.mDayOfMonth = dayOfMonth
         val timeDialog = TimePickerFragment()
         timeDialog.show(supportFragmentManager, "time_dialog")
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        tempTime!!.mHour = hourOfDay
-        tempTime!!.mMinute = minute
-
-        time = tempTime
-        val retrievedTime = time?.toLocalDateTime()
-        val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
-        timeEditText.setText(retrievedTime?.format(formatter))
-    }
-
-    private class PrimitiveDateTime {
-        var mYear: Int = 0
-        var mMonth: Int = 0
-        var mDayOfMonth: Int = 0
-        var mHour: Int = 0
-        var mMinute: Int = 0
-
-        fun toLocalDateTime(): LocalDateTime?  = when (mYear) {
-            0 -> null
-            else -> LocalDateTime.of(mYear, mMonth+1, mDayOfMonth, mHour, mMinute)
-        }
+        time.mHour = hourOfDay
+        time.mMinute = minute
+        timeEditText.setText(viewModel.setTime(time))
     }
 }
