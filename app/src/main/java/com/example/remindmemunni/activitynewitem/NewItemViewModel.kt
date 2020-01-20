@@ -35,11 +35,12 @@ class NewItemViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setCostType(type: CharSequence?) {
         _costIsDebit = type == "Debit"
+        costType.value = type.toString()
     }
 
     fun setSeries(newSeries: Series?) {
         seriesId = newSeries?.id ?: 0
-        series.value = newSeries?.name
+        series.value = newSeries?.name ?: ""
     }
 
     fun setTime(newTime: PrimitiveDateTime): String? {

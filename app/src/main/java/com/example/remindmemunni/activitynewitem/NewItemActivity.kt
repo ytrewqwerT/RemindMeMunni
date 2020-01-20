@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.PrimitiveDateTime
 import com.example.remindmemunni.R
+import com.example.remindmemunni.UnfilteredArrayAdapter
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.databinding.ActivityNewItemBinding
 
@@ -40,7 +42,7 @@ class NewItemActivity
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val typeSpinner = findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
-        val typeSpinnerAdapter = ArrayAdapter.createFromResource(
+        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
             this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item
         )
         typeSpinner.setAdapter(typeSpinnerAdapter)
@@ -54,7 +56,7 @@ class NewItemActivity
         }
 
         val seriesSpinner = findViewById<AutoCompleteTextView>(R.id.series_dropdown)
-        val seriesSpinnerAdapter = ArrayAdapter<AggregatedSeries>(
+        val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
             this, R.layout.dropdown_menu_popup_item, ArrayList()
         )
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
@@ -64,6 +66,7 @@ class NewItemActivity
         viewModel.allSeries.observe(this, Observer {series ->
             seriesSpinnerAdapter.clear()
             seriesSpinnerAdapter.addAll(series)
+            Log.d("Nice", "Resetting series adapter")
         })
     }
 
