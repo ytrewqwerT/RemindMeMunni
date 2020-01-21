@@ -2,29 +2,22 @@ package com.example.remindmemunni.activitynewseries
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.EditText
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitymain.ItemViewModel
-import com.example.remindmemunni.database.Series
+import com.example.remindmemunni.UnfilteredArrayAdapter
+import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
 
 class NewSeriesActivity : AppCompatActivity() {
 
-    private val viewModel: ItemViewModel by lazy {
-        ViewModelProvider(this)[ItemViewModel::class.java]
+    lateinit var binding: ActivityNewSeriesBinding
+    private val viewModel: NewSeriesViewModel by lazy {
+        ViewModelProvider(this)[NewSeriesViewModel::class.java]
     }
-
-    private val nameEditText by lazy { findViewById<EditText>(R.id.name_input_field) }
-    private val costEditText by lazy { findViewById<EditText>(R.id.cost_input_field) }
-    private val typeSpinner by lazy { findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown) }
-
-    private var costIsDebit: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +25,20 @@ class NewSeriesActivity : AppCompatActivity() {
 
         title = "New Series"
 
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_new_series)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+
         setSupportActionBar(findViewById(R.id.toolbar_new))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val typeSpinnerAdapter = ArrayAdapter.createFromResource(
+        val typeSpinner = findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
+        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
             this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item
         )
         typeSpinner.setAdapter(typeSpinnerAdapter)
         typeSpinner.setOnItemClickListener { _, _, position, _ ->
-            costIsDebit = typeSpinnerAdapter.getItem(position) == "Debit"
+            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
         }
     }
 
@@ -50,40 +48,25 @@ class NewSeriesActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean  {
-        when (menuItem?.itemId) {
+        return when (menuItem?.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-
             R.id.done_button -> {
-                return if (nameEditText.text.isNullOrEmpty()) {
+                val seriesCreationResult = viewModel.createSeries()
+                if (seriesCreationResult != null) {
                     Toast.makeText(
                         applicationContext,
-                        "Series needs a name!",
+                        seriesCreationResult,
                         Toast.LENGTH_SHORT
                     ).show()
-                    false
                 } else {
-                    val series = createSeries()
-                    Log.d("Nice", "$series")
-                    viewModel.insert(series)
-
                     finish()
-                    true
                 }
+                true
             }
-
             else -> return super.onOptionsItemSelected(menuItem)
         }
-    }
-
-    private fun createSeries(): Series {
-        val name: String = nameEditText.text.toString()
-        val costText = costEditText.text.toString()
-        var cost = if (costText.isNotEmpty()) costText.toDouble() else 0.0
-        if (costIsDebit) cost = -cost
-
-        return Series(name = name, cost = cost)
     }
 }
