@@ -24,6 +24,7 @@ class NewItemViewModel(app: Application) : AndroidViewModel(app) {
     val name = MutableLiveData<String>("")
     val cost = MutableLiveData<String>("")
     val costType = MutableLiveData<String>("")
+    val timeText = MutableLiveData<String>("")
     val series = MutableLiveData<String>("")
 
     init {
@@ -47,7 +48,13 @@ class NewItemViewModel(app: Application) : AndroidViewModel(app) {
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
+        timeText.value = retrievedTime?.format(formatter) ?: ""
         return retrievedTime?.format(formatter)
+    }
+
+    fun clearTime() {
+        _time = PrimitiveDateTime()
+        timeText.value = ""
     }
 
     fun createItem(): String? {

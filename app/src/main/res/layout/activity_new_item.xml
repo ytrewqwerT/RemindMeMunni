@@ -99,12 +99,23 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/time_input_field"
+                android:text="@={viewModel.timeText}"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:inputType="time"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:text="@string/clear_field"
+            android:onClick="@{() -> viewModel.clearTime()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/time_input_layout"
+            app:layout_constraintTop_toTopOf="@id/time_input_layout"
+            app:layout_constraintStart_toEndOf="@id/time_input_layout" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"

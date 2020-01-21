@@ -15,6 +15,7 @@ import com.example.remindmemunni.PrimitiveDateTime
 import com.example.remindmemunni.R
 import com.example.remindmemunni.UnfilteredArrayAdapter
 import com.example.remindmemunni.database.AggregatedSeries
+import com.example.remindmemunni.database.Series
 import com.example.remindmemunni.databinding.ActivityNewItemBinding
 
 class NewItemActivity
@@ -59,12 +60,14 @@ class NewItemActivity
         val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
             this, R.layout.dropdown_menu_popup_item, ArrayList()
         )
+        val dummySeries = AggregatedSeries(Series(), emptyList())
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setSeries(seriesSpinnerAdapter.getItem(position)?.series)
         }
         viewModel.allSeries.observe(this, Observer {series ->
             seriesSpinnerAdapter.clear()
+            seriesSpinnerAdapter.add(dummySeries)
             seriesSpinnerAdapter.addAll(series)
             Log.d("Nice", "Resetting series adapter")
         })

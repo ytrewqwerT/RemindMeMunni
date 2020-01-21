@@ -17,5 +17,5 @@ data class Series (
         name, "$numPrefix $curNum", "\$$cost"
     )
 
-    override fun toString(): String = "$id $name: \$$cost, at $numPrefix$curNum"
+    override fun toString(): String = name
 }
