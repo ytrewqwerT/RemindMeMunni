@@ -29,7 +29,7 @@ class NewSeriesActivity : AppCompatActivity() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        setSupportActionBar(findViewById(R.id.toolbar_new))
+        setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val typeSpinner = findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
