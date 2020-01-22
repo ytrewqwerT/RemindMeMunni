@@ -10,7 +10,9 @@ data class Series (
     val name: String = "",
     val cost: Double = 0.0,
     val curNum: Double = 0.0,
-    val numPrefix: String = ""
+    val numPrefix: String = "",
+    val recurMonths: Int = 0,
+    val recurDays: Int = 0
 ) : ListItemViewable {
 
     override fun getListItemContents() = ListItemViewable.ListItemContents(
