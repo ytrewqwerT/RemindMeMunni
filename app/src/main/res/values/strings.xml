@@ -1,22 +1,27 @@
 <resources>
     <string name="app_name">RemindMeMunni</string>
-    <string name="main_column_items">Items</string>
-    <string name="main_column_series">Series</string>
     <string name="new_object">New</string>
     <string name="done">Done</string>
+    <string name="clear_field">Clear</string>
+
+    <string name="main_column_items">Items</string>
+    <string name="main_column_series">Series</string>
+
     <string name="new_item_name">Name</string>
     <string name="new_item_cost">Cost (Optional)</string>
     <string name="new_item_type">Type</string>
-    <string name="cost_debit">Debit</string>
-    <string name="cost_credit">Credit</string>
     <string name="new_item_time">Time (optional)</string>
     <string name="new_item_series">Series (Optional)</string>
+
     <string name="new_series_name">Name</string>
     <string name="new_series_cost">Cost (Optional)</string>
     <string name="new_series_type">Type</string>
-    <string name="clear_field">Clear</string>
     <string name="new_series_next_num">Next # in Series (Optional)</string>
     <string name="new_series_num_prefix">Next # Prefix (Optional)</string>
+    <string name="new_series_repeat">Repeat</string>
+
+    <string name="cost_debit">Debit</string>
+    <string name="cost_credit">Credit</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>

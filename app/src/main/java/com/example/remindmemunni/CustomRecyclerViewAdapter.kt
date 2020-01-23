@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.SnapHelper
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
 class CustomRecyclerViewAdapter<T : ListItemViewable>(
@@ -31,6 +32,9 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
         holder.mSubLeftView.text = contents.mSubLeftText
         holder.mSubRightView.text = contents.mSubRightText
 
+        if (contents.mSubLeftText.isEmpty()) holder.mSubLeftView.visibility = View.GONE
+        if (contents.mSubRightText.isEmpty()) holder.mSubRightView.visibility = View.GONE
+
         with(holder.mView) {
             tag = items[position]
             setOnClickListener(mOnClickListener)
@@ -38,6 +42,8 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun getItem(position: Int): T? = items.getOrNull(position)
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mMainView: TextView = mView.main_text
@@ -53,4 +59,10 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
         this.items = items
         notifyDataSetChanged()
     }
+}
+
+fun SnapHelper.getSnapPosition(recyclerView: RecyclerView): Int {
+    val layoutManager = recyclerView.layoutManager ?: return RecyclerView.NO_POSITION
+    val snapView = findSnapView(layoutManager) ?: return RecyclerView.NO_POSITION
+    return layoutManager.getPosition(snapView)
 }

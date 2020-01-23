@@ -7,12 +7,14 @@ import android.view.MenuItem
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
 import com.example.remindmemunni.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
+import com.google.android.material.textfield.TextInputEditText
 
-class NewSeriesActivity : AppCompatActivity() {
+class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.RecurrenceSelectListener {
 
     lateinit var binding: ActivityNewSeriesBinding
     private val viewModel: NewSeriesViewModel by lazy {
@@ -39,6 +41,11 @@ class NewSeriesActivity : AppCompatActivity() {
         typeSpinner.setAdapter(typeSpinnerAdapter)
         typeSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setCostType(typeSpinnerAdapter.getItem(position))
+        }
+
+        val recurrenceEditText = findViewById<TextInputEditText>(R.id.repeat)
+        recurrenceEditText.setOnClickListener {
+            RecurrenceSelectFragment().show(supportFragmentManager, "frequency_dialog")
         }
     }
 
@@ -68,5 +75,9 @@ class NewSeriesActivity : AppCompatActivity() {
             }
             else -> return super.onOptionsItemSelected(menuItem)
         }
+    }
+
+    override fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int) {
+        viewModel.setRecurrence(months, days)
     }
 }

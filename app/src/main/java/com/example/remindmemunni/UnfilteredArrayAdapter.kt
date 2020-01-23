@@ -16,6 +16,7 @@ class UnfilteredArrayAdapter<T>(context: Context, resource: Int, objects: Mutabl
     override fun addAll(vararg items: T) { this.items.addAll(items) }
     override fun clear() { items.clear() }
     override fun getFilter(): Filter { return filter }
+    override fun getItem(position: Int): T? = items.getOrNull(position)
 
     fun addAll(items: List<T>) { this.items.addAll(items) }
 
