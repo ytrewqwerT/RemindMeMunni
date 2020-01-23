@@ -19,5 +19,5 @@ data class Series (
         name, "$numPrefix $curNum", "\$$cost"
     )
 
-    override fun toString(): String = name
+    override fun toString(): String = name      // TODO: Not do this
 }

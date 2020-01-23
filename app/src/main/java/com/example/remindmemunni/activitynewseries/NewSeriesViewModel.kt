@@ -11,11 +11,13 @@ class NewSeriesViewModel(app: Application) : AndroidViewModel(app) {
 
     private val itemRepository: ItemRepository
 
-    private var _costIsDebit: Boolean = false
+    private var mIsDebit: Boolean = false
 
-    val name = MutableLiveData<String>("")
-    val cost = MutableLiveData<String>("")
-    val costType = MutableLiveData<String>("")
+    val mName = MutableLiveData<String>("")
+    val mCost = MutableLiveData<String>("")
+    val mCostType = MutableLiveData<String>("")
+    val mNum = MutableLiveData<String>("")
+    val mNumPrefix = MutableLiveData<String>("")
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
@@ -24,17 +26,20 @@ class NewSeriesViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setCostType(type: CharSequence?) {
-        _costIsDebit = type == "Debit"
-        costType.value = type.toString()
+        mIsDebit = type == "Debit"
+        mCostType.value = type.toString()
     }
 
     fun createSeries(): String? {
-        if (name.value.isNullOrEmpty()) return "Series needs a name!"
+        val name = mName.value
+        var cost = mCost.value?.toDoubleOrNull() ?: 0.0
+        if (mIsDebit) cost = -cost
+        val num = mNum.value?.toDoubleOrNull() ?: 0.0
+        val prefix = mNumPrefix.value ?: ""
 
-        var cc = if (cost.value?.isNotEmpty() == true) cost.value!!.toDouble() else 0.0
-        if (_costIsDebit) cc = -cc
+        if (name.isNullOrEmpty()) return "Series needs a name!"
 
-        val series = Series(name = name.value!!, cost = cc)
+        val series = Series(name = name, cost = cost, curNum = num, numPrefix = prefix)
         viewModelScope.launch { itemRepository.insert(series) }
         return null
     }

@@ -16,74 +16,110 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/name_input_layout"
+            android:hint="@string/new_series_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:hint="@string/new_series_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/name_input_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:text="@={viewModel.mName}"
                 android:singleLine="true"
-                android:text="@={viewModel.name}" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/cost_input_layout"
+            android:hint="@string/new_series_cost"
+            app:prefixText="$ "
+            app:prefixTextAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:hint="@string/new_series_cost"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name_input_layout"
-            app:prefixText="$ "
-            app:prefixTextAppearance="@style/TextAppearance.AppCompat.Medium">
+            app:layout_constraintTop_toBottomOf="@+id/name_input_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/cost_input_field"
+                android:text="@={viewModel.mCost}"
+                android:inputType="numberDecimal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
                 android:maxWidth="200dp"
-                android:minWidth="150dp"
-                android:text="@={viewModel.cost}" />
+                android:minWidth="150dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:hint="@string/new_series_type"
+            android:labelFor="@id/cost_type_dropdown"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:hint="@string/new_series_type"
-            android:labelFor="@id/cost_type_dropdown"
             app:layout_constraintBottom_toBottomOf="@id/cost_input_layout"
             app:layout_constraintStart_toEndOf="@+id/cost_input_layout"
             app:layout_constraintTop_toTopOf="@id/cost_input_layout">
 
             <AutoCompleteTextView
                 android:id="@+id/cost_type_dropdown"
+                android:text="@={viewModel.mCostType}"
+                android:focusable="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/number_input_layout"
+            android:hint="@string/new_series_next_num"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/cost_input_layout"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/number_input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="@={viewModel.costType}" />
+                android:text="@={viewModel.mNum}"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:hint="@string/new_series_num_prefix"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toTopOf="@id/number_input_layout"
+            app:layout_constraintBottom_toBottomOf="@id/number_input_layout"
+            app:layout_constraintStart_toEndOf="@id/number_input_layout"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/prefix_input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={viewModel.mNumPrefix}" />
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
