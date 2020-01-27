@@ -6,12 +6,8 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
-import androidx.recyclerview.widget.RecyclerView
-import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.R
-import com.example.remindmemunni.getSnapPosition
+import com.example.remindmemunni.ScrollSpinner
 import kotlin.ClassCastException
 
 class RecurrenceSelectFragment: DialogFragment() {
@@ -32,42 +28,16 @@ class RecurrenceSelectFragment: DialogFragment() {
 
             val view = inflater.inflate(R.layout.dialog_frequency, null)
 
-            // TODO: Refactor into new view type?
-            val daysRecyclerView = view.findViewById<RecyclerView>(R.id.days_list)
-            val daysAdapter = CustomRecyclerViewAdapter<NumberListItem>(null).apply {
-                val items = NumberListItem.createSequentialList(0, 30).asReversed()
-                items.add(0, NumberListItem())
-                items.add(0, NumberListItem())
-                items.add(NumberListItem())
-                items.add(NumberListItem())
-                setItems(items)
-            }
-            daysRecyclerView.adapter = daysAdapter
-            daysRecyclerView.layoutManager = LinearLayoutManager(context)
-            val daysSnapHelper = LinearSnapHelper()
-            daysSnapHelper.attachToRecyclerView(daysRecyclerView)
+            val daysScrollSpinner = view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
+            daysScrollSpinner.setItems(NumberListItem.createSequentialList(0, 30).asReversed())
 
-            val monthsRecyclerView = view.findViewById<RecyclerView>(R.id.months_list)
-            val monthsAdapter = CustomRecyclerViewAdapter<NumberListItem>(null).apply {
-                val items = NumberListItem.createSequentialList(0, 24).asReversed()
-                items.add(0, NumberListItem())
-                items.add(0, NumberListItem())
-                items.add(NumberListItem())
-                items.add(NumberListItem())
-                setItems(items)
-            }
-            monthsRecyclerView.adapter = monthsAdapter
-            monthsRecyclerView.layoutManager = LinearLayoutManager(context)
-            val monthsSnapHelper = LinearSnapHelper()
-            monthsSnapHelper.attachToRecyclerView(monthsRecyclerView)
+            val monthsScrollSpinner = view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
+            monthsScrollSpinner.setItems(NumberListItem.createSequentialList(0, 24).asReversed())
 
             builder.setView(view)
             builder.setPositiveButton("Confirm") { _, _ ->
-                var position = daysSnapHelper.getSnapPosition(daysRecyclerView)
-                val days = daysAdapter.getItem(position)?.num ?: 0
-                position = monthsSnapHelper.getSnapPosition(monthsRecyclerView)
-                val months = monthsAdapter.getItem(position)?.num ?: 0
-
+                val days = daysScrollSpinner.getSelectedItem()?.num ?: 0
+                val months = monthsScrollSpinner.getSelectedItem()?.num ?: 0
                 listener.onDialogConfirm(this, months, days)
                 dialog?.dismiss()
             }

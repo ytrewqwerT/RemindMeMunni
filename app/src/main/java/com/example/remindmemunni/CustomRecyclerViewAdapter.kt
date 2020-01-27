@@ -8,15 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.SnapHelper
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
-class CustomRecyclerViewAdapter<T : ListItemViewable>(
+class CustomRecyclerViewAdapter<T : ListItemViewable?>(
     private val mListener: OnListItemInteractionListener<T>?
 ) : RecyclerView.Adapter<CustomRecyclerViewAdapter<T>.ViewHolder>() {
 
-    private var items = emptyList<T>()
+    private var items: List<T?> = emptyList()
     private val mOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener { v ->
-            val item = v.tag as T
-            mListener?.onInteraction(item)
+            mListener?.onInteraction(v.tag as T)
         }
     }
 
@@ -27,13 +26,13 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val contents = items[position].getListItemContents()
-        holder.mMainView.text = contents.mMainText
-        holder.mSubLeftView.text = contents.mSubLeftText
-        holder.mSubRightView.text = contents.mSubRightText
+        val contents = items[position]?.getListItemContents()
+        holder.mMainView.text = contents?.mMainText
+        holder.mSubLeftView.text = contents?.mSubLeftText
+        holder.mSubRightView.text = contents?.mSubRightText
 
-        if (contents.mSubLeftText.isEmpty()) holder.mSubLeftView.visibility = View.GONE
-        if (contents.mSubRightText.isEmpty()) holder.mSubRightView.visibility = View.GONE
+        if (contents?.mSubLeftText?.isNotEmpty() != true) holder.mSubLeftView.visibility = View.GONE
+        if (contents?.mSubRightText?.isNotEmpty() != true) holder.mSubRightView.visibility = View.GONE
 
         with(holder.mView) {
             tag = items[position]
@@ -55,14 +54,8 @@ class CustomRecyclerViewAdapter<T : ListItemViewable>(
         }
     }
 
-    internal fun setItems(items: List<T>) {
+    internal fun setItems(items: List<T?>) {
         this.items = items
         notifyDataSetChanged()
     }
-}
-
-fun SnapHelper.getSnapPosition(recyclerView: RecyclerView): Int {
-    val layoutManager = recyclerView.layoutManager ?: return RecyclerView.NO_POSITION
-    val snapView = findSnapView(layoutManager) ?: return RecyclerView.NO_POSITION
-    return layoutManager.getPosition(snapView)
 }
