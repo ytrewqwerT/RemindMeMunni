@@ -22,6 +22,8 @@
 
     <string name="cost_debit">Debit</string>
     <string name="cost_credit">Credit</string>
+    <string name="days">Days,</string>
+    <string name="months">Months</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>
