@@ -16,4 +16,12 @@ class ItemRepository(private val itemDao: ItemDao) {
     }
 
     fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
+
+    suspend fun delete(item: Item) {
+        itemDao.delete(item)
+    }
+
+    suspend fun delete(series: Series) {
+        itemDao.delete(series)
+    }
 }

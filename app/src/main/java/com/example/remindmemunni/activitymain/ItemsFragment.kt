@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.R
 import com.example.remindmemunni.database.Item
+import com.google.android.material.snackbar.Snackbar
 
 class ItemsFragment : Fragment() {
 
@@ -23,6 +24,8 @@ class ItemsFragment : Fragment() {
     private val recyclerViewAdapter: CustomRecyclerViewAdapter<Item> by lazy {
         CustomRecyclerViewAdapter<Item>(null)
     }
+
+    private lateinit var mView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +40,9 @@ class ItemsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
-        if (view is RecyclerView) {
-            with(view) {
+        mView = inflater.inflate(R.layout.fragment_item_list, container, false)
+        if (mView is RecyclerView) {
+            with(mView as RecyclerView) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
                 val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -47,7 +50,7 @@ class ItemsFragment : Fragment() {
                 registerForContextMenu(this)
             }
         }
-        return view
+        return mView
     }
 
     override fun onCreateContextMenu(
@@ -72,7 +75,13 @@ class ItemsFragment : Fragment() {
         }
         R.id.item_delete -> {
             val item = recyclerViewAdapter.contextMenuItem
-            Toast.makeText(context, "Delete ${item?.name}", Toast.LENGTH_SHORT).show()
+            if (item != null) {
+                viewModel.delete(item)
+                Snackbar.make(mView, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") {
+                        viewModel.insert(item)
+                    }.show()
+            }
             true
         }
         else -> super.onContextItemSelected(menuItem)

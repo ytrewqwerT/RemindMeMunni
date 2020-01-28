@@ -27,4 +27,12 @@ class ItemViewModel(app: Application) : AndroidViewModel(app) {
     fun insert(series: Series) = viewModelScope.launch {
         itemRepository.insert(series)
     }
+
+    fun delete(item: Item) = viewModelScope.launch {
+        itemRepository.delete(item)
+    }
+
+    fun delete(series: Series) = viewModelScope.launch {
+        itemRepository.delete(series)
+    }
 }

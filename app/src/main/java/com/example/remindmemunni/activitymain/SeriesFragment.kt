@@ -16,6 +16,7 @@ import com.example.remindmemunni.OnListItemInteractionListener
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activityseries.SeriesActivity
 import com.example.remindmemunni.database.AggregatedSeries
+import com.google.android.material.snackbar.Snackbar
 
 class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSeries> {
 
@@ -36,22 +37,24 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
         })
     }
 
+    private lateinit var mView: View
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
-        if (view is RecyclerView) {
-            with(view) {
+        mView = inflater.inflate(R.layout.fragment_item_list, container, false)
+        if (mView is RecyclerView) {
+            with(mView as RecyclerView) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = recyclerViewAdapter
                 val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
                 this.addItemDecoration(decoration)
-                registerForContextMenu(view)
+                registerForContextMenu(mView)
             }
         }
-        return view
+        return mView
     }
 
     override fun onInteraction(item: AggregatedSeries) {
@@ -78,7 +81,13 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
         }
         R.id.series_delete -> {
             val series = recyclerViewAdapter.contextMenuItem
-            Toast.makeText(context, "Delete ${series?.series?.name}", Toast.LENGTH_SHORT).show()
+            if (series != null) {
+                viewModel.delete(series.series)
+                Snackbar.make(mView, "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") {
+                        viewModel.insert(series.series)
+                    }.show()
+            }
             true
         }
         else -> super.onContextItemSelected(item)
