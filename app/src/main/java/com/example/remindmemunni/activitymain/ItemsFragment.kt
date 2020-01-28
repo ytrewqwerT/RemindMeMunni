@@ -1,12 +1,11 @@
 package com.example.remindmemunni.activitymain
 
 import android.os.Bundle
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -45,8 +44,37 @@ class ItemsFragment : Fragment() {
                 adapter = recyclerViewAdapter
                 val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
                 this.addItemDecoration(decoration)
+                registerForContextMenu(this)
             }
         }
         return view
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        activity?.menuInflater?.inflate(R.menu.menu_item_context, menu)
+    }
+
+    override fun onContextItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+        R.id.item_edit -> {
+            val item = recyclerViewAdapter.contextMenuItem
+            Toast.makeText(context, "Edit ${item?.name}", Toast.LENGTH_SHORT).show()
+            true
+        }
+        R.id.item_finish -> {
+            val item = recyclerViewAdapter.contextMenuItem
+            Toast.makeText(context, "Complete ${item?.name}", Toast.LENGTH_SHORT).show()
+            true
+        }
+        R.id.item_delete -> {
+            val item = recyclerViewAdapter.contextMenuItem
+            Toast.makeText(context, "Delete ${item?.name}", Toast.LENGTH_SHORT).show()
+            true
+        }
+        else -> super.onContextItemSelected(menuItem)
     }
 }

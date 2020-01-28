@@ -1,11 +1,11 @@
 package com.example.remindmemunni
 
+import android.view.ContextMenu
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.SnapHelper
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
 class CustomRecyclerViewAdapter<T : ListItemViewable?>(
@@ -18,6 +18,8 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
             mListener?.onInteraction(v.tag as T)
         }
     }
+    var contextMenuItem: T? = null
+        private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -44,10 +46,21 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
 
     fun getItem(position: Int): T? = items.getOrNull(position)
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView), View.OnCreateContextMenuListener {
         val mMainView: TextView = mView.main_text
         val mSubLeftView: TextView = mView.sub_left_text
         val mSubRightView: TextView = mView.sub_right_text
+
+        init {
+            mView.setOnCreateContextMenuListener(this)
+        }
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            v: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            contextMenuItem = mView.tag as? T?
+        }
 
         override fun toString(): String {
             return super.toString() + " '" + mMainView.text + "'"
