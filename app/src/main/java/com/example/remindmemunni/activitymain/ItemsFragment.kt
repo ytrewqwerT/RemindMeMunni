@@ -1,5 +1,6 @@
 package com.example.remindmemunni.activitymain
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.R
+import com.example.remindmemunni.activitynewitem.NewItemActivity
 import com.example.remindmemunni.database.Item
 import com.google.android.material.snackbar.Snackbar
 
@@ -65,7 +67,12 @@ class ItemsFragment : Fragment() {
     override fun onContextItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
         R.id.item_edit -> {
             val item = recyclerViewAdapter.contextMenuItem
-            Toast.makeText(context, "Edit ${item?.name}", Toast.LENGTH_SHORT).show()
+            if (item != null) {
+                val intent = Intent(activity, NewItemActivity::class.java)
+                intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, item.id)
+                startActivity(intent)
+            }
+
             true
         }
         R.id.item_finish -> {

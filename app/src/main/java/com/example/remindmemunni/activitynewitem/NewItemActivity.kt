@@ -25,15 +25,22 @@ class NewItemActivity
 
     lateinit var binding: ActivityNewItemBinding
     private val viewModel by lazy {
-        ViewModelProvider(this)[NewItemViewModel::class.java]
+        ViewModelProvider(
+            this, NewItemViewModel.NewItemViewModelFactory(application, itemId)
+        )[NewItemViewModel::class.java]
     }
 
     private val timeEditText by lazy { findViewById<EditText>(R.id.time_input_field) }
     private val time = PrimitiveDateTime()
 
+    private var itemId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "New Item"
+
+        itemId = intent.getIntExtra(EXTRA_ITEM_ID, 0)
+        if (itemId != 0) title = "Edit Item"
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_item)
         binding.viewModel = viewModel
@@ -60,7 +67,7 @@ class NewItemActivity
         val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
             this, R.layout.dropdown_menu_popup_item, ArrayList()
         )
-        val dummySeries = AggregatedSeries(Series(), emptyList())
+        val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setSeries(seriesSpinnerAdapter.getItem(position)?.series)
@@ -103,7 +110,7 @@ class NewItemActivity
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         time.mYear = year
-        time.mMonth = month
+        time.mMonth = month + 1
         time.mDayOfMonth = dayOfMonth
         val timeDialog = TimePickerFragment()
         timeDialog.show(supportFragmentManager, "time_dialog")
@@ -113,5 +120,9 @@ class NewItemActivity
         time.mHour = hourOfDay
         time.mMinute = minute
         timeEditText.setText(viewModel.setTime(time))
+    }
+
+    companion object {
+        const val EXTRA_ITEM_ID = "ITEM_ID"
     }
 }

@@ -42,7 +42,6 @@ class SeriesActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
-        Log.d("Nice", "$seriesId")
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         recyclerView.adapter = mRecyclerViewAdapter
