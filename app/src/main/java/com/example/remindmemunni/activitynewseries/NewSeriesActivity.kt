@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
 import com.example.remindmemunni.UnfilteredArrayAdapter
+import com.example.remindmemunni.activitynewitem.NewItemActivity
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
 import com.google.android.material.textfield.TextInputEditText
 
@@ -18,14 +19,21 @@ class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.Recurren
 
     lateinit var binding: ActivityNewSeriesBinding
     private val viewModel: NewSeriesViewModel by lazy {
-        ViewModelProvider(this)[NewSeriesViewModel::class.java]
+        ViewModelProvider(
+            this, NewSeriesViewModel.NewSeriesViewModelFactory(application, seriesId)
+        )[NewSeriesViewModel::class.java]
     }
+
+    private var seriesId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_series)
 
         title = "New Series"
+
+        seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
+        if (seriesId != 0) title = "Edit Item"
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_series)
         binding.viewModel = viewModel
@@ -79,5 +87,9 @@ class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.Recurren
 
     override fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int) {
         viewModel.setRecurrence(months, days)
+    }
+
+    companion object {
+        const val EXTRA_SERIES_ID = "SERIES_ID"
     }
 }

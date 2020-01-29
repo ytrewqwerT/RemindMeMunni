@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.OnListItemInteractionListener
 import com.example.remindmemunni.R
+import com.example.remindmemunni.activitynewseries.NewSeriesActivity
 import com.example.remindmemunni.activityseries.SeriesActivity
 import com.example.remindmemunni.database.AggregatedSeries
 import com.google.android.material.snackbar.Snackbar
@@ -76,7 +77,11 @@ class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSerie
     override fun onContextItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.series_edit -> {
             val series = recyclerViewAdapter.contextMenuItem
-            Toast.makeText(context, "Edit ${series?.series?.name}", Toast.LENGTH_SHORT).show()
+            if (series != null) {
+                val intent = Intent(activity, NewSeriesActivity::class.java)
+                intent.putExtra(NewSeriesActivity.EXTRA_SERIES_ID, series.series.id)
+                startActivity(intent)
+            }
             true
         }
         R.id.series_delete -> {

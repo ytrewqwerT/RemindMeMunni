@@ -1,14 +1,16 @@
 package com.example.remindmemunni.activitynewseries
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.remindmemunni.PrimitiveDateTime
+import com.example.remindmemunni.activitynewitem.NewItemViewModel
 import com.example.remindmemunni.database.*
 import kotlinx.coroutines.launch
 
-class NewSeriesViewModel(app: Application) : AndroidViewModel(app) {
+class NewSeriesViewModel(
+    app: Application,
+    private val seriesId: Int = 0
+) : AndroidViewModel(app) {
 
     private val mRepository: ItemRepository
 
@@ -27,6 +29,22 @@ class NewSeriesViewModel(app: Application) : AndroidViewModel(app) {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
         mRepository = ItemRepository(itemDao)
         setCostType("Debit")
+
+        if (seriesId != 0) {
+            viewModelScope.launch {
+                val series = mRepository.getDirectSerie(seriesId).series
+                mName.value = series.name
+                if (series.cost < 0) {
+                    mCost.value = (-series.cost).toString()
+                } else {
+                    mCost.value = series.cost.toString()
+                    setCostType("Credit")
+                }
+                mNum.value = series.curNum.toString()
+                mNumPrefix.value = series.numPrefix
+                setRecurrence(series.recurMonths, series.recurDays)
+            }
+        }
     }
 
     fun setCostType(type: CharSequence?) {
@@ -54,11 +72,20 @@ class NewSeriesViewModel(app: Application) : AndroidViewModel(app) {
         if (name.isNullOrEmpty()) return "Series needs a name!"
 
         val series = Series(
+            id = seriesId,
             name = name, cost = cost,
             curNum = num, numPrefix = prefix,
             recurDays = mDays, recurMonths = mMonths
         )
         viewModelScope.launch { mRepository.insert(series) }
         return null
+    }
+
+    class NewSeriesViewModelFactory(
+        private val application: Application,
+        private val seriesId: Int
+    ) : ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            NewSeriesViewModel(application, seriesId) as T
     }
 }
