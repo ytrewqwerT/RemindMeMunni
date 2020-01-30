@@ -61,7 +61,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/cost_input_field"
                 android:inputType="numberDecimal"
-                android:text="@{viewModel.cost}"
+                android:text="@={viewModel.cost}"
                 android:maxWidth="200dp"
                 android:minWidth="150dp"
                 android:layout_width="wrap_content"
