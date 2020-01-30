@@ -42,6 +42,9 @@ class NewItemActivity
         itemId = intent.getIntExtra(EXTRA_ITEM_ID, 0)
         if (itemId != 0) title = "Edit Item"
 
+        val seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
+        if (seriesId != 0) viewModel.setSeries(seriesId)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_item)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -70,7 +73,7 @@ class NewItemActivity
         val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
-            viewModel.setSeries(seriesSpinnerAdapter.getItem(position)?.series)
+            viewModel.setSeries(seriesSpinnerAdapter.getItem(position))
         }
         viewModel.allSeries.observe(this, Observer {series ->
             seriesSpinnerAdapter.clear()
@@ -124,5 +127,6 @@ class NewItemActivity
 
     companion object {
         const val EXTRA_ITEM_ID = "ITEM_ID"
+        const val EXTRA_SERIES_ID = "SERIES_ID"
     }
 }

@@ -62,13 +62,37 @@ class NewItemViewModel(
         costType.value = type.toString()
     }
 
-    fun setSeries(newSeries: Series?) {
-        seriesId = newSeries?.id ?: 0
-        series.value = newSeries?.name ?: ""
+    fun setSeries(newSeries: AggregatedSeries?) {
+        if (newSeries == null) {
+            seriesId = 0
+            series.value = ""
+        } else {
+            val newSerie = newSeries.series
+            seriesId = newSerie.id
+            series.value = newSerie.name
+
+            val nextItem = newSeries.generateNextInSeries()
+            if (nextItem != null) {
+                name.value = nextItem.name
+                if (nextItem.cost < 0) {
+                    cost.value = (-nextItem.cost).toString()
+                    setCostType("Debit")
+                } else {
+                    cost.value = nextItem.cost.toString()
+                    setCostType("Credit")
+                }
+                setTime(PrimitiveDateTime.fromEpoch(nextItem.time))
+            }
+        }
+    }
+
+    fun setSeries(newSeries: Int) {
+        viewModelScope.launch {
+            setSeries(itemRepository.getDirectSerie(newSeries))
+        }
     }
 
     fun setTime(newTime: PrimitiveDateTime): String? {
-        Log.d("Nice", "${newTime.toEpoch()}")
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")

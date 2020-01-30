@@ -21,19 +21,23 @@ data class AggregatedSeries (
 
     override fun toString(): String = series.toString()
 
-    // Generates the next item if there is only one left and a series recurrence is set
-    fun completeLastItem(): Item? {
-        if (items.size != 1) return null
-        if (series.recurDays == 0 && series.recurMonths == 0) return null
+    // Generates the next item in the series (curNum is NOT changed).
+    fun generateNextInSeries(): Item? {
+        if (series.recurMonths == 0 && series.recurDays == 0) return null
 
-        var oldTime: LocalDateTime = PrimitiveDateTime.fromEpoch(items[0].time).toLocalDateTime()
-            ?: return null
-        oldTime = oldTime.plusMonths(series.recurMonths.toLong())
-        oldTime = oldTime.plusDays(series.recurDays.toLong())
-        val newTime = PrimitiveDateTime.fromLocalDateTime(oldTime).toEpoch()
-
-        var name = "${series.name} ${series.numPrefix}${series.curNum}"
-        series.curNum = floor(series.curNum) + 1
+        val lastItem = items.lastOrNull()
+        var newTime = 0L
+        if (lastItem != null) {
+            var lastTime = PrimitiveDateTime.fromEpoch(lastItem.time).toLocalDateTime()
+            newTime = if (lastTime != null) {
+                lastTime = lastTime.plusMonths(series.recurMonths.toLong())
+                lastTime = lastTime.plusDays(series.recurDays.toLong())
+                PrimitiveDateTime.fromLocalDateTime(lastTime).toEpoch()
+            } else {
+                0L
+            }
+        }
+        val name = "${series.name} ${series.numPrefix}${series.curNum}"
 
         return Item(name = name, seriesId = series.id, cost = series.cost, time = newTime)
     }

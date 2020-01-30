@@ -52,6 +52,7 @@ class SeriesActivity : AppCompatActivity() {
         R.id.add_button -> {
             // TODO: Start NewItemActivity with series auto-set to current series
             val intent = Intent(this, NewItemActivity::class.java)
+            intent.putExtra(NewItemActivity.EXTRA_SERIES_ID, seriesId)
             startActivity(intent)
             true
         }

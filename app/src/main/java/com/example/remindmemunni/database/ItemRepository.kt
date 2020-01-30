@@ -20,9 +20,10 @@ class ItemRepository(private val itemDao: ItemDao) {
     suspend fun completeItem(item: Item) {
         if (item.seriesId != 0) {
             val series = getDirectSerie(item.seriesId)
-            val newItem = series.completeLastItem()
+            val newItem = series.generateNextInSeries()
             if (newItem != null) {
                 insert(newItem)
+                series.series.curNum += 1
                 insert(series.series)
             }
         }
