@@ -27,6 +27,9 @@ interface ItemDao {
     @Query("SELECT * FROM series_table WHERE (:seriesId)= id")
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries
 
+    @Query("SELECT * FROM item_table WHERE (:seriesId)= seriesId")
+    fun getItemsInSeries(seriesId: Int): LiveData<List<Item>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Item)
 

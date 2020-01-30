@@ -11,16 +11,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.remindmemunni.CustomRecyclerViewAdapter
+import com.example.remindmemunni.ItemsListViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activitynewitem.NewItemActivity
 import com.example.remindmemunni.database.Item
 import com.google.android.material.snackbar.Snackbar
 
-class ItemsFragment : Fragment() {
+class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
-    private val viewModel: ItemViewModel by lazy {
-        activity?.run { ViewModelProvider(this)[ItemViewModel::class.java] }
-            ?: ViewModelProvider(this)[ItemViewModel::class.java]
+    private val viewModel: ItemsListViewModel by lazy {
+        ViewModelProvider(
+            requireActivity(),
+            ItemsListViewModel.ItemsListViewModelFactory(requireActivity().application, seriesId)
+        )[ItemsListViewModel::class.java]
     }
 
     private val recyclerViewAdapter: CustomRecyclerViewAdapter<Item> by lazy {
@@ -32,7 +35,7 @@ class ItemsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.allItems.observe(this, Observer { items ->
+        viewModel.mItemsList.observe(this, Observer { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
         })
     }
