@@ -81,6 +81,12 @@ class NewItemActivity
             seriesSpinnerAdapter.addAll(series)
             Log.d("Nice", "Resetting series adapter")
         })
+
+        val checkBox = findViewById<CheckBox>(R.id.series_increment)
+        viewModel.series.observe(this, Observer {
+            checkBox.isEnabled = it.isNotEmpty()
+            checkBox.isChecked = it.isNotEmpty()
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

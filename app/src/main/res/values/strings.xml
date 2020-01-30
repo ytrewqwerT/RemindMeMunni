@@ -24,6 +24,7 @@
     <string name="cost_credit">Credit</string>
     <string name="days">Days,</string>
     <string name="months">Months</string>
+    <string name="increment_series">Increment series counter</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>

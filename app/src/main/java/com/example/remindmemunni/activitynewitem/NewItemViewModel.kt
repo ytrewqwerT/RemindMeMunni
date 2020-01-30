@@ -30,6 +30,7 @@ class NewItemViewModel(
     val costType = MutableLiveData<String>("")
     val timeText = MutableLiveData<String>("")
     val series = MutableLiveData<String>("")
+    var incrementSeriesNum = MutableLiveData<Boolean>(false)
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
@@ -114,6 +115,15 @@ class NewItemViewModel(
 
         val item = Item(id = itemId, name = name.value!!, seriesId = seriesId, cost = cc, time = epochTime)
         viewModelScope.launch { itemRepository.insert(item) }
+
+        if (incrementSeriesNum.value == true && seriesId != 0) {
+            viewModelScope.launch {
+                val serie = itemRepository.getDirectSerie(seriesId)
+                serie.series.curNum += 1
+                itemRepository.insert(serie.series)
+            }
+        }
+
         return null
     }
 
