@@ -25,6 +25,7 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
     }
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
+    fun complete(item: Item) = viewModelScope.launch { itemRepository.completeItem(item) }
     fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
 
     class ItemsListViewModelFactory(

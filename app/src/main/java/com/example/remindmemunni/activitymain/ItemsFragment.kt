@@ -81,6 +81,9 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         R.id.item_finish -> {
             val item = recyclerViewAdapter.contextMenuItem
             Toast.makeText(context, "Complete ${item?.name}", Toast.LENGTH_SHORT).show()
+            if (item != null) {
+                viewModel.complete(item)
+            }
             true
         }
         R.id.item_delete -> {

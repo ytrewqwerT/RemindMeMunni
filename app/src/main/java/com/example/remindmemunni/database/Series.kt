@@ -9,7 +9,7 @@ data class Series (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String = "",
     val cost: Double = 0.0,
-    val curNum: Double = 0.0,
+    var curNum: Double = 0.0,
     val numPrefix: String = "",
     val recurMonths: Int = 0,
     val recurDays: Int = 0
