@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynewseries
+package com.example.remindmemunni.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
@@ -88,7 +88,10 @@ class NewSeriesViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return NewSeriesViewModel(application, seriesId) as T
+                return NewSeriesViewModel(
+                    application,
+                    seriesId
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

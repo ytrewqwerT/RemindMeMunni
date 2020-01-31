@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.views
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import com.example.remindmemunni.R
+import com.example.remindmemunni.adapters.CustomRecyclerViewAdapter
+import com.example.remindmemunni.interfaces.ListItemViewable
 
 class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     : RecyclerView(context, attrs) {
@@ -18,7 +21,8 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     private val indicatorPaint: Paint = Paint()
     private var items: List<T?> = emptyList()
     private var listPaddingSize = 1
-    private val customAdapter = CustomRecyclerViewAdapter<T>(null)
+    private val customAdapter =
+        CustomRecyclerViewAdapter<T>(null)
     private val snapHelper: SnapHelper = object : LinearSnapHelper() {
         override fun findTargetSnapPosition(
             layoutManager: LayoutManager?,

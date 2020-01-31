@@ -1,8 +1,8 @@
 package com.example.remindmemunni
 
+import com.example.remindmemunni.utils.PrimitiveDateTime
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -17,8 +17,9 @@ class ExampleUnitTest {
 
     @Test
     fun primitiveDateTimeConversions() {
-        var pdt = PrimitiveDateTime(2000, 1, 1, 9, 0)
-        var ldt = pdt.toLocalDateTime()
+        var pdt =
+            PrimitiveDateTime(2000, 1, 1, 9, 0)
+        val ldt = pdt.toLocalDateTime()
         assertEquals(2000, ldt?.year)
         assertEquals(1, ldt?.monthValue)
         assertEquals(1, ldt?.dayOfMonth)

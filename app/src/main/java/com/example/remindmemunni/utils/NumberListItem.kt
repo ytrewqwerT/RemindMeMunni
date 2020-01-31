@@ -1,9 +1,10 @@
-package com.example.remindmemunni.activitynewseries
+package com.example.remindmemunni.utils
 
-import com.example.remindmemunni.ListItemViewable
-import com.example.remindmemunni.ListItemViewable.ListItemContents
+import com.example.remindmemunni.interfaces.ListItemViewable
+import com.example.remindmemunni.interfaces.ListItemViewable.ListItemContents
 
-class NumberListItem(val num: Int? = null) : ListItemViewable {
+class NumberListItem(val num: Int? = null) :
+    ListItemViewable {
 
     override fun getListItemContents(): ListItemContents = ListItemContents(
         num?.toString() ?: "",

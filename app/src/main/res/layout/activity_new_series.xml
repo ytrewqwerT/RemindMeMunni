@@ -6,13 +6,13 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.activitynewseries.NewSeriesViewModel" />
+            type="com.example.remindmemunni.viewmodels.NewSeriesViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activitynewseries.NewSeriesActivity">
+        tools:context=".activities.NewSeriesActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

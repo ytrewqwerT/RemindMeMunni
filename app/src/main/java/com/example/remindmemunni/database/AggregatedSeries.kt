@@ -2,8 +2,8 @@ package com.example.remindmemunni.database
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.remindmemunni.ListItemViewable
-import com.example.remindmemunni.PrimitiveDateTime
+import com.example.remindmemunni.interfaces.ListItemViewable
+import com.example.remindmemunni.utils.PrimitiveDateTime
 
 data class AggregatedSeries (
     @Embedded val series: Series,

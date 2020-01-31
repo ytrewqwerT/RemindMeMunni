@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynewitem
+package com.example.remindmemunni.fragments
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -21,7 +21,7 @@ class DatePickerFragment : DialogFragment() {
         }
 
         return DatePickerDialog(
-            context, activity as DatePickerDialog.OnDateSetListener,
+            requireContext(), activity as DatePickerDialog.OnDateSetListener,
             year, month, day
         )
     }

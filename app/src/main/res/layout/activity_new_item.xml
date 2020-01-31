@@ -7,13 +7,13 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.activitynewitem.NewItemViewModel" />
+            type="com.example.remindmemunni.viewmodels.NewItemViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activitynewitem.NewItemActivity">
+        tools:context=".activities.NewItemActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

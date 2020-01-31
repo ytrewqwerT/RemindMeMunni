@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,11 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.remindmemunni.CustomRecyclerViewAdapter
-import com.example.remindmemunni.ItemsListViewModel
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitynewitem.NewItemActivity
+import com.example.remindmemunni.activities.NewItemActivity
+import com.example.remindmemunni.adapters.CustomRecyclerViewAdapter
 import com.example.remindmemunni.database.Item
+import com.example.remindmemunni.viewmodels.ItemsListViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
@@ -23,7 +23,11 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         ItemsListViewModel.ItemsListViewModelFactory(requireActivity().application, seriesId)
     }
 
-    private val recyclerViewAdapter by lazy { CustomRecyclerViewAdapter<Item>(null) }
+    private val recyclerViewAdapter by lazy {
+        CustomRecyclerViewAdapter<Item>(
+            null
+        )
+    }
     private lateinit var contentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {

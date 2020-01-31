@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.interfaces
 
 interface ListItemViewable {
 

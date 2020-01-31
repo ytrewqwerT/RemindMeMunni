@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.adapters
 
 import android.content.Context
 import android.widget.ArrayAdapter
@@ -25,7 +25,11 @@ class UnfilteredArrayAdapter<T>(context: Context, resource: Int, objects: Mutabl
                 : UnfilteredArrayAdapter<CharSequence> {
 
             val strings = context.resources.getTextArray(textArrayResId)
-            return UnfilteredArrayAdapter(context, textViewResId, strings.toMutableList())
+            return UnfilteredArrayAdapter(
+                context,
+                textViewResId,
+                strings.toMutableList()
+            )
         }
     }
 

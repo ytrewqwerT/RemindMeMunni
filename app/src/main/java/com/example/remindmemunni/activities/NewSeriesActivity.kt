@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynewseries
+package com.example.remindmemunni.activities
 
 import android.os.Bundle
 import android.view.Menu
@@ -10,15 +10,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.example.remindmemunni.R
-import com.example.remindmemunni.UnfilteredArrayAdapter
+import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
+import com.example.remindmemunni.fragments.RecurrenceSelectFragment
+import com.example.remindmemunni.viewmodels.NewSeriesViewModel
 import com.google.android.material.textfield.TextInputEditText
 
-class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.RecurrenceSelectListener {
+class NewSeriesActivity : AppCompatActivity(),
+    RecurrenceSelectFragment.RecurrenceSelectListener {
 
     lateinit var binding: ActivityNewSeriesBinding
     private val viewModel: NewSeriesViewModel by viewModels {
-        NewSeriesViewModel.NewSeriesViewModelFactory(application, seriesId)
+        NewSeriesViewModel.NewSeriesViewModelFactory(
+            application,
+            seriesId
+        )
     }
 
     private var seriesId: Int = 0
@@ -48,7 +54,8 @@ class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.Recurren
 
         val recurrenceEditText = findViewById<TextInputEditText>(R.id.repeat)
         recurrenceEditText.setOnClickListener {
-            RecurrenceSelectFragment().show(supportFragmentManager, "frequency_dialog")
+            RecurrenceSelectFragment()
+                .show(supportFragmentManager, "frequency_dialog")
         }
     }
 

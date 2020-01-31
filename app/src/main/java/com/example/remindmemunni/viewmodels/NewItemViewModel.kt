@@ -1,12 +1,12 @@
-package com.example.remindmemunni.activitynewitem
+package com.example.remindmemunni.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.remindmemunni.PrimitiveDateTime
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.database.ItemRoomDatabase
+import com.example.remindmemunni.utils.PrimitiveDateTime
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
@@ -121,7 +121,10 @@ class NewItemViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewItemViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return NewItemViewModel(application, itemId) as T
+                return NewItemViewModel(
+                    application,
+                    itemId
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

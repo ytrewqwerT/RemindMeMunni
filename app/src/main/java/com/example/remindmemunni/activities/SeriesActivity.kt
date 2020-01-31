@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activityseries
+package com.example.remindmemunni.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,13 +8,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitymain.ItemsFragment
-import com.example.remindmemunni.activitynewitem.NewItemActivity
+import com.example.remindmemunni.fragments.ItemsFragment
+import com.example.remindmemunni.viewmodels.SeriesViewModel
 
 class SeriesActivity : AppCompatActivity() {
 
     private val viewModel: SeriesViewModel by viewModels {
-        SeriesViewModel.SeriesViewModelFactory(application, seriesId)
+        SeriesViewModel.SeriesViewModelFactory(
+            application,
+            seriesId
+        )
     }
 
     private var seriesId: Int = 0
@@ -33,7 +36,9 @@ class SeriesActivity : AppCompatActivity() {
         })
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.series_list_fragment, ItemsFragment(seriesId))
+        fragmentTransaction.add(R.id.series_list_fragment,
+            ItemsFragment(seriesId)
+        )
         fragmentTransaction.commit()
     }
 

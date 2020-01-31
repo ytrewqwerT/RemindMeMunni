@@ -2,7 +2,7 @@ package com.example.remindmemunni.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.remindmemunni.ListItemViewable
+import com.example.remindmemunni.interfaces.ListItemViewable
 
 @Entity(tableName = "series_table")
 data class Series (

@@ -1,8 +1,10 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.example.remindmemunni.fragments.ItemsFragment
+import com.example.remindmemunni.fragments.SeriesFragment
 
 class ItemPagerAdapter(fm: FragmentManager)
     : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {

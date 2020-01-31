@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.adapters
 
 import android.view.ContextMenu
 import android.view.LayoutInflater
@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.R
+import com.example.remindmemunni.interfaces.ListItemViewable
+import com.example.remindmemunni.interfaces.OnListItemInteractionListener
 import kotlinx.android.synthetic.main.fragment_item.view.*
 
 class CustomRecyclerViewAdapter<T : ListItemViewable?>(

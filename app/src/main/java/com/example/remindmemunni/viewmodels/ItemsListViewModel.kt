@@ -1,7 +1,6 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
@@ -33,8 +32,11 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
         private val seriesId: Int = 0
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            Log.d("Nice", "Creating new ItemsListViewModel with series $seriesId")
-            return ItemsListViewModel(application, seriesId) as T
+            if (modelClass.isAssignableFrom(ItemsListViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return ItemsListViewModel(application, seriesId) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

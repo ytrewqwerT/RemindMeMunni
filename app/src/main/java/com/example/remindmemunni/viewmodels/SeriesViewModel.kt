@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activityseries
+package com.example.remindmemunni.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -30,7 +30,10 @@ class SeriesViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SeriesViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return SeriesViewModel(application, seriesId) as T
+                return SeriesViewModel(
+                    application,
+                    seriesId
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

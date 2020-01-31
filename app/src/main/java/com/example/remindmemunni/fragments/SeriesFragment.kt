@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,20 +9,24 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.remindmemunni.CustomRecyclerViewAdapter
-import com.example.remindmemunni.OnListItemInteractionListener
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitynewseries.NewSeriesActivity
-import com.example.remindmemunni.activityseries.SeriesActivity
+import com.example.remindmemunni.activities.NewSeriesActivity
+import com.example.remindmemunni.activities.SeriesActivity
+import com.example.remindmemunni.adapters.CustomRecyclerViewAdapter
 import com.example.remindmemunni.database.AggregatedSeries
+import com.example.remindmemunni.interfaces.OnListItemInteractionListener
+import com.example.remindmemunni.viewmodels.ItemViewModel
 import com.google.android.material.snackbar.Snackbar
 
-class SeriesFragment : Fragment(), OnListItemInteractionListener<AggregatedSeries> {
+class SeriesFragment : Fragment(),
+    OnListItemInteractionListener<AggregatedSeries> {
 
     private val viewModel: ItemViewModel by activityViewModels()
 
     private val recyclerViewAdapter by lazy {
-        CustomRecyclerViewAdapter<AggregatedSeries>(this)
+        CustomRecyclerViewAdapter<AggregatedSeries>(
+            this
+        )
     }
     private lateinit var contentView: View
 

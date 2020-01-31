@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activitynewseries.NewSeriesActivity"></activity>
-        <activity android:name=".activitynewitem.NewItemActivity" />
-        <activity android:name=".activityseries.SeriesActivity" />
-        <activity android:name=".activitymain.MainActivity">
+        <activity android:name=".activities.NewSeriesActivity" />
+        <activity android:name=".activities.NewItemActivity" />
+        <activity android:name=".activities.SeriesActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

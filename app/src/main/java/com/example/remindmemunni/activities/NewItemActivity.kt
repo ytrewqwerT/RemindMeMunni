@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynewitem
+package com.example.remindmemunni.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -10,12 +10,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import com.example.remindmemunni.PrimitiveDateTime
 import com.example.remindmemunni.R
-import com.example.remindmemunni.UnfilteredArrayAdapter
+import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.Series
 import com.example.remindmemunni.databinding.ActivityNewItemBinding
+import com.example.remindmemunni.fragments.DatePickerFragment
+import com.example.remindmemunni.fragments.TimePickerFragment
+import com.example.remindmemunni.utils.PrimitiveDateTime
+import com.example.remindmemunni.viewmodels.NewItemViewModel
 
 class NewItemActivity
     : AppCompatActivity()
@@ -24,7 +27,10 @@ class NewItemActivity
 
     private lateinit var binding: ActivityNewItemBinding
     private val viewModel: NewItemViewModel by viewModels {
-        NewItemViewModel.NewItemViewModelFactory(application, itemId)
+        NewItemViewModel.NewItemViewModelFactory(
+            application,
+            itemId
+        )
     }
 
     private val time = PrimitiveDateTime()
@@ -59,13 +65,15 @@ class NewItemActivity
 
         val timeEditText = findViewById<EditText>(R.id.time_input_field)
         timeEditText.setOnClickListener {
-            DatePickerFragment().show(supportFragmentManager, "date_dialog")
+            DatePickerFragment()
+                .show(supportFragmentManager, "date_dialog")
         }
 
         val seriesSpinner = findViewById<AutoCompleteTextView>(R.id.series_dropdown)
-        val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
-            this, R.layout.dropdown_menu_popup_item, ArrayList()
-        )
+        val seriesSpinnerAdapter =
+            UnfilteredArrayAdapter<AggregatedSeries>(
+                this, R.layout.dropdown_menu_popup_item, ArrayList()
+            )
         val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
@@ -114,7 +122,8 @@ class NewItemActivity
         time.mYear = year
         time.mMonth = month + 1 // DatePicker returns month as 0-11 instead of 1-12
         time.mDayOfMonth = dayOfMonth
-        val timeDialog = TimePickerFragment()
+        val timeDialog =
+            TimePickerFragment()
         timeDialog.show(supportFragmentManager, "time_dialog")
     }
 

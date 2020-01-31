@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.utils
 
 import java.time.Instant
 import java.time.LocalDateTime
@@ -24,17 +24,20 @@ class PrimitiveDateTime(
     }
 
      companion object {
-         fun fromLocalDateTime(time: LocalDateTime): PrimitiveDateTime = PrimitiveDateTime(
-             time.year, time.monthValue, time.dayOfMonth,
-             time.hour, time.minute
-         )
+         fun fromLocalDateTime(time: LocalDateTime): PrimitiveDateTime =
+             PrimitiveDateTime(
+                 time.year, time.monthValue, time.dayOfMonth,
+                 time.hour, time.minute
+             )
 
          fun fromEpoch(epochSeconds: Long): PrimitiveDateTime {
              if (epochSeconds == 0L) return PrimitiveDateTime()
              val localDateTime = LocalDateTime.ofInstant(
                  Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault()
              )
-             return fromLocalDateTime(localDateTime)
+             return fromLocalDateTime(
+                 localDateTime
+             )
          }
      }
 }

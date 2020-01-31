@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitynewseries
+package com.example.remindmemunni.fragments
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -6,7 +6,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.example.remindmemunni.R
-import com.example.remindmemunni.ScrollSpinner
+import com.example.remindmemunni.utils.NumberListItem
+import com.example.remindmemunni.views.ScrollSpinner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class RecurrenceSelectFragment: DialogFragment() {
@@ -26,12 +27,18 @@ class RecurrenceSelectFragment: DialogFragment() {
             val daysScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
             daysScrollSpinner.setItems(
-                NumberListItem.createSequentialList(0, 30).asReversed()
+                NumberListItem.createSequentialList(
+                    0,
+                    30
+                ).asReversed()
             )
             val monthsScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
             monthsScrollSpinner.setItems(
-                NumberListItem.createSequentialList(0, 24).asReversed()
+                NumberListItem.createSequentialList(
+                    0,
+                    24
+                ).asReversed()
             )
 
             MaterialAlertDialogBuilder(it)

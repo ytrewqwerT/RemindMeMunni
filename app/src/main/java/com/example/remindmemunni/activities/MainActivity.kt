@@ -1,4 +1,4 @@
-package com.example.remindmemunni.activitymain
+package com.example.remindmemunni.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,12 +7,15 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.example.remindmemunni.R
-import com.example.remindmemunni.activitynewitem.NewItemActivity
-import com.example.remindmemunni.activitynewseries.NewSeriesActivity
+import com.example.remindmemunni.adapters.ItemPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
-    private val itemPagerAdapter by lazy { ItemPagerAdapter(supportFragmentManager) }
+    private val itemPagerAdapter by lazy {
+        ItemPagerAdapter(
+            supportFragmentManager
+        )
+    }
     private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
