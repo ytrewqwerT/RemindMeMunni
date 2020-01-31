@@ -1,39 +1,34 @@
 package com.example.remindmemunni.activitynewseries
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
 import com.example.remindmemunni.UnfilteredArrayAdapter
-import com.example.remindmemunni.activitynewitem.NewItemActivity
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
 import com.google.android.material.textfield.TextInputEditText
 
 class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.RecurrenceSelectListener {
 
     lateinit var binding: ActivityNewSeriesBinding
-    private val viewModel: NewSeriesViewModel by lazy {
-        ViewModelProvider(
-            this, NewSeriesViewModel.NewSeriesViewModelFactory(application, seriesId)
-        )[NewSeriesViewModel::class.java]
+    private val viewModel: NewSeriesViewModel by viewModels {
+        NewSeriesViewModel.NewSeriesViewModelFactory(application, seriesId)
     }
 
     private var seriesId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_series)
-
         title = "New Series"
 
         seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
-        if (seriesId != 0) title = "Edit Item"
+        if (seriesId != 0) title = "Edit Series"
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_series)
         binding.viewModel = viewModel
@@ -62,27 +57,21 @@ class NewSeriesActivity : AppCompatActivity(), RecurrenceSelectFragment.Recurren
         return true
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean  {
-        return when (menuItem?.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
-            }
-            R.id.done_button -> {
-                val seriesCreationResult = viewModel.createSeries()
-                if (seriesCreationResult != null) {
-                    Toast.makeText(
-                        applicationContext,
-                        seriesCreationResult,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    finish()
-                }
-                true
-            }
-            else -> return super.onOptionsItemSelected(menuItem)
+    override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
+        android.R.id.home -> {
+            finish()
+            true
         }
+        R.id.done_button -> {
+            val seriesCreationResult = viewModel.createSeries()
+            if (seriesCreationResult != null) {
+                Toast.makeText(applicationContext, seriesCreationResult, Toast.LENGTH_SHORT).show()
+            } else {
+                finish()
+            }
+            true
+        }
+        else -> super.onOptionsItemSelected(menuItem)
     }
 
     override fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int) {
