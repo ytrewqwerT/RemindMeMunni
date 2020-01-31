@@ -13,7 +13,7 @@ class NumberListItem(val num: Int? = null) : ListItemViewable {
 
     companion object {
         fun createSequentialList(lower: Int, upper: Int, increment: Int = 1): MutableList<NumberListItem> {
-            val list = ArrayList<NumberListItem>((upper-lower)/increment)
+            val list = ArrayList<NumberListItem>((upper - lower) / increment)
             for (i in lower..upper step increment) {
                 list.add(NumberListItem(i))
             }

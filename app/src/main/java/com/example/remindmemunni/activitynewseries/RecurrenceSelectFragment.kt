@@ -8,7 +8,6 @@ import androidx.fragment.app.DialogFragment
 import com.example.remindmemunni.R
 import com.example.remindmemunni.ScrollSpinner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.ClassCastException
 
 class RecurrenceSelectFragment: DialogFragment() {
 
@@ -21,13 +20,19 @@ class RecurrenceSelectFragment: DialogFragment() {
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val inflater = requireActivity().layoutInflater
+            val inflater = it.layoutInflater
             val view = inflater.inflate(R.layout.dialog_frequency, null)
 
-            val daysScrollSpinner = view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
-            daysScrollSpinner.setItems(NumberListItem.createSequentialList(0, 30).asReversed())
-            val monthsScrollSpinner = view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
-            monthsScrollSpinner.setItems(NumberListItem.createSequentialList(0, 24).asReversed())
+            val daysScrollSpinner =
+                view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
+            daysScrollSpinner.setItems(
+                NumberListItem.createSequentialList(0, 30).asReversed()
+            )
+            val monthsScrollSpinner =
+                view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
+            monthsScrollSpinner.setItems(
+                NumberListItem.createSequentialList(0, 24).asReversed()
+            )
 
             MaterialAlertDialogBuilder(it)
                 .setTitle("Set Frequency")

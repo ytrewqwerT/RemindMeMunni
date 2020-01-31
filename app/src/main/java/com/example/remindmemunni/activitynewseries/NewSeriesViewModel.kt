@@ -2,9 +2,9 @@ package com.example.remindmemunni.activitynewseries
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.remindmemunni.PrimitiveDateTime
-import com.example.remindmemunni.activitynewitem.NewItemViewModel
-import com.example.remindmemunni.database.*
+import com.example.remindmemunni.database.ItemRepository
+import com.example.remindmemunni.database.ItemRoomDatabase
+import com.example.remindmemunni.database.Series
 import kotlinx.coroutines.launch
 
 class NewSeriesViewModel(
@@ -12,80 +12,85 @@ class NewSeriesViewModel(
     private val seriesId: Int = 0
 ) : AndroidViewModel(app) {
 
-    private val mRepository: ItemRepository
+    private val itemRepository: ItemRepository
 
-    private var mIsDebit: Boolean = false
-    private var mMonths: Int = 0
-    private var mDays: Int = 0
+    private var isDebit: Boolean = false
+    private var recurMonths: Int = 0
+    private var recurDays: Int = 0
 
-    val mName = MutableLiveData<String>("")
-    val mCost = MutableLiveData<String>("")
-    val mCostType = MutableLiveData<String>("")
-    val mNum = MutableLiveData<String>("")
-    val mNumPrefix = MutableLiveData<String>("")
-    val mRecurrence = MutableLiveData<String>("")
+    val name = MutableLiveData<String>("")
+    val cost = MutableLiveData<String>("")
+    val costType = MutableLiveData<String>("")
+    val nextNumInSeries = MutableLiveData<String>("")
+    val numInSeriesPrefix = MutableLiveData<String>("")
+    val recurrence = MutableLiveData<String>("")
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
-        mRepository = ItemRepository(itemDao)
+        itemRepository = ItemRepository(itemDao)
         setCostType("Debit")
 
         if (seriesId != 0) {
             viewModelScope.launch {
-                val series = mRepository.getDirectSerie(seriesId).series
-                mName.value = series.name
+                val series = itemRepository.getDirectSerie(seriesId).series
+                name.value = series.name
                 if (series.cost < 0) {
-                    mCost.value = (-series.cost).toString()
+                    cost.value = (-series.cost).toString()
                 } else {
-                    mCost.value = series.cost.toString()
+                    cost.value = series.cost.toString()
                     setCostType("Credit")
                 }
-                mNum.value = series.curNum.toString()
-                mNumPrefix.value = series.numPrefix
+                nextNumInSeries.value = series.curNum.toString()
+                numInSeriesPrefix.value = series.numPrefix
                 setRecurrence(series.recurMonths, series.recurDays)
             }
         }
     }
 
     fun setCostType(type: CharSequence?) {
-        mIsDebit = type == "Debit"
-        mCostType.value = type.toString()
+        isDebit = type == "Debit"
+        costType.value = type.toString()
     }
 
     fun setRecurrence(months: Int, days: Int) {
-        mMonths = months
-        mDays = days
-        var recurText = "$mMonths Month"
-        if (mMonths != 1) recurText += "s"
-        recurText += ", $mDays Day"
-        if (mDays != 1) recurText += "s"
-        mRecurrence.value = recurText
+        recurMonths = months
+        recurDays = days
+        var recurText = "$recurMonths Month"
+        if (recurMonths != 1) recurText += "s"
+        recurText += ", $recurDays Day"
+        if (recurDays != 1) recurText += "s"
+        recurrence.value = recurText
     }
 
     fun createSeries(): String? {
-        val name = mName.value
-        var cost = mCost.value?.toDoubleOrNull() ?: 0.0
-        if (mIsDebit) cost = -cost
-        val num = mNum.value?.toDoubleOrNull() ?: 0.0
-        val prefix = mNumPrefix.value ?: ""
+        val name = name.value
+        var absCost = cost.value?.toDoubleOrNull() ?: 0.0
+        if (isDebit) absCost = -absCost
+        val num = nextNumInSeries.value?.toDoubleOrNull() ?: 0.0
+        val prefix = numInSeriesPrefix.value ?: ""
 
         if (name.isNullOrEmpty()) return "Series needs a name!"
 
         val series = Series(
             id = seriesId,
-            name = name, cost = cost,
+            name = name, cost = absCost,
             curNum = num, numPrefix = prefix,
-            recurDays = mDays, recurMonths = mMonths
+            recurDays = recurDays, recurMonths = recurMonths
         )
-        viewModelScope.launch { mRepository.insert(series) }
+        viewModelScope.launch { itemRepository.insert(series) }
         return null
     }
 
     class NewSeriesViewModelFactory(
         private val application: Application,
         private val seriesId: Int
-    ) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            NewSeriesViewModel(application, seriesId) as T
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return NewSeriesViewModel(application, seriesId) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }
