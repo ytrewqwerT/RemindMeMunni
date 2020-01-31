@@ -142,7 +142,7 @@
         <CheckBox
             android:id="@+id/series_increment"
             android:text="@string/increment_series"
-            android:checked="@={viewModel.incrementSeriesNum}"
+            android:checked="@={viewModel.incSeriesNum}"
             android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

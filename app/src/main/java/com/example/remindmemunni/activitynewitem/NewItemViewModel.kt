@@ -1,16 +1,13 @@
 package com.example.remindmemunni.activitynewitem
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.PrimitiveDateTime
-import com.example.remindmemunni.activityseries.SeriesViewModel
-import com.example.remindmemunni.database.*
-import kotlinx.coroutines.CoroutineScope
+import com.example.remindmemunni.database.AggregatedSeries
+import com.example.remindmemunni.database.Item
+import com.example.remindmemunni.database.ItemRepository
+import com.example.remindmemunni.database.ItemRoomDatabase
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class NewItemViewModel(
@@ -30,7 +27,7 @@ class NewItemViewModel(
     val costType = MutableLiveData<String>("")
     val timeText = MutableLiveData<String>("")
     val series = MutableLiveData<String>("")
-    var incrementSeriesNum = MutableLiveData<Boolean>(false)
+    var incSeriesNum = MutableLiveData<Boolean>(false)
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
@@ -41,19 +38,7 @@ class NewItemViewModel(
         if (itemId != 0) {
             viewModelScope.launch {
                 val item = itemRepository.getDirectItem(itemId)
-                name.value = item.name
-                if (item.cost < 0) {
-                    cost.value = (-item.cost).toString()
-                } else {
-                    cost.value = item.cost.toString()
-                    setCostType("Credit")
-                }
-                setTime(PrimitiveDateTime.fromEpoch(item.time))
-                if (item.seriesId != 0) {
-                    val serie = itemRepository.getDirectSerie(item.seriesId)
-                    seriesId = item.seriesId
-                    series.value = serie.series.name
-                }
+                setItem(item)
             }
         }
     }
@@ -61,6 +46,24 @@ class NewItemViewModel(
     fun setCostType(type: CharSequence?) {
         _costIsDebit = type == "Debit"
         costType.value = type.toString()
+    }
+
+    private fun setItem(item: Item) {
+        name.value = item.name
+        if (item.cost < 0) {
+            cost.value = (-item.cost).toString()
+        } else {
+            cost.value = item.cost.toString()
+            setCostType("Credit")
+        }
+        setTime(PrimitiveDateTime.fromEpoch(item.time))
+        if (item.seriesId != 0) {
+            viewModelScope.launch {
+                val serie = itemRepository.getDirectSerie(item.seriesId)
+                seriesId = item.seriesId
+                series.value = serie.series.name
+            }
+        }
     }
 
     fun setSeries(newSeries: AggregatedSeries?) {
@@ -73,38 +76,22 @@ class NewItemViewModel(
             series.value = newSerie.name
 
             val nextItem = newSeries.generateNextInSeries()
-            if (nextItem != null) {
-                name.value = nextItem.name
-                if (nextItem.cost < 0) {
-                    cost.value = (-nextItem.cost).toString()
-                    setCostType("Debit")
-                } else {
-                    cost.value = nextItem.cost.toString()
-                    setCostType("Credit")
-                }
-                setTime(PrimitiveDateTime.fromEpoch(nextItem.time))
-            }
+            if (nextItem != null) setItem(nextItem)
+
         }
     }
 
     fun setSeries(newSeries: Int) {
-        viewModelScope.launch {
-            setSeries(itemRepository.getDirectSerie(newSeries))
-        }
+        viewModelScope.launch { setSeries(itemRepository.getDirectSerie(newSeries)) }
     }
 
-    fun setTime(newTime: PrimitiveDateTime): String? {
+    fun setTime(newTime: PrimitiveDateTime) {
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
         timeText.value = retrievedTime?.format(formatter) ?: ""
-        return retrievedTime?.format(formatter)
     }
-
-    fun clearTime() {
-        _time = PrimitiveDateTime()
-        timeText.value = ""
-    }
+    fun clearTime() { setTime(PrimitiveDateTime()) }
 
     fun createItem(): String? {
         if (name.value.isNullOrEmpty()) return "Item needs a name!"
@@ -116,7 +103,7 @@ class NewItemViewModel(
         val item = Item(id = itemId, name = name.value!!, seriesId = seriesId, cost = cc, time = epochTime)
         viewModelScope.launch { itemRepository.insert(item) }
 
-        if (incrementSeriesNum.value == true && seriesId != 0) {
+        if (incSeriesNum.value == true && seriesId != 0) {
             viewModelScope.launch {
                 val serie = itemRepository.getDirectSerie(seriesId)
                 serie.series.curNum += 1
@@ -130,8 +117,13 @@ class NewItemViewModel(
     class NewItemViewModelFactory(
         private val application: Application,
         private val itemId: Int
-    ) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            NewItemViewModel(application, itemId) as T
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(NewItemViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return NewItemViewModel(application, itemId) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }
