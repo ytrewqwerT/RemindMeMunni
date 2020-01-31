@@ -4,8 +4,6 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.remindmemunni.ListItemViewable
 import com.example.remindmemunni.PrimitiveDateTime
-import java.time.LocalDateTime
-import kotlin.math.floor
 
 data class AggregatedSeries (
     @Embedded val series: Series,
@@ -15,9 +13,12 @@ data class AggregatedSeries (
     ) val items: List<Item>
 ) : ListItemViewable {
 
-    override fun getListItemContents() = ListItemViewable.ListItemContents(
-        series.name, "${items.size} items", "\$${series.cost} each"
-    )
+    override fun getListItemContents(): ListItemViewable.ListItemContents {
+        val costString = if (series.cost < 0) "${-series.cost}" else "${series.cost} cr"
+        return ListItemViewable.ListItemContents(
+            series.name, "${items.size} items", "\$${costString} per item"
+        )
+    }
 
     override fun toString(): String = series.toString()
 

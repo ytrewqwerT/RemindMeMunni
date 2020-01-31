@@ -17,17 +17,19 @@ data class Item(
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
+        val costString = if (cost < 0) "${-cost}" else "$cost cr"
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
         return ListItemViewable.ListItemContents(
-            name, date.format(formatter), "\$$cost"
+            name, date.format(formatter), "\$$costString"
         )
     }
 
     override fun toString(): String {
+        val costString = if (cost < 0) "${-cost}" else "$cost cr"
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
-        return "$id $name: \$$cost, $date"
+        return "$id $name: \$$costString, $date"
     }
 }

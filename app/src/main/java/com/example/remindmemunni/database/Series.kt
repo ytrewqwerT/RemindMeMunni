@@ -15,9 +15,12 @@ data class Series (
     val recurDays: Int = 0
 ) : ListItemViewable {
 
-    override fun getListItemContents() = ListItemViewable.ListItemContents(
-        name, "$numPrefix $curNum", "\$$cost"
-    )
+    override fun getListItemContents(): ListItemViewable.ListItemContents {
+        val costString = if (cost < 0) "${-cost}" else "$cost cr"
+        return ListItemViewable.ListItemContents(
+                name, "$numPrefix$curNum", "\$$costString"
+        )
+    }
 
     override fun toString(): String = name      // TODO: Not do this
 }

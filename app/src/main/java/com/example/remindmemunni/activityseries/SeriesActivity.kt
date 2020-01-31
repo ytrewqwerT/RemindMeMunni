@@ -1,22 +1,20 @@
 package com.example.remindmemunni.activityseries
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.R
 import com.example.remindmemunni.activitymain.ItemsFragment
 import com.example.remindmemunni.activitynewitem.NewItemActivity
 
 class SeriesActivity : AppCompatActivity() {
 
-    private val viewModel: SeriesViewModel by lazy {
-        ViewModelProvider(
-            this, SeriesViewModel.SeriesViewModelFactory(application, seriesId)
-        )[SeriesViewModel::class.java]
+    private val viewModel: SeriesViewModel by viewModels {
+        SeriesViewModel.SeriesViewModelFactory(application, seriesId)
     }
 
     private var seriesId: Int = 0
@@ -50,7 +48,6 @@ class SeriesActivity : AppCompatActivity() {
             true
         }
         R.id.add_button -> {
-            // TODO: Start NewItemActivity with series auto-set to current series
             val intent = Intent(this, NewItemActivity::class.java)
             intent.putExtra(NewItemActivity.EXTRA_SERIES_ID, seriesId)
             startActivity(intent)
