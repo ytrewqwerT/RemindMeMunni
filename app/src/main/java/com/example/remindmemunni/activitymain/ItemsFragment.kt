@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.remindmemunni.CustomRecyclerViewAdapter
 import com.example.remindmemunni.ItemsListViewModel
 import com.example.remindmemunni.R
@@ -19,18 +19,12 @@ import com.google.android.material.snackbar.Snackbar
 
 class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
-    private val viewModel: ItemsListViewModel by lazy {
-        ViewModelProvider(
-            requireActivity(),
-            ItemsListViewModel.ItemsListViewModelFactory(requireActivity().application, seriesId)
-        )[ItemsListViewModel::class.java]
+    private val viewModel: ItemsListViewModel by activityViewModels {
+        ItemsListViewModel.ItemsListViewModelFactory(requireActivity().application, seriesId)
     }
 
-    private val recyclerViewAdapter: CustomRecyclerViewAdapter<Item> by lazy {
-        CustomRecyclerViewAdapter<Item>(null)
-    }
-
-    private lateinit var mView: View
+    private val recyclerViewAdapter by lazy { CustomRecyclerViewAdapter<Item>(null) }
+    private lateinit var contentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,17 +39,15 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mView = inflater.inflate(R.layout.fragment_item_list, container, false)
-        if (mView is RecyclerView) {
-            with(mView as RecyclerView) {
-                layoutManager = LinearLayoutManager(context)
-                adapter = recyclerViewAdapter
-                val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-                this.addItemDecoration(decoration)
-                registerForContextMenu(this)
-            }
+        contentView = inflater.inflate(R.layout.fragment_item_list, container, false)
+        if (contentView is RecyclerView) with (contentView as RecyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = recyclerViewAdapter
+            val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+            this.addItemDecoration(decoration)
+            registerForContextMenu(this)
         }
-        return mView
+        return contentView
     }
 
     override fun onCreateContextMenu(
@@ -75,25 +67,21 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
                 intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, item.id)
                 startActivity(intent)
             }
-
             true
         }
         R.id.item_finish -> {
             val item = recyclerViewAdapter.contextMenuItem
             Toast.makeText(context, "Complete ${item?.name}", Toast.LENGTH_SHORT).show()
-            if (item != null) {
-                viewModel.complete(item)
-            }
+            if (item != null) viewModel.complete(item)
             true
         }
         R.id.item_delete -> {
             val item = recyclerViewAdapter.contextMenuItem
             if (item != null) {
                 viewModel.delete(item)
-                Snackbar.make(mView, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
-                    .setAction("Undo") {
-                        viewModel.insert(item)
-                    }.show()
+                Snackbar.make(contentView, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
+                    .setAction("Undo") { viewModel.insert(item) }
+                    .show()
             }
             true
         }

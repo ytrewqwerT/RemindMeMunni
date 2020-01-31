@@ -31,7 +31,7 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
     class ItemsListViewModelFactory(
         private val application: Application,
         private val seriesId: Int = 0
-    ) : ViewModelProvider.NewInstanceFactory() {
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             Log.d("Nice", "Creating new ItemsListViewModel with series $seriesId")
             return ItemsListViewModel(application, seriesId) as T

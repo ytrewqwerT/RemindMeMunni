@@ -1,18 +1,28 @@
 package com.example.remindmemunni.activitymain
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 import com.example.remindmemunni.R
+import com.example.remindmemunni.activitynewitem.NewItemActivity
+import com.example.remindmemunni.activitynewseries.NewSeriesActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private val itemPagerAdapter by lazy { ItemPagerAdapter(supportFragmentManager) }
+    private lateinit var viewPager: ViewPager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        viewPager = findViewById(R.id.pager)
+        viewPager.adapter = itemPagerAdapter
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -22,10 +32,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.add_button -> {
-            val frag = supportFragmentManager.findFragmentById(R.id.main_fragment) as MainFragment
-            frag.startNewActivityByPage()
+            val intent = when (viewPager.currentItem) {
+                ItemPagerAdapter.POS_ITEMS -> Intent(this, NewItemActivity::class.java)
+                ItemPagerAdapter.POS_SERIES -> Intent(this, NewSeriesActivity::class.java)
+                else -> null
+            }
+            startActivity(intent)
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
+
 }
