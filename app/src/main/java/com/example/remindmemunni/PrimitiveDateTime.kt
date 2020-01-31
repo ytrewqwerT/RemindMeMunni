@@ -2,7 +2,6 @@ package com.example.remindmemunni
 
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class PrimitiveDateTime(
@@ -20,7 +19,8 @@ class PrimitiveDateTime(
 
     fun toEpoch(): Long {
         val localDateTime = toLocalDateTime()
-        return localDateTime?.atZone(ZoneId.systemDefault())?.toEpochSecond() ?: 0
+        val zonedDateTime = localDateTime?.atZone(ZoneId.systemDefault())
+        return zonedDateTime?.toEpochSecond() ?: 0
     }
 
      companion object {
@@ -31,7 +31,9 @@ class PrimitiveDateTime(
 
          fun fromEpoch(epochSeconds: Long): PrimitiveDateTime {
              if (epochSeconds == 0L) return PrimitiveDateTime()
-             val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault())
+             val localDateTime = LocalDateTime.ofInstant(
+                 Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault()
+             )
              return fromLocalDateTime(localDateTime)
          }
      }
