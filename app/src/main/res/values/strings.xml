@@ -4,9 +4,6 @@
     <string name="done">Done</string>
     <string name="clear_field">Clear</string>
 
-    <string name="main_column_items">Items</string>
-    <string name="main_column_series">Series</string>
-
     <string name="new_item_name">Name</string>
     <string name="new_item_cost">Cost (Optional)</string>
     <string name="new_item_type">Type</string>
@@ -25,6 +22,9 @@
     <string name="days">Days,</string>
     <string name="months">Months</string>
     <string name="increment_series">Increment series counter</string>
+    <string name="edit">Edit</string>
+    <string name="complete">Complete</string>
+    <string name="delete">Delete</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>

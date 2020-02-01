@@ -1,26 +1,23 @@
 package com.example.remindmemunni
 
-import android.util.Log
-import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.database.MIGRATION_1_2
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Assert.*
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class MigrationTest {
 
     companion object {
-        val TEST_DB = "migration-test"
-        val DOUBLE_DELTA = 0.05
+        const val TEST_DB = "migration-test"
+        const val DOUBLE_DELTA = 0.05
     }
 
     @get: Rule val helper: MigrationTestHelper = MigrationTestHelper(

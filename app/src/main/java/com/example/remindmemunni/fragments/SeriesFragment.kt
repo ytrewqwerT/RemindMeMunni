@@ -24,6 +24,7 @@ class SeriesFragment : Fragment(),
     private val viewModel: SeriesListViewModel by activityViewModels()
 
     private val recyclerViewAdapter by lazy {
+        @Suppress("RemoveExplicitTypeArguments")
         CustomRecyclerViewAdapter<AggregatedSeries>(
             this
         )

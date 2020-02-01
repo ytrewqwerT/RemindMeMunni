@@ -19,7 +19,7 @@ import com.google.android.material.textfield.TextInputEditText
 class NewSeriesActivity : AppCompatActivity(),
     RecurrenceSelectFragment.RecurrenceSelectListener {
 
-    lateinit var binding: ActivityNewSeriesBinding
+    private lateinit var binding: ActivityNewSeriesBinding
     private val viewModel: NewSeriesViewModel by viewModels {
         NewSeriesViewModel.NewSeriesViewModelFactory(
             application,
