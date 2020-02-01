@@ -8,28 +8,28 @@
 
     <TextView
         android:id="@+id/main_text"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="@dimen/list_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_main" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/sub_left_text"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="@dimen/list_sub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/main_text"
         app:layout_constraintStart_toStartOf="parent"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_sub" />
+        app:layout_constraintTop_toBottomOf="@id/main_text" />
 
     <TextView
         android:id="@+id/sub_right_text"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="@dimen/list_sub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/main_text"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_sub" />
+        app:layout_constraintTop_toBottomOf="@id/main_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,32 +7,31 @@
 
     <com.example.remindmemunni.views.ScrollSpinner
         android:id="@+id/days_list"
+        tools:listitem="@layout/fragment_item"
         android:layout_width="55dp"
         android:layout_height="170dp"
-        android:layout_marginStart="16dp"
-        tools:listitem="@layout/fragment_item" />
+        android:layout_marginStart="16dp" />
 
     <TextView
+        android:text="@string/days"
+        android:textSize="@dimen/list_main"
+        android:gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/list_main"
-        android:text="@string/days" />
+        android:layout_marginStart="8dp" />
 
     <com.example.remindmemunni.views.ScrollSpinner
         android:id="@+id/months_list"
+        tools:listitem="@layout/fragment_item"
         android:layout_width="55dp"
         android:layout_height="170dp"
-        android:layout_marginStart="16dp"
-        tools:listitem="@layout/fragment_item" />
+        android:layout_marginStart="16dp" />
 
     <TextView
+        android:text="@string/months"
+        android:textSize="@dimen/list_main"
+        android:gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/list_main"
-        android:text="@string/months" />
-
+        android:layout_marginStart="8dp" />
 </LinearLayout>
