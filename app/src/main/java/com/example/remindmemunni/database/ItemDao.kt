@@ -27,9 +27,9 @@ interface ItemDao {
     fun getItemsInSeries(seriesId: Int): LiveData<List<Item>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: Item)
+    suspend fun insert(item: Item): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(series: Series)
+    suspend fun insert(series: Series): Long
 
     @Delete
     suspend fun delete(item: Item)

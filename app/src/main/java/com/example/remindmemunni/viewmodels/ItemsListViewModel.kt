@@ -13,7 +13,7 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
 
     val mItemsList: LiveData<List<Item>>
     private val itemRepository: ItemRepository
-    val newItemEvent = SingleLiveEvent<Item>()
+    val newItemEvent = SingleLiveEvent<Int>()
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
@@ -27,13 +27,17 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
     fun complete(item: Item) = viewModelScope.launch {
-        val newItem = itemRepository.completeItem(item)
+        val newItemId = itemRepository.completeItem(item)
         val series = itemRepository.getDirectSerie(item.seriesId)
-        if (newItem != null && !series.series.autoCreate) {
-            newItemEvent.value = newItem
-        }
+        if (newItemId != 0 && !series.series.autoCreate) newItemEvent.value = newItemId
     }
     fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
+    fun delete(item: Int) {
+        if (item == 0) return
+        viewModelScope.launch {
+            delete(itemRepository.getDirectItem(item))
+        }
+    }
 
     class ItemsListViewModelFactory(
         private val application: Application,

@@ -7,30 +7,25 @@ class ItemRepository(private val itemDao: ItemDao) {
     val allItems: LiveData<List<Item>> = itemDao.getItems()
     val allSeries: LiveData<List<AggregatedSeries>> = itemDao.getSeries()
 
-    suspend fun insert(item: Item) {
-        itemDao.insert(item)
-    }
-
-    suspend fun insert(series: Series) {
-        itemDao.insert(series)
-    }
+    suspend fun insert(item: Item): Int = itemDao.insert(item).toInt()
+    suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
     fun getItem(itemId: Int): LiveData<Item> = itemDao.getItem(itemId)
     suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId)
-    suspend fun completeItem(item: Item): Item? {
-        var newItem: Item? = null
+    suspend fun completeItem(item: Item): Int {
+        var newItemId = 0
         if (item.seriesId != 0) {
             val series = getDirectSerie(item.seriesId)
-            if (series.items.size == 1) {
-                newItem = series.generateNextInSeries()
-                if (newItem != null && series.series.autoCreate) {
-                    insert(newItem)
-                    incrementSeries(item.seriesId)
+            if (item == series.items.last()) {
+                val newItem = series.generateNextInSeries()
+                if (newItem != null) {
+                    newItemId = insert(newItem)
+                    if (series.series.autoCreate) incrementSeries(item.seriesId)
                 }
             }
         }
         delete(item)
-        return newItem
+        return newItemId
     }
 
     fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
