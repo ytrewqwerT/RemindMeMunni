@@ -36,6 +36,15 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         viewModel.mItemsList.observe(this, Observer { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
         })
+        viewModel.newItemEvent.observe(this, Observer {
+            val intent = Intent(activity, NewItemActivity::class.java)
+            intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, it.id)
+            intent.putExtra(NewItemActivity.EXTRA_SERIES_ID, it.seriesId)
+            intent.putExtra(NewItemActivity.EXTRA_NAME, it.name)
+            intent.putExtra(NewItemActivity.EXTRA_COST, it.cost)
+            intent.putExtra(NewItemActivity.EXTRA_TIME, it.time)
+            startActivity(intent)
+        })
     }
 
     override fun onCreateView(

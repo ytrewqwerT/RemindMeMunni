@@ -1,6 +1,7 @@
 package com.example.remindmemunni.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.Item
@@ -40,6 +41,16 @@ class NewItemViewModel(
                 val item = itemRepository.getDirectItem(itemId)
                 setItem(item)
             }
+        }
+    }
+
+    fun setCost(newCost: Double) {
+        if (newCost < 0) {
+            cost.value = (-newCost).toString()
+            setCostType("Debit")
+        } else {
+            setCostType("Credit")
+            cost.value = newCost.toString()
         }
     }
 
@@ -86,6 +97,7 @@ class NewItemViewModel(
     }
 
     fun setTime(newTime: PrimitiveDateTime) {
+        Log.d("Nice", "$newTime")
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")

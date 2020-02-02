@@ -12,6 +12,10 @@ class PrimitiveDateTime(
     var mMinute: Int = 0
 ) {
 
+    override fun toString(): String {
+        return super.toString() + "$mYear/$mMonth/$mDayOfMonth $mHour:$mMinute"
+    }
+
     fun toLocalDateTime(): LocalDateTime?  = when (mYear) {
         0 -> null
         else -> LocalDateTime.of(mYear, mMonth, mDayOfMonth, mHour, mMinute)

@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.database.ItemRoomDatabase
+import com.example.remindmemunni.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 
 class ItemsListViewModel(app: Application, seriesId: Int = 0)
@@ -12,6 +13,7 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
 
     val mItemsList: LiveData<List<Item>>
     private val itemRepository: ItemRepository
+    val newItemEvent = SingleLiveEvent<Item>()
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
@@ -24,7 +26,13 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
     }
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
-    fun complete(item: Item) = viewModelScope.launch { itemRepository.completeItem(item) }
+    fun complete(item: Item) = viewModelScope.launch {
+        val newItem = itemRepository.completeItem(item)
+        val series = itemRepository.getDirectSerie(item.seriesId)
+        if (newItem != null && !series.series.autoCreate) {
+            newItemEvent.value = newItem
+        }
+    }
     fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
 
     class ItemsListViewModelFactory(

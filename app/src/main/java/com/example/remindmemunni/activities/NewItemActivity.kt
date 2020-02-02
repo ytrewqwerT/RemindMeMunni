@@ -3,6 +3,7 @@ package com.example.remindmemunni.activities
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
@@ -42,10 +43,19 @@ class NewItemActivity
         title = "New Item"
 
         itemId = intent.getIntExtra(EXTRA_ITEM_ID, 0)
-        if (itemId != 0) title = "Edit Item"
-
         val seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
+        val itemName = intent.getStringExtra(EXTRA_NAME)
+        val itemCost = intent.getDoubleExtra(EXTRA_COST, 0.0)
+        val itemTime = intent.getLongExtra(EXTRA_TIME, 0)
+
+        // TODO: Pass item information bundle to viewModel
+        // (to fix bug: Time overwritten by setSeries due to its usage of coroutines)
+        Log.d("Nice", "$itemTime")
+        if (itemId != 0) title = "Edit Item"
         if (seriesId != 0) viewModel.setSeries(seriesId)
+        if (!itemName.isNullOrEmpty()) viewModel.name.value = itemName
+        if (itemCost != 0.0) viewModel.setCost(itemCost)
+        if (itemTime != 0L) viewModel.setTime(PrimitiveDateTime.fromEpoch(itemTime))
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_item)
         binding.viewModel = viewModel
@@ -136,5 +146,8 @@ class NewItemActivity
     companion object {
         const val EXTRA_ITEM_ID = "ITEM_ID"
         const val EXTRA_SERIES_ID = "SERIES_ID"
+        const val EXTRA_NAME = "NAME"
+        const val EXTRA_COST = "COST"
+        const val EXTRA_TIME = "TIME"
     }
 }
