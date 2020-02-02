@@ -24,6 +24,7 @@ class NewSeriesViewModel(
     val nextNumInSeries = MutableLiveData<String>("")
     val numInSeriesPrefix = MutableLiveData<String>("")
     val recurrence = MutableLiveData<String>("")
+    val autoCreateItems = MutableLiveData<Boolean>(true)
 
     init {
         val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()

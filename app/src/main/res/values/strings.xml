@@ -25,6 +25,7 @@
     <string name="edit">Edit</string>
     <string name="complete">Complete</string>
     <string name="delete">Delete</string>
+    <string name="item_auto_create">Automatically create subsequent items</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>
