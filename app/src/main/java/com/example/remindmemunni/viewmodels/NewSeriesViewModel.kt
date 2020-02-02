@@ -69,6 +69,7 @@ class NewSeriesViewModel(
         if (isDebit) absCost = -absCost
         val num = nextNumInSeries.value?.toDoubleOrNull() ?: 0.0
         val prefix = numInSeriesPrefix.value ?: ""
+        val autoCreate = autoCreateItems.value ?: true
 
         if (name.isNullOrEmpty()) return "Series needs a name!"
 
@@ -76,7 +77,8 @@ class NewSeriesViewModel(
             id = seriesId,
             name = name, cost = absCost,
             curNum = num, numPrefix = prefix,
-            recurDays = recurDays, recurMonths = recurMonths
+            recurDays = recurDays, recurMonths = recurMonths,
+            autoCreate = autoCreate
         )
         viewModelScope.launch { itemRepository.insert(series) }
         return null
