@@ -12,7 +12,8 @@ data class Series (
     var curNum: Double = 0.0,
     val numPrefix: String = "",
     val recurMonths: Int = 0,
-    val recurDays: Int = 0
+    val recurDays: Int = 0,
+    val autoCreate: Boolean = true
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
