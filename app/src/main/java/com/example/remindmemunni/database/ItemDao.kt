@@ -14,7 +14,7 @@ interface ItemDao {
     suspend fun getDirectItem(itemId: Int): Item
 
     @Transaction
-    @Query("SELECT * FROM series_table ORDER BY id ASC")
+    @Query("SELECT * FROM series_table ORDER BY name ASC")
     fun getSeries(): LiveData<List<AggregatedSeries>>
     @Transaction
     @Query("SELECT * FROM series_table WHERE (:seriesId)= id")
@@ -23,7 +23,7 @@ interface ItemDao {
     @Query("SELECT * FROM series_table WHERE (:seriesId)= id")
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries
 
-    @Query("SELECT * FROM item_table WHERE (:seriesId)= seriesId")
+    @Query("SELECT * FROM item_table WHERE (:seriesId)= seriesId ORDER BY time ASC")
     fun getItemsInSeries(seriesId: Int): LiveData<List<Item>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
