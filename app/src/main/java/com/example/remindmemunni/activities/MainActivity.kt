@@ -27,11 +27,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(findViewById(R.id.toolbar))
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         viewPager = findViewById(R.id.pager)
         viewPager.adapter = itemPagerAdapter
