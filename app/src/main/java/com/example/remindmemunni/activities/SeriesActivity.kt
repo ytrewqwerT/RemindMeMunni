@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -33,6 +34,18 @@ class SeriesActivity : AppCompatActivity() {
 
         viewModel.series.observe(this, Observer { series ->
             title = series?.series?.name
+        })
+
+        val recurrenceTextView = findViewById<TextView>(R.id.subtitle)
+        viewModel.series.observe(this, Observer {
+            val series = it.series
+            var text = "\$"
+            text += if (series.cost < 0) "${-series.cost}" else "${series.cost} cr"
+            text += " repeating every ${series.recurMonths} month"
+            if (series.recurMonths != 1) text += "s"
+            text += " and ${series.recurDays} day"
+            if (series.recurDays != 1) text += "s"
+            recurrenceTextView.text = text
         })
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
