@@ -1,5 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,18 +14,30 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
     private val _munniRemaining = MutableLiveData<String>()
     val munniRemaining: LiveData<String> = _munniRemaining
+    val curMunni = MutableLiveData<String>()
+    var monthsOffset = 0
+        set(value) {
+            field = value
+            updateMunniCalc()
+        }
 
     val allItems = itemRepository.allItems
     val allSeries = itemRepository.allSeries
 
     init {
-        updateMunniCalc(0)
+        updateMunniCalc()
+
+        curMunni.observeForever {
+            itemRepository.munni = it.toDoubleOrNull() ?: 0.0
+            updateMunniCalc()
+            Log.d("Nice", "${itemRepository.munni}")
+        }
     }
 
-    fun updateMunniCalc(months: Int) {
+    fun updateMunniCalc() {
         // Get end of [Current month + months] (aka start of next month) as epoch seconds
         val endLocalDateTime = LocalDate.now()
-            .plusMonths(months.toLong() + 1)
+            .plusMonths(monthsOffset.toLong() + 1)
             .withDayOfMonth(1)
             .atTime(0, 0)
         val endEpoch = PrimitiveDateTime.fromLocalDateTime(endLocalDateTime).toEpoch()
