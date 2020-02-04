@@ -7,16 +7,20 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.example.remindmemunni.R
 import com.example.remindmemunni.adapters.ItemPagerAdapter
 import com.example.remindmemunni.databinding.ActivityMainBinding
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.MainViewModel
 import com.google.android.material.slider.Slider
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels {
+        InjectorUtils.provideMainViewModelFactory(applicationContext)
+    }
     private lateinit var binding: ActivityMainBinding
     private val itemPagerAdapter by lazy {
         ItemPagerAdapter(
@@ -24,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
     private lateinit var viewPager: ViewPager
+
+    private var endPointSliderValue = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +45,13 @@ class MainActivity : AppCompatActivity() {
 
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->
-            viewModel.setMunniCalcEndDist(value.toInt())
+            endPointSliderValue = value.toInt()
+            viewModel.updateMunniCalc(endPointSliderValue)
         }
+
+        viewModel.allItems.observe(this, Observer {
+            viewModel.updateMunniCalc(endPointSliderValue)
+        })
 
     }
 
