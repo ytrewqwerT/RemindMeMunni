@@ -15,6 +15,7 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     val munniRemaining: LiveData<String> = _munniRemaining
 
     val allItems = itemRepository.allItems
+    val allSeries = itemRepository.allSeries
 
     init {
         updateMunniCalc(0)
@@ -28,11 +29,17 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
             .atTime(0, 0)
         val endEpoch = PrimitiveDateTime.fromLocalDateTime(endLocalDateTime).toEpoch()
 
-        val allItems = itemRepository.allItems.value
         var costDelta = 0.0
-        if (allItems != null) {
-            for (item in allItems) {
+        val items = allItems.value
+        if (items != null) {
+            for (item in items) {
                 if (item.time < endEpoch) costDelta += item.cost
+            }
+        }
+        val series = allSeries.value
+        if (series != null) {
+            for (serie in series) {
+                costDelta += serie.getHiddenCost(endLocalDateTime)
             }
         }
 

@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.remindmemunni.interfaces.ListItemViewable
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import java.time.LocalDateTime
 
 data class AggregatedSeries (
     @Embedded val series: Series,
@@ -41,5 +42,23 @@ data class AggregatedSeries (
         val name = "${series.name} ${series.numPrefix}${series.curNum}"
 
         return Item(name = name, seriesId = series.id, cost = series.cost, time = newTime)
+    }
+
+    fun getHiddenCost(until: LocalDateTime): Double {
+        var hiddenCost = 0.0
+
+        val lastItemTime = if (items.isNotEmpty()) {
+            PrimitiveDateTime.fromEpoch(items.last().time).toLocalDateTime() ?: LocalDateTime.now()
+        } else {
+            LocalDateTime.now()
+        }
+
+        var currentHiddenTime = series.addRecurrenceToTime(lastItemTime)
+        while (currentHiddenTime < until) {
+            hiddenCost += series.cost
+            currentHiddenTime = series.addRecurrenceToTime(currentHiddenTime)
+        }
+
+        return hiddenCost
     }
 }

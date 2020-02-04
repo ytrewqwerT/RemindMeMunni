@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.allItems.observe(this, Observer {
             viewModel.updateMunniCalc(endPointSliderValue)
         })
+        viewModel.allSeries.observe(this, Observer {
+            viewModel.updateMunniCalc(endPointSliderValue)
+        })
 
     }
 

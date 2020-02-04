@@ -3,6 +3,7 @@ package com.example.remindmemunni.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.remindmemunni.interfaces.ListItemViewable
+import java.time.LocalDateTime
 
 @Entity(tableName = "series_table")
 data class Series (
@@ -24,4 +25,8 @@ data class Series (
     }
 
     override fun toString(): String = name      // TODO: Not do this
+
+    fun addRecurrenceToTime(time: LocalDateTime): LocalDateTime {
+        return time.plusMonths(recurMonths.toLong()).plusDays(recurDays.toLong())
+    }
 }
