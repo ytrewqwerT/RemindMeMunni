@@ -7,8 +7,14 @@ import com.example.remindmemunni.viewmodels.*
 
 object InjectorUtils {
 
-    private fun getItemRepository(context: Context) =
-        ItemRepository(ItemRoomDatabase.getDatabase(context.applicationContext).itemDao())
+    private fun getItemRepository(context: Context): ItemRepository {
+        val itemDao = ItemRoomDatabase.getDatabase(context.applicationContext).itemDao()
+        val sharedPref = context.getSharedPreferences(
+            "com.example.remindmemunni.GLOBAL_PREFERENCES",
+            Context.MODE_PRIVATE
+        )
+        return ItemRepository(itemDao, sharedPref)
+    }
 
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =
         ItemsListViewModel.ItemsListViewModelFactory(getItemRepository(context), seriesId)

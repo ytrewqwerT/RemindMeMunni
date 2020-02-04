@@ -1,11 +1,34 @@
 package com.example.remindmemunni.database
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 
-class ItemRepository(private val itemDao: ItemDao) {
+class ItemRepository(
+    private val itemDao: ItemDao,
+    private val sharedPref: SharedPreferences
+) {
 
     val allItems: LiveData<List<Item>> = itemDao.getItems()
     val allSeries: LiveData<List<AggregatedSeries>> = itemDao.getSeries()
+
+    // TODO: Either leave preference as Float and convert all other munnis to Float
+    //  or hack a solution to store doubles in preferences.
+    var munni: Double = sharedPref.getFloat("MUNNI", 0F).toDouble()
+        set(value) {
+            field = value
+            with (sharedPref.edit()) {
+                putFloat("MUNNI", value.toFloat())
+                commit()
+            }
+        }
+    var munniCalcEndMonth: Int = sharedPref.getInt("CALC_MONTH", 0)
+        set(value) {
+            field = value
+            with(sharedPref.edit()) {
+                putInt("CALC_MONTH", value)
+                commit()
+            }
+        }
 
     suspend fun insert(item: Item): Int = itemDao.insert(item).toInt()
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()

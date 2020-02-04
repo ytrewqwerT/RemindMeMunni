@@ -29,22 +29,22 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
             .atTime(0, 0)
         val endEpoch = PrimitiveDateTime.fromLocalDateTime(endLocalDateTime).toEpoch()
 
-        var costDelta = 0.0
+        var remainingMunni = itemRepository.munni
         val items = allItems.value
         if (items != null) {
             for (item in items) {
-                if (item.time < endEpoch) costDelta += item.cost
+                if (item.time < endEpoch) remainingMunni += item.cost
             }
         }
         val series = allSeries.value
         if (series != null) {
             for (serie in series) {
-                costDelta += serie.getHiddenCost(endLocalDateTime)
+                remainingMunni += serie.getHiddenCost(endLocalDateTime)
             }
         }
 
         val formatter = DateTimeFormatter.ofPattern("MMMM")
-        _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)} = $costDelta"
+        _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)} = $remainingMunni"
     }
 
     class MainViewModelFactory(private val itemRepository: ItemRepository) : ViewModelProvider.Factory {
