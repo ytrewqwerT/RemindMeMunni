@@ -1,26 +1,30 @@
 package com.example.remindmemunni.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.ItemRepository
-import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.database.Series
 import kotlinx.coroutines.launch
 
-class SeriesListViewModel(app: Application) : AndroidViewModel(app) {
+class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
-    private val itemRepository: ItemRepository
-    val series: LiveData<List<AggregatedSeries>>
-
-    init {
-        val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
-        itemRepository = ItemRepository(itemDao)
-        series = itemRepository.allSeries
-    }
+    val series: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
 
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
     fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
+
+    class SeriesListViewModelFactory(
+        private val itemRepository: ItemRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(SeriesListViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return SeriesListViewModel(itemRepository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 }

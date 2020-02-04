@@ -27,6 +27,7 @@ class ItemRepository(private val itemDao: ItemDao) {
         delete(item)
         return newItemId
     }
+    fun getItemsInSeries(seriesId: Int): LiveData<List<Item>> = itemDao.getItemsInSeries(seriesId)
 
     fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId)

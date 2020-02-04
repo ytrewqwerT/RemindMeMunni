@@ -15,13 +15,14 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.activities.NewItemActivity
 import com.example.remindmemunni.adapters.CustomRecyclerViewAdapter
 import com.example.remindmemunni.database.Item
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.ItemsListViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
     private val viewModel: ItemsListViewModel by activityViewModels {
-        ItemsListViewModel.ItemsListViewModelFactory(requireActivity().application, seriesId)
+        InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
 
     private val recyclerViewAdapter by lazy {

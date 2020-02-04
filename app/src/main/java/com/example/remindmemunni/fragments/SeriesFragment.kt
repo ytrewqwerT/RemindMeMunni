@@ -15,13 +15,16 @@ import com.example.remindmemunni.activities.SeriesActivity
 import com.example.remindmemunni.adapters.CustomRecyclerViewAdapter
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.interfaces.OnListItemInteractionListener
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.SeriesListViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class SeriesFragment : Fragment(),
     OnListItemInteractionListener<AggregatedSeries> {
 
-    private val viewModel: SeriesListViewModel by activityViewModels()
+    private val viewModel: SeriesListViewModel by activityViewModels {
+        InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
+    }
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")

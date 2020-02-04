@@ -19,6 +19,7 @@ import com.example.remindmemunni.database.Series
 import com.example.remindmemunni.databinding.ActivityNewItemBinding
 import com.example.remindmemunni.fragments.DatePickerFragment
 import com.example.remindmemunni.fragments.TimePickerFragment
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import com.example.remindmemunni.viewmodels.NewItemViewModel
 
@@ -29,10 +30,7 @@ class NewItemActivity
 
     private lateinit var binding: ActivityNewItemBinding
     private val viewModel: NewItemViewModel by viewModels {
-        NewItemViewModel.NewItemViewModelFactory(
-            application,
-            itemId
-        )
+        InjectorUtils.provideNewItemViewModelFactory(this, itemId)
     }
 
     private val time = PrimitiveDateTime()

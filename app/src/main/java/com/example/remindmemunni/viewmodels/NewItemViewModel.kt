@@ -1,22 +1,19 @@
 package com.example.remindmemunni.viewmodels
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
-import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 class NewItemViewModel(
-    app: Application,
+    private val itemRepository: ItemRepository,
     private val itemId: Int = 0
-) : AndroidViewModel(app) {
+) : ViewModel() {
 
-    private val itemRepository: ItemRepository
     val allSeries: LiveData<List<AggregatedSeries>>
 
     private var _costIsDebit: Boolean = false
@@ -31,8 +28,6 @@ class NewItemViewModel(
     var incSeriesNum = MutableLiveData<Boolean>(false)
 
     init {
-        val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
-        itemRepository = ItemRepository(itemDao)
         allSeries = itemRepository.allSeries
         setCostType("Debit")
 
@@ -127,14 +122,14 @@ class NewItemViewModel(
     }
 
     class NewItemViewModelFactory(
-        private val application: Application,
+        private val itemRepository: ItemRepository,
         private val itemId: Int
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewItemViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return NewItemViewModel(
-                    application,
+                    itemRepository,
                     itemId
                 ) as T
             }

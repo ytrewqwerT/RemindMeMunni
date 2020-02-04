@@ -13,6 +13,7 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
 import com.example.remindmemunni.fragments.RecurrenceSelectFragment
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.NewSeriesViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -21,10 +22,7 @@ class NewSeriesActivity : AppCompatActivity(),
 
     private lateinit var binding: ActivityNewSeriesBinding
     private val viewModel: NewSeriesViewModel by viewModels {
-        NewSeriesViewModel.NewSeriesViewModelFactory(
-            application,
-            seriesId
-        )
+        InjectorUtils.provideNewSeriesViewModelFactory(this, seriesId)
     }
 
     private var seriesId: Int = 0

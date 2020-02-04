@@ -1,18 +1,17 @@
 package com.example.remindmemunni.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.database.ItemRepository
-import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.database.Series
 import kotlinx.coroutines.launch
 
 class NewSeriesViewModel(
-    app: Application,
+    private val itemRepository: ItemRepository,
     private val seriesId: Int = 0
-) : AndroidViewModel(app) {
-
-    private val itemRepository: ItemRepository
+) : ViewModel() {
 
     private var isDebit: Boolean = false
     private var recurMonths: Int = 0
@@ -27,8 +26,6 @@ class NewSeriesViewModel(
     val autoCreateItems = MutableLiveData<Boolean>(true)
 
     init {
-        val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
-        itemRepository = ItemRepository(itemDao)
         setCostType("Debit")
 
         if (seriesId != 0) {
@@ -85,14 +82,14 @@ class NewSeriesViewModel(
     }
 
     class NewSeriesViewModelFactory(
-        private val application: Application,
+        private val itemRepository: ItemRepository,
         private val seriesId: Int
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return NewSeriesViewModel(
-                    application,
+                    itemRepository,
                     seriesId
                 ) as T
             }

@@ -1,37 +1,27 @@
 package com.example.remindmemunni.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.ItemRepository
-import com.example.remindmemunni.database.ItemRoomDatabase
 
 class SeriesViewModel(
-    application: Application,
+    private val itemRepository: ItemRepository,
     seriesId: Int
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    private val repository: ItemRepository
-    val series: LiveData<AggregatedSeries>
-
-    init {
-        val itemDao = ItemRoomDatabase.getDatabase(application).itemDao()
-        repository = ItemRepository(itemDao)
-        series = repository.getSerie(seriesId)
-    }
+    val series: LiveData<AggregatedSeries> = itemRepository.getSerie(seriesId)
 
     class SeriesViewModelFactory(
-        private val application: Application,
+        private val itemRepository: ItemRepository,
         private val seriesId: Int
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SeriesViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return SeriesViewModel(
-                    application,
+                    itemRepository,
                     seriesId
                 ) as T
             }

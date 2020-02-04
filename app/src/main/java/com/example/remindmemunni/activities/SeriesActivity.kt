@@ -10,15 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.remindmemunni.R
 import com.example.remindmemunni.fragments.ItemsFragment
+import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.SeriesViewModel
 
 class SeriesActivity : AppCompatActivity() {
 
     private val viewModel: SeriesViewModel by viewModels {
-        SeriesViewModel.SeriesViewModelFactory(
-            application,
-            seriesId
-        )
+        InjectorUtils.provideSeriesViewModelFactory(this, seriesId)
     }
 
     private var seriesId: Int = 0

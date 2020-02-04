@@ -1,27 +1,25 @@
 package com.example.remindmemunni.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
-import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 
-class ItemsListViewModel(app: Application, seriesId: Int = 0)
-    : AndroidViewModel(app) {
+class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: Int = 0)
+    : ViewModel() {
 
     val mItemsList: LiveData<List<Item>>
-    private val itemRepository: ItemRepository
     val newItemEvent = SingleLiveEvent<Int>()
 
     init {
-        val itemDao = ItemRoomDatabase.getDatabase(app).itemDao()
-        itemRepository = ItemRepository(itemDao)
         mItemsList = if (seriesId == 0) {
-            itemDao.getItems()
+            itemRepository.allItems
         } else {
-            itemDao.getItemsInSeries(seriesId)
+            itemRepository.getItemsInSeries(seriesId)
         }
     }
 
@@ -40,13 +38,13 @@ class ItemsListViewModel(app: Application, seriesId: Int = 0)
     }
 
     class ItemsListViewModelFactory(
-        private val application: Application,
+        private val itemRepository: ItemRepository,
         private val seriesId: Int = 0
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ItemsListViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ItemsListViewModel(application, seriesId) as T
+                return ItemsListViewModel(itemRepository, seriesId) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
