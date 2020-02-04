@@ -45,6 +45,8 @@ data class AggregatedSeries (
     }
 
     fun getHiddenCost(until: LocalDateTime): Double {
+        if (series.recurMonths == 0 && series.recurDays == 0) return 0.0
+
         var hiddenCost = 0.0
 
         val lastItemTime = if (items.isNotEmpty()) {
