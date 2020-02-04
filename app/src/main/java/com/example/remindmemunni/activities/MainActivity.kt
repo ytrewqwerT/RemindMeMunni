@@ -46,15 +46,11 @@ class MainActivity : AppCompatActivity() {
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->
             endPointSliderValue = value.toInt()
-            viewModel.updateMunniCalc(endPointSliderValue)
+            viewModel.monthsOffset = endPointSliderValue
         }
 
-        viewModel.allItems.observe(this, Observer {
-            viewModel.updateMunniCalc(endPointSliderValue)
-        })
-        viewModel.allSeries.observe(this, Observer {
-            viewModel.updateMunniCalc(endPointSliderValue)
-        })
+        viewModel.allItems.observe(this, Observer { viewModel.updateMunniCalc() })
+        viewModel.allSeries.observe(this, Observer { viewModel.updateMunniCalc() })
 
     }
 
