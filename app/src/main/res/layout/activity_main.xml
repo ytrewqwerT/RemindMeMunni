@@ -67,9 +67,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <EditText
-                    android:text="@={viewModel.curMunni}"
+                    android:id="@+id/cur_munni_text"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
