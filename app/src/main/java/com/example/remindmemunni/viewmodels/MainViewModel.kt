@@ -26,7 +26,7 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
     init {
         updateMunniCalc()
-
+        curMunni.value = itemRepository.munni.toString()
         curMunni.observeForever {
             itemRepository.munni = it.toDoubleOrNull() ?: 0.0
             updateMunniCalc()
