@@ -17,11 +17,8 @@ data class Item(
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
-        val offset = OffsetDateTime.now().offset
-        val date = LocalDateTime.ofEpochSecond(time, 0, offset)
-        val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
         return ListItemViewable.ListItemContents(
-            name, date.format(formatter), getCostString()
+            name, getDateString(), getCostString()
         )
     }
 
@@ -35,5 +32,13 @@ data class Item(
         cost < 0.0 -> "\$${-cost}"
         cost > 0.0 -> "\$${cost}cr"
         else -> ""
+    }
+
+    fun getDateString(): String = getDateString(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy"))
+    fun getDateString(formatter: DateTimeFormatter): String {
+        if (time == 0L) return ""
+        val offset = OffsetDateTime.now().offset
+        val date = LocalDateTime.ofEpochSecond(time, 0, offset)
+        return date.format(formatter)
     }
 }
