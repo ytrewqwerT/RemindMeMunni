@@ -15,9 +15,10 @@ data class AggregatedSeries (
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
-        val costString = if (series.cost < 0) "${-series.cost}" else "${series.cost} cr"
+        val costString = series.getCostString()
+        val itemCostString = if (costString.isNotEmpty()) "$costString per item" else ""
         return ListItemViewable.ListItemContents(
-            series.name, "${items.size} items", "\$${costString} per item"
+            series.name, "${items.size} items", itemCostString
         )
     }
 

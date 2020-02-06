@@ -18,9 +18,8 @@ data class Series (
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
-        val costString = if (cost < 0) "${-cost}" else "$cost cr"
         return ListItemViewable.ListItemContents(
-                name, "$numPrefix$curNum", "\$$costString"
+                name, "$numPrefix$curNum", getCostString()
         )
     }
 
@@ -28,5 +27,11 @@ data class Series (
 
     fun addRecurrenceToTime(time: LocalDateTime): LocalDateTime {
         return time.plusMonths(recurMonths.toLong()).plusDays(recurDays.toLong())
+    }
+
+    fun getCostString(): String = when {
+        cost < 0.0 -> "\$${-cost}"
+        cost > 0.0 -> "\$${cost}cr"
+        else -> ""
     }
 }
