@@ -40,12 +40,19 @@ class NewItemViewModel(
     }
 
     fun setCost(newCost: Double) {
-        if (newCost < 0) {
-            cost.value = (-newCost).toString()
-            setCostType("Debit")
-        } else {
-            setCostType("Credit")
-            cost.value = newCost.toString()
+        when {
+            newCost == 0.0 -> {
+                cost.value = ""
+                setCostType("Debit")
+            }
+            newCost < 0 -> {
+                cost.value = (-newCost).toString()
+                setCostType("Debit")
+            }
+            else -> {
+                setCostType("Credit")
+                cost.value = newCost.toString()
+            }
         }
     }
 
@@ -56,12 +63,7 @@ class NewItemViewModel(
 
     private fun setItem(item: Item) {
         name.value = item.name
-        if (item.cost < 0) {
-            cost.value = (-item.cost).toString()
-        } else {
-            cost.value = item.cost.toString()
-            setCostType("Credit")
-        }
+        setCost(item.cost)
         setTime(PrimitiveDateTime.fromEpoch(item.time))
         if (item.seriesId != 0) {
             viewModelScope.launch {
