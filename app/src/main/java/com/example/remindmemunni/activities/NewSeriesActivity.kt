@@ -1,5 +1,7 @@
 package com.example.remindmemunni.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.example.remindmemunni.R
 import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
@@ -16,6 +19,7 @@ import com.example.remindmemunni.fragments.RecurrenceSelectFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.viewmodels.NewSeriesViewModel
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class NewSeriesActivity : AppCompatActivity(),
     RecurrenceSelectFragment.RecurrenceSelectListener {
@@ -68,11 +72,16 @@ class NewSeriesActivity : AppCompatActivity(),
             true
         }
         R.id.done_button -> {
-            val seriesCreationResult = viewModel.createSeries()
-            if (seriesCreationResult != null) {
-                Toast.makeText(applicationContext, seriesCreationResult, Toast.LENGTH_SHORT).show()
-            } else {
-                finish()
+            lifecycleScope.launch {
+                val newSeriesId = viewModel.createSeries()
+                if (newSeriesId == 0) {
+                    Toast.makeText(applicationContext, viewModel.validateInput(), Toast.LENGTH_SHORT).show()
+                } else {
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(EXTRA_SERIES_ID, newSeriesId)
+                    setResult(Activity.RESULT_OK, resultIntent)
+                    finish()
+                }
             }
             true
         }

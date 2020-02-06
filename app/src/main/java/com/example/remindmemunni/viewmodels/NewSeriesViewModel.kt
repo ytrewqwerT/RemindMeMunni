@@ -60,15 +60,21 @@ class NewSeriesViewModel(
         recurrence.value = recurText
     }
 
-    fun createSeries(): String? {
+    fun validateInput(): String? {
         val name = name.value
+        if (name.isNullOrEmpty()) return "Series needs a name!"
+        return null
+    }
+
+    suspend fun createSeries(): Int {
+        if (validateInput() != null) return 0
+
+        val name = name.value ?: ""
         var absCost = cost.value?.toDoubleOrNull() ?: 0.0
         if (isDebit) absCost = -absCost
         val num = nextNumInSeries.value?.toDoubleOrNull() ?: 0.0
         val prefix = numInSeriesPrefix.value ?: ""
         val autoCreate = autoCreateItems.value ?: true
-
-        if (name.isNullOrEmpty()) return "Series needs a name!"
 
         val series = Series(
             id = seriesId,
@@ -77,8 +83,7 @@ class NewSeriesViewModel(
             recurDays = recurDays, recurMonths = recurMonths,
             autoCreate = autoCreate
         )
-        viewModelScope.launch { itemRepository.insert(series) }
-        return null
+        return itemRepository.insert(series)
     }
 
     class NewSeriesViewModelFactory(

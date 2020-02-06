@@ -1,5 +1,6 @@
 package com.example.remindmemunni.activities
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -81,15 +82,39 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.add_button -> {
-            val intent = when (viewPager.currentItem) {
-                ItemPagerAdapter.POS_ITEMS -> Intent(this, NewItemActivity::class.java)
-                ItemPagerAdapter.POS_SERIES -> Intent(this, NewSeriesActivity::class.java)
-                else -> null
+            when (viewPager.currentItem) {
+                ItemPagerAdapter.POS_ITEMS -> {
+                    val intent = Intent(this, NewItemActivity::class.java)
+                    startActivity(intent)
+                }
+                ItemPagerAdapter.POS_SERIES -> {
+                    val intent = Intent(this, NewSeriesActivity::class.java)
+                    startActivityForResult(intent, NEW_SERIES_REQUEST)
+                }
             }
-            startActivity(intent)
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            NEW_SERIES_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val newSeriesId = data?.getIntExtra(NewSeriesActivity.EXTRA_SERIES_ID, 0) ?: 0
+                    if (newSeriesId != 0) {
+                        val intent = Intent(this, SeriesActivity::class.java)
+                        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, newSeriesId)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val NEW_SERIES_REQUEST = 1
+    }
 }
