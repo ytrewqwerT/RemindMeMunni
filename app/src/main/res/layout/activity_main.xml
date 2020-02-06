@@ -79,6 +79,7 @@
             <com.google.android.material.slider.Slider
                 android:theme="@style/AccentPrimaryInverted"
                 android:id="@+id/endpoint_slider"
+                android:value="@{viewModel.monthsOffset}"
                 android:valueFrom="0"
                 android:valueTo="11"
                 android:stepSize="1"

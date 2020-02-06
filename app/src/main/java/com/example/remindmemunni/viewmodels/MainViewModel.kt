@@ -14,9 +14,10 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     private val _munniRemaining = MutableLiveData<String>()
     val munniRemaining: LiveData<String> = _munniRemaining
     val curMunni = itemRepository.munni
-    var monthsOffset = 0
+    var monthsOffset = itemRepository.munniCalcEndMonth - LocalDate.now().monthValue
         set(value) {
             field = value
+            itemRepository.munniCalcEndMonth = value + LocalDate.now().monthValue
             updateMunniCalc()
         }
 

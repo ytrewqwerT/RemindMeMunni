@@ -34,8 +34,6 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var viewPager: ViewPager
 
-    private var endPointSliderValue = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,8 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->
-            endPointSliderValue = value.toInt()
-            viewModel.monthsOffset = endPointSliderValue
+            viewModel.monthsOffset = value.toInt()
         }
 
         val munniEditText = findViewById<EditText>(R.id.cur_munni_text)
