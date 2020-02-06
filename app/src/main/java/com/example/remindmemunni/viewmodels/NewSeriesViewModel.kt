@@ -53,11 +53,9 @@ class NewSeriesViewModel(
     fun setRecurrence(months: Int, days: Int) {
         recurMonths = months
         recurDays = days
-        var recurText = "$recurMonths Month"
-        if (recurMonths != 1) recurText += "s"
-        recurText += ", $recurDays Day"
-        if (recurDays != 1) recurText += "s"
-        recurrence.value = recurText
+
+        val temp = Series(recurMonths = months, recurDays = days)
+        recurrence.value = temp.getRecurrenceString()
     }
 
     fun validateInput(): String? {

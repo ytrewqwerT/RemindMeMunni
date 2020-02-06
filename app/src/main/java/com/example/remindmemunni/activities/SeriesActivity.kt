@@ -38,11 +38,10 @@ class SeriesActivity : AppCompatActivity() {
         viewModel.series.observe(this, Observer {
             val series = it.series
             var text = series.getCostString()
-            text += if (text.isNotEmpty()) " repeating every " else "Repeats every "
-            text += "${series.recurMonths} month"
-            if (series.recurMonths != 1) text += "s"
-            text += " and ${series.recurDays} day"
-            if (series.recurDays != 1) text += "s"
+            text += if (text.isNotEmpty()) " repeating " else "Repeats "
+
+            val recurrenceText = series.getRecurrenceString()
+            text += if (recurrenceText.isNotEmpty()) "every $recurrenceText" else "never"
             recurrenceTextView.text = text
         })
 

@@ -34,4 +34,16 @@ data class Series (
         cost > 0.0 -> "\$${cost}cr"
         else -> ""
     }
+
+    fun getRecurrenceString(): String {
+        var result = ""
+        if (recurMonths > 0) {
+            result += if (recurMonths == 1) "$recurMonths Month" else "$recurMonths Months"
+        }
+        if (recurDays > 0) {
+            if (result.isNotEmpty()) result += " and "
+            result += if (recurDays == 1) "$recurDays Day" else "$recurDays Days"
+        }
+        return result
+    }
 }
