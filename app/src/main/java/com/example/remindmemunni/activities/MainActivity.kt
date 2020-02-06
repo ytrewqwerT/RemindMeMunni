@@ -66,7 +66,9 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
         viewModel.curMunni.observe(this, Observer {
+            title = getString(R.string.app_name) + ": \$${it.toStringTrimmed()}"
             munniEditText.setText(it.toStringTrimmed())
             viewModel.updateMunniCalc()
         })
