@@ -48,7 +48,8 @@ class SeriesFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View? {
         contentView = inflater.inflate(R.layout.fragment_item_list, container, false)
-        if (contentView is RecyclerView) with (contentView as RecyclerView) {
+        val recyclerView = contentView.findViewById<RecyclerView>(R.id.list)
+        if (recyclerView != null) with (recyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
             val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -52,7 +51,8 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         contentView = inflater.inflate(R.layout.fragment_item_list, container, false)
-        if (contentView is RecyclerView) with (contentView as RecyclerView) {
+        val recyclerView = contentView.findViewById<RecyclerView>(R.id.list)
+        if (recyclerView != null) with (recyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
             val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -83,7 +83,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
         R.id.item_finish -> {
             val item = recyclerViewAdapter.contextMenuItem
-            Toast.makeText(context, "Complete ${item?.name}", Toast.LENGTH_SHORT).show()
+            Snackbar.make(contentView, "Complete ${item?.name}", Snackbar.LENGTH_LONG).show()
             if (item != null) viewModel.complete(item)
             true
         }
