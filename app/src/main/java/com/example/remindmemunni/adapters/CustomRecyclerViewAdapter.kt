@@ -37,8 +37,16 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
         holder.subLeftView.text = contents?.mSubLeftText
         holder.subRightView.text = contents?.mSubRightText
 
-        if (contents?.mSubLeftText?.isNotEmpty() != true) holder.subLeftView.visibility = View.GONE
-        if (contents?.mSubRightText?.isNotEmpty() != true) holder.subRightView.visibility = View.GONE
+        if (contents?.mSubLeftText?.isNotEmpty() != true) {
+            holder.subLeftView.visibility = View.GONE
+        } else {
+            holder.subLeftView.visibility = View.VISIBLE
+        }
+        if (contents?.mSubRightText?.isNotEmpty() != true) {
+            holder.subRightView.visibility = View.GONE
+        } else {
+            holder.subRightView.visibility = View.VISIBLE
+        }
 
         with(holder.view) {
             tag = items[position]
