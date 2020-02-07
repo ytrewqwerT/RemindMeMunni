@@ -1,9 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.utils.SingleLiveEvent
@@ -12,15 +9,36 @@ import kotlinx.coroutines.launch
 class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: Int = 0)
     : ViewModel() {
 
-    val mItemsList: LiveData<List<Item>>
+    private val sourceItems: LiveData<List<Item>>
+    private val _items = MediatorLiveData<List<Item>>()
+    val items: LiveData<List<Item>> = _items
     val newItemEvent = SingleLiveEvent<Int>()
 
+    val lowerTimeBound = MutableLiveData<Long>(0L)
+    val upperTimeBound = MutableLiveData<Long>(Long.MAX_VALUE)
+
     init {
-        mItemsList = if (seriesId == 0) {
+        sourceItems = if (seriesId == 0) {
             itemRepository.allItems
         } else {
             itemRepository.getItemsInSeries(seriesId)
         }
+        _items.addSource(sourceItems) { updateItemsList() }
+        _items.addSource(lowerTimeBound) { updateItemsList() }
+        _items.addSource(upperTimeBound) { updateItemsList() }
+    }
+
+    private fun updateItemsList() {
+        val allItems = sourceItems.value ?: return
+        val lowerTime = lowerTimeBound.value ?: 0L
+        val upperTime = upperTimeBound.value ?: Long.MAX_VALUE
+        var lowerIndex = 0
+        while (lowerIndex < allItems.size && allItems[lowerIndex].time < lowerTime)
+            lowerIndex++
+        var upperIndex = lowerIndex
+        while (upperIndex < allItems.size && allItems[upperIndex].time < upperTime)
+            upperIndex++
+        _items.value = allItems.subList(lowerIndex, upperIndex)
     }
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }

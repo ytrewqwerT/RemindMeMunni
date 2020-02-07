@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.Menu
 import android.view.MenuItem
@@ -85,7 +86,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.add_button -> {
             when (viewPager.currentItem) {
-                ItemPagerAdapter.POS_ITEMS -> {
+                ItemPagerAdapter.POS_PAST_ITEMS -> {
+                    val intent = Intent(this, NewItemActivity::class.java)
+                    startActivity(intent)
+                }
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> {
                     val intent = Intent(this, NewItemActivity::class.java)
                     startActivity(intent)
                 }
@@ -93,6 +98,10 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this, NewSeriesActivity::class.java)
                     startActivityForResult(intent, NEW_SERIES_REQUEST)
                 }
+                else -> Log.w(
+                    "MainActivity",
+                    "No add action associated to PagerAdapter page ${viewPager.currentItem}"
+                )
             }
             true
         }

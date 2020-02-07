@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 
 class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
-    private val viewModel: ItemsListViewModel by activityViewModels {
+    private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
 
@@ -34,7 +34,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.mItemsList.observe(this, Observer { items ->
+        viewModel.items.observe(this, Observer { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
         })
 
@@ -43,6 +43,11 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, itemId)
             startActivityForResult(intent, SAVE_ITEM_OR_DELETE)
         })
+
+        val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
+        val upperBound = arguments?.getLong(EXTRA_UPPER_TIME_BOUND, Long.MAX_VALUE) ?: Long.MAX_VALUE
+        viewModel.lowerTimeBound.value = lowerBound
+        viewModel.upperTimeBound.value = upperBound
     }
 
     override fun onCreateView(
@@ -111,5 +116,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
     companion object {
         const val SAVE_ITEM_OR_DELETE = 1
+        const val EXTRA_LOWER_TIME_BOUND = "LOWER_TIME_BOUND"
+        const val EXTRA_UPPER_TIME_BOUND = "UPPER_TIME_BOUND"
     }
 }
