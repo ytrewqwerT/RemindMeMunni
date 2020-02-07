@@ -35,6 +35,7 @@ class NewItemViewModel(
             viewModelScope.launch {
                 val item = itemRepository.getDirectItem(itemId)
                 setItem(item)
+                incSeriesNum.value = false
             }
         }
     }
@@ -70,6 +71,7 @@ class NewItemViewModel(
                 val serie = itemRepository.getDirectSerie(item.seriesId)
                 seriesId = item.seriesId
                 series.value = serie.series.name
+                incSeriesNum.value = serie.series.isNumbered()
             }
         }
     }
@@ -85,7 +87,6 @@ class NewItemViewModel(
 
             val nextItem = newSeries.generateNextInSeries()
             if (nextItem != null) setItem(nextItem)
-
         }
     }
 

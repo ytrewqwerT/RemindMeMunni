@@ -46,4 +46,6 @@ data class Series (
         }
         return result
     }
+
+    fun isNumbered() = (numPrefix.isNotEmpty() || curNum != 0.0)
 }
