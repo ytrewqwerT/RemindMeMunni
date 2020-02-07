@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.remindmemunni.interfaces.ListItemViewable
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import com.example.remindmemunni.utils.toStringTrimmed
 import java.time.LocalDateTime
 
 data class AggregatedSeries (
@@ -40,7 +41,8 @@ data class AggregatedSeries (
                 0L
             }
         }
-        val name = "${series.name} ${series.numPrefix}${series.curNum}"
+        var name = series.name
+        if (series.isNumbered()) name += " ${series.numPrefix}${series.curNum.toStringTrimmed()}"
 
         return Item(name = name, seriesId = series.id, cost = series.cost, time = newTime)
     }
