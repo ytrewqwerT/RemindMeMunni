@@ -91,8 +91,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // TODO: Delegate text to fragments in viewpager for filtering
-                Log.i("MainActivity", "Query text changed")
+                itemPagerAdapter.setFilter(newText)
                 return true
             }
 

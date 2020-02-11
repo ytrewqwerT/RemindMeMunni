@@ -99,4 +99,8 @@ class SeriesFragment : Fragment(),
         intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
         startActivity(intent)
     }
+
+    fun setFilter(filterText: String?) {
+        viewModel.setFilter(filterText)
+    }
 }

@@ -120,6 +120,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
     }
 
+    fun setFilter(filterText: String?) {
+        viewModel.setFilter(filterText)
+    }
+
     companion object {
         const val SAVE_ITEM_OR_DELETE = 1
         const val EXTRA_LOWER_TIME_BOUND = "LOWER_TIME_BOUND"

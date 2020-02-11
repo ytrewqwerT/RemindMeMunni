@@ -1,5 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
@@ -53,6 +54,12 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
         viewModelScope.launch {
             delete(itemRepository.getDirectItem(item))
         }
+    }
+
+    fun setFilter(filterText: String?) {
+        // TODO
+        Log.e("ItemsListViewModel", "Items filtering not implemented ($filterText)")
+
     }
 
     class ItemsListViewModelFactory(

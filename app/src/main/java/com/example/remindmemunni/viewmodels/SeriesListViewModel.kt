@@ -1,5 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,11 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
 
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
     fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
+
+    fun setFilter(filterText: String?) {
+        // TODO
+        Log.e("SeriesListViewModel", "Series filtering not implemented ($filterText)")
+    }
 
     class SeriesListViewModelFactory(
         private val itemRepository: ItemRepository

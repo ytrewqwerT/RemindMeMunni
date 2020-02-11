@@ -50,6 +50,12 @@ class ItemPagerAdapter(fm: FragmentManager)
         else -> "???"
     }
 
+    fun setFilter(filterText: String?) {
+        overdueItemsFragment.setFilter(filterText)
+        upcomingItemsFragment.setFilter(filterText)
+        seriesFragment.setFilter(filterText)
+    }
+
     companion object {
         const val NUM_PAGES = 3
 
