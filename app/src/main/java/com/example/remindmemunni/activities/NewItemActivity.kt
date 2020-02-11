@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.example.remindmemunni.R
 import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.database.AggregatedSeries
@@ -90,6 +91,14 @@ class NewItemActivity
             checkBox.isEnabled = it.isNotEmpty()
             checkBox.isChecked = it.isNotEmpty()
         })
+
+        val categoryEditText = findViewById<AutoCompleteTextView>(R.id.category_input_field)
+        val categoryEditTextAdapter = ArrayAdapter<String>(this, R.layout.dropdown_menu_popup_item)
+        categoryEditText.setAdapter(categoryEditTextAdapter)
+        viewModel.categories.observe(this) {
+            categoryEditTextAdapter.clear()
+            categoryEditTextAdapter.addAll(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

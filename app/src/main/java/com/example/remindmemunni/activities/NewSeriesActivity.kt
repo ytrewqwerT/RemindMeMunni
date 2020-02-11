@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import com.example.remindmemunni.R
 import com.example.remindmemunni.adapters.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.ActivityNewSeriesBinding
@@ -58,6 +60,14 @@ class NewSeriesActivity : AppCompatActivity(),
         recurrenceEditText.setOnClickListener {
             RecurrenceSelectFragment()
                 .show(supportFragmentManager, "frequency_dialog")
+        }
+
+        val categoryEditText = findViewById<AutoCompleteTextView>(R.id.category_input_field)
+        val categoryEditTextAdapter = ArrayAdapter<String>(this, R.layout.dropdown_menu_popup_item)
+        categoryEditText.setAdapter(categoryEditTextAdapter)
+        viewModel.categories.observe(this) {
+            categoryEditTextAdapter.clear()
+            categoryEditTextAdapter.addAll(it)
         }
     }
 

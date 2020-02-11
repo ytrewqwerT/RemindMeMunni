@@ -16,6 +16,17 @@ class NewItemViewModel(
 
     val allSeries: LiveData<List<AggregatedSeries>>
 
+    private val itemsTransformer: LiveData<List<String>> =
+        Transformations.map(itemRepository.allItems) { items ->
+            items.map { item -> item.category }
+        }
+    private val seriesTransformer: LiveData<List<String>> =
+        Transformations.map(itemRepository.allSeries) { series ->
+            series.map { serie -> serie.series.category }
+        }
+    private val _categories = MediatorLiveData<Set<String>>()
+    val categories: LiveData<Set<String>> get() = _categories
+
     private var _costIsDebit: Boolean = false
     private var _time = PrimitiveDateTime()
     private var seriesId: Int = 0
@@ -25,11 +36,21 @@ class NewItemViewModel(
     val costType = MutableLiveData<String>("")
     val timeText = MutableLiveData<String>("")
     val series = MutableLiveData<String>("")
-    var incSeriesNum = MutableLiveData<Boolean>(false)
+    val incSeriesNum = MutableLiveData<Boolean>(false)
+    val category = MutableLiveData<String>("")
 
     init {
         allSeries = itemRepository.allSeries
         setCostType("Debit")
+
+        _categories.addSource(itemsTransformer) {
+            val other = seriesTransformer.value ?: emptyList()
+            _categories.value = other.union(it)
+        }
+        _categories.addSource(seriesTransformer) {
+            val other = itemsTransformer.value ?: emptyList()
+            _categories.value = other.union(it)
+        }
 
         if (itemId != 0) {
             viewModelScope.launch {
@@ -66,6 +87,7 @@ class NewItemViewModel(
         name.value = item.name
         setCost(item.cost)
         setTime(PrimitiveDateTime.fromEpoch(item.time))
+        category.value = item.category
         if (item.seriesId != 0) {
             viewModelScope.launch {
                 val serie = itemRepository.getDirectSerie(item.seriesId)
@@ -110,7 +132,10 @@ class NewItemViewModel(
         if (_costIsDebit) cc = -cc
         val epochTime = _time.toEpoch()
 
-        val item = Item(id = itemId, name = name.value!!, seriesId = seriesId, cost = cc, time = epochTime)
+        val item = Item(
+            id = itemId, seriesId = seriesId, name = name.value!!,
+            cost = cc, time = epochTime, category = category.value!!
+        )
         viewModelScope.launch { itemRepository.insert(item) }
 
         if (incSeriesNum.value == true && seriesId != 0) {

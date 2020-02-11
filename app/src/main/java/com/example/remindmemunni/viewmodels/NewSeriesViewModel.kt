@@ -1,9 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.database.Series
 import kotlinx.coroutines.launch
@@ -12,6 +9,17 @@ class NewSeriesViewModel(
     private val itemRepository: ItemRepository,
     private val seriesId: Int = 0
 ) : ViewModel() {
+
+    private val itemsTransformer: LiveData<List<String>> =
+        Transformations.map(itemRepository.allItems) { items ->
+            items.map { item -> item.category }
+        }
+    private val seriesTransformer: LiveData<List<String>> =
+        Transformations.map(itemRepository.allSeries) { series ->
+            series.map { serie -> serie.series.category }
+        }
+    private val _categories = MediatorLiveData<Set<String>>()
+    val categories: LiveData<Set<String>> get() = _categories
 
     private var isDebit: Boolean = false
     private var recurMonths: Int = 0
@@ -24,9 +32,19 @@ class NewSeriesViewModel(
     val numInSeriesPrefix = MutableLiveData<String>("")
     val recurrence = MutableLiveData<String>("")
     val autoCreateItems = MutableLiveData<Boolean>(true)
+    val category = MutableLiveData<String>("")
 
     init {
         setCostType("Debit")
+
+        _categories.addSource(itemsTransformer) {
+            val other = seriesTransformer.value ?: emptyList()
+            _categories.value = other.union(it)
+        }
+        _categories.addSource(seriesTransformer) {
+            val other = itemsTransformer.value ?: emptyList()
+            _categories.value = other.union(it)
+        }
 
         if (seriesId != 0) {
             viewModelScope.launch {
@@ -40,6 +58,7 @@ class NewSeriesViewModel(
                 }
                 nextNumInSeries.value = series.curNum.toString()
                 numInSeriesPrefix.value = series.numPrefix
+                category.value = series.category
                 setRecurrence(series.recurMonths, series.recurDays)
             }
         }
@@ -73,13 +92,14 @@ class NewSeriesViewModel(
         val num = nextNumInSeries.value?.toDoubleOrNull() ?: 0.0
         val prefix = numInSeriesPrefix.value ?: ""
         val autoCreate = autoCreateItems.value ?: true
+        val category = category.value ?: ""
 
         val series = Series(
             id = seriesId,
             name = name, cost = absCost,
             curNum = num, numPrefix = prefix,
             recurDays = recurDays, recurMonths = recurMonths,
-            autoCreate = autoCreate
+            autoCreate = autoCreate, category = category
         )
         return itemRepository.insert(series)
     }
