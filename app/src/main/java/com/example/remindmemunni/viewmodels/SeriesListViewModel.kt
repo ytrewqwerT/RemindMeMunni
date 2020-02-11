@@ -1,10 +1,6 @@
 package com.example.remindmemunni.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.remindmemunni.database.AggregatedSeries
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.database.Series
@@ -14,12 +10,33 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
 
     val series: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
 
+    private var filterString: String = ""
+    private val _filteredSeries = MediatorLiveData<List<AggregatedSeries>>()
+    val filteredSeries: LiveData<List<AggregatedSeries>> get() = _filteredSeries
+
+    init {
+        _filteredSeries.addSource(series) { updateFilteredSeries() }
+    }
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
     fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
 
     fun setFilter(filterText: String?) {
-        // TODO
-        Log.e("SeriesListViewModel", "Series filtering not implemented ($filterText)")
+        filterString = filterText ?: ""
+        updateFilteredSeries()
+    }
+    private fun updateFilteredSeries() {
+        val series = series.value
+        if (series == null) {
+            _filteredSeries.value = series
+        } else {
+            val result = ArrayList<AggregatedSeries>(series)
+            if (filterString.isNotEmpty()) {
+                for (serie in series) {
+                    if (!serie.series.hasFilterText(filterString)) result.remove(serie)
+                }
+            }
+            _filteredSeries.value = result
+        }
     }
 
     class SeriesListViewModelFactory(

@@ -36,7 +36,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.items.observe(this, Observer { items ->
+        viewModel.filteredItems.observe(this, Observer { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
         })
 

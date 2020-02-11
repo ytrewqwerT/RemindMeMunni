@@ -6,6 +6,7 @@ import com.example.remindmemunni.interfaces.ListItemViewable
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Entity(tableName = "item_table")
 data class Item(
@@ -41,5 +42,14 @@ data class Item(
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
         return date.format(formatter)
+    }
+
+    fun hasFilterText(filter: String): Boolean {
+        val lowerFilter = filter.toLowerCase(Locale.getDefault())
+        return if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) {
+            true
+        } else {
+            category.toLowerCase(Locale.getDefault()).contains(lowerFilter)
+        }
     }
 }

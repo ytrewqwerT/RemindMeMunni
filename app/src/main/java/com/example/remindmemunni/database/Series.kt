@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.remindmemunni.interfaces.ListItemViewable
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity(tableName = "series_table")
 data class Series (
@@ -49,4 +50,13 @@ data class Series (
     }
 
     fun isNumbered() = (numPrefix.isNotEmpty() || curNum != 0.0)
+
+    fun hasFilterText(filter: String): Boolean {
+        val lowerFilter = filter.toLowerCase(Locale.getDefault())
+        return if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) {
+            true
+        } else {
+            category.toLowerCase(Locale.getDefault()).contains(lowerFilter)
+        }
+    }
 }

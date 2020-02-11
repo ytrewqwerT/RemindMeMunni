@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
 
         viewPager = findViewById(R.id.pager)
         viewPager.adapter = itemPagerAdapter
+        // Force-attaches all pages to activity to allow all-page search functionality
+        viewPager.offscreenPageLimit = ItemPagerAdapter.NUM_PAGES
 
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->

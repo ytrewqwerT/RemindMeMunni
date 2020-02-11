@@ -1,6 +1,5 @@
 package com.example.remindmemunni.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.database.Item
 import com.example.remindmemunni.database.ItemRepository
@@ -18,6 +17,10 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     val lowerTimeBound = MutableLiveData<Long>(0L)
     val upperTimeBound = MutableLiveData<Long>(Long.MAX_VALUE)
 
+    private var filterString: String = ""
+    private val _filteredItems = MediatorLiveData<List<Item>>()
+    val filteredItems: LiveData<List<Item>> get() = _filteredItems
+
     init {
         sourceItems = if (seriesId == 0) {
             itemRepository.allItems
@@ -27,6 +30,7 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
         _items.addSource(sourceItems) { updateItemsList() }
         _items.addSource(lowerTimeBound) { updateItemsList() }
         _items.addSource(upperTimeBound) { updateItemsList() }
+        _filteredItems.addSource(items) { updateFilteredItems() }
     }
 
     private fun updateItemsList() {
@@ -57,9 +61,22 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     }
 
     fun setFilter(filterText: String?) {
-        // TODO
-        Log.e("ItemsListViewModel", "Items filtering not implemented ($filterText)")
-
+        filterString = filterText ?: ""
+        updateFilteredItems()
+    }
+    private fun updateFilteredItems() {
+        val items = items.value
+        if (items == null) {
+            _filteredItems.value = items
+        } else {
+            val result = ArrayList<Item>(items)
+            if (filterString.isNotEmpty()) {
+                for (item in items) {
+                    if (!item.hasFilterText(filterString)) result.remove(item)
+                }
+            }
+            _filteredItems.value = result
+        }
     }
 
     class ItemsListViewModelFactory(
