@@ -13,7 +13,8 @@ data class Item(
     val seriesId: Int = 0,
     val name: String = "",
     val cost: Double = 0.0,
-    val time: Long = 0
+    val time: Long = 0,
+    val category: String = ""
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {

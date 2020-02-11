@@ -1,13 +1,11 @@
 package com.example.remindmemunni
 
+import android.database.Cursor
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.remindmemunni.database.ItemRoomDatabase
-import com.example.remindmemunni.database.MIGRATION_1_2
-import com.example.remindmemunni.database.MIGRATION_2_3
-import com.example.remindmemunni.database.Series
+import com.example.remindmemunni.database.*
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -47,13 +45,7 @@ class MigrationTest {
         assertEquals(cursor.count, 1)
         cursor.moveToFirst()
         assertEquals(cursor.columnCount, 7)
-        assertEquals(cursor.getInt(0), refSeries.id)
-        assertEquals(cursor.getString(1), refSeries.name)
-        assertEquals(cursor.getDouble(2), refSeries.cost, DOUBLE_DELTA)
-        assertEquals(cursor.getDouble(3), refSeries.curNum, DOUBLE_DELTA)
-        assertEquals(cursor.getString(4), refSeries.numPrefix)
-        assertEquals(cursor.getInt(5), refSeries.recurMonths)
-        assertEquals(cursor.getInt(6), refSeries.recurDays)
+        compareSeries(refSeries, cursor)
     }
 
     @Test
@@ -76,14 +68,44 @@ class MigrationTest {
         assertEquals(cursor.count, 1)
         cursor.moveToFirst()
         assertEquals(cursor.columnCount, 8)
-        assertEquals(cursor.getInt(0), refSeries.id)
-        assertEquals(cursor.getString(1), refSeries.name)
-        assertEquals(cursor.getDouble(2), refSeries.cost, DOUBLE_DELTA)
-        assertEquals(cursor.getDouble(3), refSeries.curNum, DOUBLE_DELTA)
-        assertEquals(cursor.getString(4), refSeries.numPrefix)
-        assertEquals(cursor.getInt(5), refSeries.recurMonths)
-        assertEquals(cursor.getInt(6), refSeries.recurDays)
-        assertEquals(cursor.getInt(7) == 1, refSeries.autoCreate)
+        compareSeries(refSeries, cursor)
+    }
+
+    @Test
+    fun migrate3To4() {
+        val refSeries = Series(
+            id = 5, name = "Bottle", cost = 45.5,
+            curNum = 1.0, numPrefix = "No.",
+            recurMonths = 5, recurDays = 10,
+            autoCreate = false
+        )
+        val autoCreateTrue = if (refSeries.autoCreate) 1 else 0
+        val refItem = Item(id = 8, seriesId = 2, name = "O", cost = -10.5, time = 10583740)
+        helper.createDatabase(TEST_DB, 3).apply {
+            execSQL("INSERT INTO series_table" +
+                    "(id, name, cost, curNum, numPrefix, recurMonths, recurDays, autoCreate)" +
+                    "VALUES (${refSeries.id}, '${refSeries.name}', ${refSeries.cost}," +
+                    "${refSeries.curNum}, '${refSeries.numPrefix}'," +
+                    "${refSeries.recurMonths}, ${refSeries.recurDays}," +
+                    "${autoCreateTrue})")
+            execSQL("INSERT INTO item_table (id, seriesId, name, cost, time)" +
+                    "VALUES (${refItem.id}, ${refItem.seriesId}," +
+                    "'${refItem.name}', ${refItem.cost}, ${refItem.time})")
+            close()
+        }
+        val db = helper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_3_4)
+
+        val seriesCursor = db.query("SELECT * FROM series_table")
+        assertEquals(seriesCursor.count, 1)
+        seriesCursor.moveToFirst()
+        assertEquals(seriesCursor.columnCount, 9)
+        compareSeries(refSeries, seriesCursor)
+
+        val itemCursor = db.query("SELECT * FROM item_table")
+        assertEquals(itemCursor.count, 1)
+        itemCursor.moveToFirst()
+        assertEquals(itemCursor.columnCount, 6)
+        compareItem(refItem, itemCursor)
     }
 
     @Test
@@ -92,25 +114,68 @@ class MigrationTest {
             id = 5, name = "Bottle", cost = 45.5,
             curNum = 1.0, numPrefix = "No."
         )
+        val refItem = Item(id = 8, seriesId = 2, name = "O", cost = -10.5, time = 10583740)
         helper.createDatabase(TEST_DB, 1).apply {
             execSQL("INSERT INTO series_table (id, name, cost, curNum, numPrefix)" +
                     "VALUES (${refSeries.id}, '${refSeries.name}', ${refSeries.cost}," +
                     "${refSeries.curNum}, '${refSeries.numPrefix}')")
+            execSQL("INSERT INTO item_table (id, seriesId, name, cost, time)" +
+                    "VALUES (${refItem.id}, ${refItem.seriesId}," +
+                    "'${refItem.name}', ${refItem.cost}, ${refItem.time})")
             close()
         }
-        val db = helper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_1_2, MIGRATION_2_3)
+        val db = helper.runMigrationsAndValidate(
+            TEST_DB, 4, true,
+            MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4
+        )
 
-        val cursor = db.query("SELECT * FROM series_table")
-        assertEquals(cursor.count, 1)
-        cursor.moveToFirst()
-        assertEquals(cursor.columnCount, 8)
-        assertEquals(cursor.getInt(0), refSeries.id)
-        assertEquals(cursor.getString(1), refSeries.name)
-        assertEquals(cursor.getDouble(2), refSeries.cost, DOUBLE_DELTA)
-        assertEquals(cursor.getDouble(3), refSeries.curNum, DOUBLE_DELTA)
-        assertEquals(cursor.getString(4), refSeries.numPrefix)
-        assertEquals(cursor.getInt(5), refSeries.recurMonths)
-        assertEquals(cursor.getInt(6), refSeries.recurDays)
-        assertEquals(cursor.getInt(7) == 1, refSeries.autoCreate)
+        val seriesCursor = db.query("SELECT * FROM series_table")
+        assertEquals(seriesCursor.count, 1)
+        seriesCursor.moveToFirst()
+        assertEquals(seriesCursor.columnCount, 9)
+        compareSeries(refSeries, seriesCursor)
+
+        val itemCursor = db.query("SELECT * FROM item_table")
+        assertEquals(itemCursor.count, 1)
+        itemCursor.moveToFirst()
+        assertEquals(itemCursor.columnCount, 6)
+        compareItem(refItem, itemCursor)
+    }
+
+    private fun compareSeries(original: Series, generated: Cursor) {
+        val columnCount = generated.columnCount
+        // Version 1
+        assertEquals(generated.getInt(0), original.id)
+        assertEquals(generated.getString(1), original.name)
+        assertEquals(generated.getDouble(2), original.cost, DOUBLE_DELTA)
+        assertEquals(generated.getDouble(3), original.curNum, DOUBLE_DELTA)
+        assertEquals(generated.getString(4), original.numPrefix)
+        // Version 2
+        if (columnCount > 5) {
+            assertEquals(generated.getInt(5), original.recurMonths)
+            assertEquals(generated.getInt(6), original.recurDays)
+        }
+        // Version 3
+        if (columnCount > 7) {
+            assertEquals(generated.getInt(7) == 1, original.autoCreate)
+        }
+        // Version 4
+        if (columnCount > 8) {
+            assertEquals(generated.getString(8), original.category)
+        }
+    }
+
+    private fun compareItem(original: Item, generated: Cursor) {
+        val columnCount = generated.columnCount
+        // Version 1 - 3
+        assertEquals(generated.getInt(0), original.id)
+        assertEquals(generated.getInt(1), original.seriesId)
+        assertEquals(generated.getString(2), original.name)
+        assertEquals(generated.getDouble(3), original.cost, DOUBLE_DELTA)
+        assertEquals(generated.getLong(4), original.time)
+        // Version 4
+        if (columnCount > 5) {
+            assertEquals(generated.getString(5), original.category)
+        }
     }
 }

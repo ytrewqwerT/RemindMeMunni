@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Item::class, Series::class], version = 3, exportSchema = true)
+@Database(entities = [Item::class, Series::class], version = 4, exportSchema = true)
 abstract class ItemRoomDatabase : RoomDatabase() {
 
     abstract fun itemDao(): ItemDao
@@ -44,5 +44,12 @@ val MIGRATION_1_2 = object : Migration(1,2) {
 val MIGRATION_2_3 = object : Migration(2,3) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE series_table ADD COLUMN autoCreate INTEGER NOT NULL DEFAULT 1")
+    }
+}
+
+val MIGRATION_3_4 = object : Migration(3,4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE series_table ADD COLUMN category TEXT NOT NULL DEFAULT ''")
+        database.execSQL("ALTER TABLE item_table ADD COLUMN category TEXT NOT NULL DEFAULT ''")
     }
 }
