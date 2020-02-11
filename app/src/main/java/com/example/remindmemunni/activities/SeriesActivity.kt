@@ -54,7 +54,7 @@ class SeriesActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu?.getItem(R.id.search_button)?.isVisible = false
+        menu?.findItem(R.id.search_button)?.isVisible = false
         return true
     }
 
