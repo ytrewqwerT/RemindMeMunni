@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_add, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
@@ -103,6 +103,11 @@ class MainActivity : AppCompatActivity() {
                     "No add action associated to PagerAdapter page ${viewPager.currentItem}"
                 )
             }
+            true
+        }
+        R.id.search_button -> {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
             true
         }
         else -> super.onOptionsItemSelected(item)

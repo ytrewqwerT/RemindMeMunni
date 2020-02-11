@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activities.SearchActivity" />
         <activity android:name=".activities.NewSeriesActivity" />
         <activity android:name=".activities.NewItemActivity" />
         <activity android:name=".activities.SeriesActivity" />

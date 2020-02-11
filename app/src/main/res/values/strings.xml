@@ -29,6 +29,8 @@
     <string name="current_munni_field_label">Current Munni: $</string>
     <string name="show_hide">Show/Hide</string>
     <string name="category">Category</string>
+    <string name="search">Search</string>
+    <string name="filter_hint">Filter items/series</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>
