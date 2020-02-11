@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -78,8 +79,24 @@ class MainActivity : AppCompatActivity() {
         viewModel.allSeries.observe(this, Observer { viewModel.updateMunniCalc() })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        val searchView = menu.findItem(R.id.search_button).actionView as SearchView
+        searchView.isSubmitButtonEnabled = false
+        searchView.queryHint = getString(R.string.filter_hint)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return onQueryTextChange(query)
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // TODO: Delegate text to fragments in viewpager for filtering
+                Log.i("MainActivity", "Query text changed")
+                return true
+            }
+
+        })
         return true
     }
 
