@@ -105,11 +105,6 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-        R.id.search_button -> {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-            true
-        }
         else -> super.onOptionsItemSelected(item)
     }
 
