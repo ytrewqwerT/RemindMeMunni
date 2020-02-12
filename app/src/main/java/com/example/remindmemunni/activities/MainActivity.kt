@@ -10,9 +10,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity() {
         val searchView = menu.findItem(R.id.search_button).actionView as SearchView
         searchView.isSubmitButtonEnabled = false
         searchView.queryHint = getString(R.string.filter_hint)
+        searchView.maxWidth = 900
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return onQueryTextChange(query)
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-        return true
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
