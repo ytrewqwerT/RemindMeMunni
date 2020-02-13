@@ -43,8 +43,12 @@ data class AggregatedSeries (
         }
         var name = series.name
         if (series.isNumbered()) name += " ${series.numPrefix}${series.curNum.toStringTrimmed()}"
+        val category = series.category
 
-        return Item(name = name, seriesId = series.id, cost = series.cost, time = newTime)
+        return Item(
+            name = name, seriesId = series.id,
+            cost = series.cost, time = newTime, category = category
+        )
     }
 
     fun getHiddenCost(until: LocalDateTime): Double {
