@@ -3,6 +3,7 @@ package com.example.remindmemunni.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -81,13 +82,27 @@ class SeriesFragment : Fragment(),
         R.id.series_delete -> {
             val series = recyclerViewAdapter.contextMenuItem
             if (series != null) {
-                viewModel.delete(series.series)
-                Snackbar.make(
-                    contentView,
-                    "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
-                ).setAction("Undo") {
-                        viewModel.insert(series.series)
-                }.show()
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Deleting ${series.series.name}")
+                    .setMessage("Do you want to delete the items in this series?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        viewModel.delete(series)
+                        Snackbar.make(
+                            contentView,
+                            "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                        ).setAction("Undo") {
+                            viewModel.insert(series)
+                        }.show()
+                    }.setNegativeButton("No") { _, _ ->
+                        viewModel.delete(series.series)
+                        Snackbar.make(
+                            contentView,
+                            "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                        ).setAction("Undo") {
+                            viewModel.insert(series.series)
+                        }.show()
+                    }.setNeutralButton("Cancel") { _, _ -> }
+                    .create().show()
             }
             true
         }

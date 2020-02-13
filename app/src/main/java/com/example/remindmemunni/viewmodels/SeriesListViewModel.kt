@@ -17,8 +17,21 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
     init {
         _filteredSeries.addSource(series) { updateFilteredSeries() }
     }
+
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
     fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
+    fun insert(serie: AggregatedSeries) {
+        viewModelScope.launch {
+            itemRepository.insert(serie.series)
+            for (item in serie.items) itemRepository.insert(item)
+        }
+    }
+    fun delete(serie: AggregatedSeries) {
+        viewModelScope.launch {
+            itemRepository.delete(serie.series)
+            for (item in serie.items) itemRepository.delete(item)
+        }
+    }
 
     fun setFilter(filterText: String?) {
         filterString = filterText ?: ""
