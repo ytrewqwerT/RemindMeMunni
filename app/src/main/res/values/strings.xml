@@ -33,6 +33,7 @@
     <string name="filter_hint">Filter items/series</string>
     <string name="notification_channel_name">Alerts</string>
     <string name="notification_channel_id">alerts</string>
+    <string name="notify">Notify</string>
     <string-array name="cost_types_array">
         <item>@string/cost_credit</item>
         <item>@string/cost_debit</item>

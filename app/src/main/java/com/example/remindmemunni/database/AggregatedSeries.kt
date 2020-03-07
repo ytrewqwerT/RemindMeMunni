@@ -44,10 +44,11 @@ data class AggregatedSeries (
         var name = series.name
         if (series.isNumbered()) name += " ${series.numPrefix}${series.curNum.toStringTrimmed()}"
         val category = series.category
+        val notify = series.notify
 
         return Item(
             name = name, seriesId = series.id,
-            cost = series.cost, time = newTime, category = category
+            cost = series.cost, time = newTime, category = category, notify = notify
         )
     }
 

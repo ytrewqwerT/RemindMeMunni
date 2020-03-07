@@ -33,6 +33,7 @@ class NewSeriesViewModel(
     val recurrence = MutableLiveData<String>("")
     val autoCreateItems = MutableLiveData<Boolean>(true)
     val category = MutableLiveData<String>("")
+    val notify = MutableLiveData<Boolean>(false)
 
     init {
         setCostType("Debit")
@@ -59,6 +60,7 @@ class NewSeriesViewModel(
                 nextNumInSeries.value = series.curNum.toString()
                 numInSeriesPrefix.value = series.numPrefix
                 category.value = series.category
+                notify.value = series.notify
                 setRecurrence(series.recurMonths, series.recurDays)
             }
         }
@@ -93,13 +95,14 @@ class NewSeriesViewModel(
         val prefix = numInSeriesPrefix.value ?: ""
         val autoCreate = autoCreateItems.value ?: true
         val category = category.value ?: ""
+        val notify = notify.value ?: false
 
         val series = Series(
             id = seriesId,
             name = name, cost = absCost,
             curNum = num, numPrefix = prefix,
             recurDays = recurDays, recurMonths = recurMonths,
-            autoCreate = autoCreate, category = category
+            autoCreate = autoCreate, category = category, notify = notify
         )
         return itemRepository.insert(series)
     }

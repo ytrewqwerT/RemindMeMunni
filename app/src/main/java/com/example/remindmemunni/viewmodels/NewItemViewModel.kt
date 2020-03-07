@@ -38,6 +38,7 @@ class NewItemViewModel(
     val series = MutableLiveData<String>("")
     val incSeriesNum = MutableLiveData<Boolean>(false)
     val category = MutableLiveData<String>("")
+    val notify = MutableLiveData<Boolean>(false)
 
     init {
         allSeries = itemRepository.allSeries
@@ -88,6 +89,7 @@ class NewItemViewModel(
         setCost(item.cost)
         setTime(PrimitiveDateTime.fromEpoch(item.time))
         category.value = item.category
+        notify.value = item.notify
         if (item.seriesId != 0) {
             viewModelScope.launch {
                 val serie = itemRepository.getDirectSerie(item.seriesId)
@@ -134,7 +136,7 @@ class NewItemViewModel(
 
         val item = Item(
             id = itemId, seriesId = seriesId, name = name.value!!,
-            cost = cc, time = epochTime, category = category.value!!
+            cost = cc, time = epochTime, category = category.value!!, notify = notify.value!!
         )
         viewModelScope.launch { itemRepository.insert(item) }
 

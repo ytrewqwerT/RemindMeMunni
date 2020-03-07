@@ -164,6 +164,16 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/series_dropdown_container" />
+
+            <CheckBox
+                android:id="@+id/notify"
+                android:text="@string/notify"
+                android:checked="@={viewModel.notify}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/series_increment" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>
