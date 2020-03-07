@@ -82,6 +82,7 @@ class ItemRepository(
     suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
         val series = itemDao.getDirectSerie(seriesId)
+        if (series.series.curNum == 0.0) return
         series.series.curNum += increment
         itemDao.insert(series.series)
     }
