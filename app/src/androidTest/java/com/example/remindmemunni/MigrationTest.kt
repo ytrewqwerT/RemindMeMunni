@@ -110,16 +110,35 @@ class MigrationTest {
 
     @Test
     fun migrate4To5() {
+        val refSeries = Series(
+            id = 5, name = "Bottle", cost = 45.5,
+            curNum = 1.0, numPrefix = "No.",
+            recurMonths = 5, recurDays = 10,
+            autoCreate = false, category = "Mac"
+        )
+        val autoCreateTrue = if (refSeries.autoCreate) 1 else 0
         val refItem = Item(
             id = 8, seriesId = 2, name = "O", cost = -10.5, time = 10583740, category = "Cheese"
         )
         helper.createDatabase(TEST_DB, 4).apply {
+            execSQL("INSERT INTO series_table" +
+                    "(id, name, cost, curNum, numPrefix, recurMonths, recurDays, autoCreate, category)" +
+                    "VALUES (${refSeries.id}, '${refSeries.name}', ${refSeries.cost}," +
+                    "${refSeries.curNum}, '${refSeries.numPrefix}'," +
+                    "${refSeries.recurMonths}, ${refSeries.recurDays}," +
+                    "${autoCreateTrue}, '${refSeries.category}')")
             execSQL("INSERT INTO item_table (id, seriesId, name, cost, time, category)" +
                     "VALUES (${refItem.id}, ${refItem.seriesId}," +
                     "'${refItem.name}', ${refItem.cost}, ${refItem.time}, '${refItem.category}')")
             close()
         }
         val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+
+        val seriesCursor = db.query("SELECT * FROM series_table")
+        assertEquals(seriesCursor.count, 1)
+        seriesCursor.moveToFirst()
+        assertEquals(seriesCursor.columnCount, 10)
+        compareSeries(refSeries, seriesCursor)
 
         val itemCursor = db.query("SELECT * FROM item_table")
         assertEquals(itemCursor.count, 1)
@@ -152,7 +171,7 @@ class MigrationTest {
         val seriesCursor = db.query("SELECT * FROM series_table")
         assertEquals(seriesCursor.count, 1)
         seriesCursor.moveToFirst()
-        assertEquals(seriesCursor.columnCount, 9)
+        assertEquals(seriesCursor.columnCount, 10)
         compareSeries(refSeries, seriesCursor)
 
         val itemCursor = db.query("SELECT * FROM item_table")
@@ -182,6 +201,10 @@ class MigrationTest {
         // Version 4
         if (columnCount > 8) {
             assertEquals(generated.getString(8), original.category)
+        }
+        // Version 5
+        if (columnCount > 9) {
+            assertEquals(generated.getInt(9) == 1, original.notify)
         }
     }
 

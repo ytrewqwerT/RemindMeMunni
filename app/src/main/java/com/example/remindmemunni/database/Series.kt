@@ -16,7 +16,8 @@ data class Series (
     val recurMonths: Int = 0,
     val recurDays: Int = 0,
     val autoCreate: Boolean = true,
-    val category: String = ""
+    val category: String = "",
+    val notify: Boolean = false
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
