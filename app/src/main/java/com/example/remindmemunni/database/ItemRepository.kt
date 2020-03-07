@@ -3,10 +3,12 @@ package com.example.remindmemunni.database
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.remindmemunni.NotificationScheduler
 
 class ItemRepository(
     private val itemDao: ItemDao,
-    private val sharedPref: SharedPreferences
+    private val sharedPref: SharedPreferences,
+    private val notificationScheduler: NotificationScheduler
 ) {
 
     val allItems: LiveData<List<Item>> = itemDao.getItems()
@@ -45,7 +47,12 @@ class ItemRepository(
         sharedPref.registerOnSharedPreferenceChangeListener(sharedPrefListener)
     }
 
-    suspend fun insert(item: Item): Int = itemDao.insert(item).toInt()
+    suspend fun insert(item: Item): Int {
+        val itemId = itemDao.insert(item).toInt()
+        val notification = notificationScheduler.createNotification(item.name)
+        notificationScheduler.scheduleNotification(itemId, item.time * 1000, notification)
+        return itemId
+    }
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
     fun getItem(itemId: Int): LiveData<Item> = itemDao.getItem(itemId)

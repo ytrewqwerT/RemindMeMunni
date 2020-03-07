@@ -1,6 +1,8 @@
 package com.example.remindmemunni.activities
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -79,6 +81,8 @@ class MainActivity : AppCompatActivity() {
         
         viewModel.allItems.observe(this, Observer { viewModel.updateMunniCalc() })
         viewModel.allSeries.observe(this, Observer { viewModel.updateMunniCalc() })
+
+        createNotificationChannel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -143,6 +147,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun createNotificationChannel() {
+        val id = getString(R.string.notification_channel_id)
+        val name = getString(R.string.notification_channel_name)
+        val importance = NotificationManager.IMPORTANCE_LOW
+        val channel = NotificationChannel(id, name, importance)
+
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
     }
 
     companion object {

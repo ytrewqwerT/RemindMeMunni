@@ -1,6 +1,7 @@
 package com.example.remindmemunni.utils
 
 import android.content.Context
+import com.example.remindmemunni.NotificationScheduler
 import com.example.remindmemunni.database.ItemRepository
 import com.example.remindmemunni.database.ItemRoomDatabase
 import com.example.remindmemunni.viewmodels.*
@@ -13,7 +14,8 @@ object InjectorUtils {
             "com.example.remindmemunni.GLOBAL_PREFERENCES",
             Context.MODE_PRIVATE
         )
-        return ItemRepository(itemDao, sharedPref)
+        val notificationScheduler = NotificationScheduler(context.applicationContext)
+        return ItemRepository(itemDao, sharedPref, notificationScheduler)
     }
 
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =
