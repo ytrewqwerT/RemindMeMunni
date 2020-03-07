@@ -15,7 +15,8 @@ data class Item(
     val name: String = "",
     val cost: Double = 0.0,
     val time: Long = 0,
-    val category: String = ""
+    val category: String = "",
+    val notify: Boolean = false
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {

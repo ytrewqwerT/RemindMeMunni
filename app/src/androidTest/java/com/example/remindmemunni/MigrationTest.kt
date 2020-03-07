@@ -109,6 +109,26 @@ class MigrationTest {
     }
 
     @Test
+    fun migrate4To5() {
+        val refItem = Item(
+            id = 8, seriesId = 2, name = "O", cost = -10.5, time = 10583740, category = "Cheese"
+        )
+        helper.createDatabase(TEST_DB, 4).apply {
+            execSQL("INSERT INTO item_table (id, seriesId, name, cost, time, category)" +
+                    "VALUES (${refItem.id}, ${refItem.seriesId}," +
+                    "'${refItem.name}', ${refItem.cost}, ${refItem.time}, '${refItem.category}')")
+            close()
+        }
+        val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+
+        val itemCursor = db.query("SELECT * FROM item_table")
+        assertEquals(itemCursor.count, 1)
+        itemCursor.moveToFirst()
+        assertEquals(itemCursor.columnCount, 7)
+        compareItem(refItem, itemCursor)
+    }
+
+    @Test
     fun migrateFirstToLast() {
         val refSeries = Series(
             id = 5, name = "Bottle", cost = 45.5,
@@ -125,8 +145,8 @@ class MigrationTest {
             close()
         }
         val db = helper.runMigrationsAndValidate(
-            TEST_DB, 4, true,
-            MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4
+            TEST_DB, 5, true,
+            MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5
         )
 
         val seriesCursor = db.query("SELECT * FROM series_table")
@@ -138,7 +158,7 @@ class MigrationTest {
         val itemCursor = db.query("SELECT * FROM item_table")
         assertEquals(itemCursor.count, 1)
         itemCursor.moveToFirst()
-        assertEquals(itemCursor.columnCount, 6)
+        assertEquals(itemCursor.columnCount, 7)
         compareItem(refItem, itemCursor)
     }
 
@@ -176,6 +196,10 @@ class MigrationTest {
         // Version 4
         if (columnCount > 5) {
             assertEquals(generated.getString(5), original.category)
+        }
+        // Version 5
+        if (columnCount > 6) {
+            assertEquals(generated.getInt(6) == 1, original.notify)
         }
     }
 }
