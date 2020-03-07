@@ -84,19 +84,17 @@ class NewItemViewModel(
         costType.value = type.toString()
     }
 
-    private fun setItem(item: Item) {
+    private suspend fun setItem(item: Item) {
         name.value = item.name
         setCost(item.cost)
         setTime(PrimitiveDateTime.fromEpoch(item.time))
         category.value = item.category
         notify.value = item.notify
         if (item.seriesId != 0) {
-            viewModelScope.launch {
-                val serie = itemRepository.getDirectSerie(item.seriesId)
-                seriesId = item.seriesId
-                series.value = serie.series.name
-                incSeriesNum.value = serie.series.isNumbered()
-            }
+            val serie = itemRepository.getDirectSerie(item.seriesId)
+            seriesId = item.seriesId
+            series.value = serie.series.name
+            incSeriesNum.value = serie.series.isNumbered()
         }
     }
 
@@ -110,7 +108,9 @@ class NewItemViewModel(
             series.value = newSerie.name
 
             val nextItem = newSeries.generateNextInSeries()
-            if (nextItem != null) setItem(nextItem)
+            if (nextItem != null) {
+                viewModelScope.launch { setItem(nextItem) }
+            }
         }
     }
 
