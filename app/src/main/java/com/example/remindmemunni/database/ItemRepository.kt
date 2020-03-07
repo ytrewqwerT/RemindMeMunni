@@ -49,8 +49,10 @@ class ItemRepository(
 
     suspend fun insert(item: Item): Int {
         val itemId = itemDao.insert(item).toInt()
-        val notification = notificationScheduler.createNotification(item.name)
-        notificationScheduler.scheduleNotification(itemId, item.time * 1000, notification)
+        if (item.notify) {
+            val notification = notificationScheduler.createNotification(item.name)
+            notificationScheduler.scheduleNotification(itemId, item.time * 1000, notification)
+        }
         return itemId
     }
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
