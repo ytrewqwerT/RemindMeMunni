@@ -1,7 +1,7 @@
 package com.example.remindmemunni.utils
 
-import com.example.remindmemunni.interfaces.ListItemViewable
-import com.example.remindmemunni.interfaces.ListItemViewable.ListItemContents
+import com.example.remindmemunni.common.ListItemViewable
+import com.example.remindmemunni.common.ListItemViewable.ListItemContents
 
 class NumberListItem(val num: Int? = null) :
     ListItemViewable {

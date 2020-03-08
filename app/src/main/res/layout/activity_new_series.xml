@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.viewmodels.NewSeriesViewModel" />
+            type="com.example.remindmemunni.newseries.NewSeriesViewModel" />
     </data>
 
     <ScrollView
@@ -15,7 +15,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".activities.NewSeriesActivity">
+            tools:context=".newseries.NewSeriesActivity">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"

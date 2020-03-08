@@ -6,14 +6,14 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.viewmodels.MainViewModel" />
+            type="com.example.remindmemunni.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutDescription="@xml/main_bottom_bar_collapse"
-        tools:context=".activities.MainActivity">
+        tools:context=".main.MainActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

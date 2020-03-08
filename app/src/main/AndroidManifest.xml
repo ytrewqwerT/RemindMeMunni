@@ -14,10 +14,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".activities.NewSeriesActivity" />
-        <activity android:name=".activities.NewItemActivity" />
-        <activity android:name=".activities.SeriesActivity" />
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".newseries.NewSeriesActivity" />
+        <activity android:name=".newitem.NewItemActivity" />
+        <activity android:name=".series.SeriesActivity" />
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,14 +25,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".NotificationPublisher" />
-        <receiver android:name=".BootReceiver" android:enabled="true">
+        <receiver android:name=".notifications.NotificationPublisher" />
+        <receiver android:name=".notifications.BootReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".NotificationService"
+        <service android:name=".notifications.NotificationService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
