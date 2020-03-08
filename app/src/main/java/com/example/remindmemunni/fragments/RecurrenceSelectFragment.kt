@@ -29,7 +29,7 @@ class RecurrenceSelectFragment: DialogFragment() {
             daysScrollSpinner.setItems(
                 NumberListItem.createSequentialList(
                     0,
-                    30
+                    31
                 ).asReversed()
             )
             val monthsScrollSpinner =
