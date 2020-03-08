@@ -5,8 +5,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import java.util.*
+import com.example.remindmemunni.database.Item
 
 class NotificationScheduler(context: Context) {
     private val appContext = context.applicationContext
@@ -19,14 +18,15 @@ class NotificationScheduler(context: Context) {
             .build()
     }
 
-    fun scheduleNotification(notifId: Int, notifTime: Long, notif: Notification) {
-        Log.e("NotificationScheduler", "Scheduling notification for $notifTime at ${Calendar.getInstance().timeInMillis}")
+    fun scheduleNotificationForItem(item: Item) {
+        val notif = createNotification(item.name)
+
         val intent = Intent(appContext, NotificationPublisher::class.java)
-        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, notifId)
+        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, item.id)
         intent.putExtra(NotificationPublisher.NOTIFICATION_CONTENT, notif)
         val pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.set(AlarmManager.RTC, notifTime, pendingIntent)
+        alarmManager.set(AlarmManager.RTC, item.time * 1000, pendingIntent)
     }
 }

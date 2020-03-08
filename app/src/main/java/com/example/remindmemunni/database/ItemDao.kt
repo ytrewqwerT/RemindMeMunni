@@ -13,6 +13,9 @@ interface ItemDao {
     @Query("SELECT * FROM item_table WHERE (:itemId)= id")
     suspend fun getDirectItem(itemId: Int): Item
 
+    @Query("SELECT * FROM item_table WHERE notify = 1")
+    fun getNotifyItems(): List<Item>
+
     @Transaction
     @Query("SELECT * FROM series_table ORDER BY name ASC")
     fun getSeries(): LiveData<List<AggregatedSeries>>
