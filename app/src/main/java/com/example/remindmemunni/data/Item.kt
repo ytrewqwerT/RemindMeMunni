@@ -37,7 +37,7 @@ data class Item(
         else -> ""
     }
 
-    fun getDateString(): String = getDateString(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy"))
+    fun getDateString(): String = getDateString(DateTimeFormatter.ofPattern("EEEE, d MMMM - HH:mm"))
     fun getDateString(formatter: DateTimeFormatter): String {
         if (time == 0L) return ""
         val offset = OffsetDateTime.now().offset
