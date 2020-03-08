@@ -27,6 +27,6 @@ class NotificationScheduler(context: Context) {
         val pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.set(AlarmManager.RTC, item.time * 1000, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC, item.time * 1000, pendingIntent)
     }
 }
