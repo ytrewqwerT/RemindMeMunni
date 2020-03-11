@@ -19,11 +19,11 @@ class NotificationScheduler(context: Context) {
             .build()
     }
 
-    fun scheduleNotificationForItem(item: Item) {
+    fun scheduleNotificationForItem(notificationId: Int, item: Item) {
         val notif = createNotification(item.name)
 
         val intent = Intent(appContext, NotificationPublisher::class.java)
-        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, item.id)
+        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, notificationId)
         intent.putExtra(NotificationPublisher.NOTIFICATION_CONTENT, notif)
         val pendingIntent = PendingIntent.getBroadcast(appContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 

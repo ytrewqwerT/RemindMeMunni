@@ -15,7 +15,7 @@ class NotificationService : JobIntentService() {
             )
         val itemDao = ItemRoomDatabase.getDatabase(applicationContext).itemDao()
         val items = itemDao.getNotifyItems()
-        for (item in items) { scheduler.scheduleNotificationForItem(item) }
+        for (item in items) { scheduler.scheduleNotificationForItem(item.id, item) }
     }
 
     companion object {
