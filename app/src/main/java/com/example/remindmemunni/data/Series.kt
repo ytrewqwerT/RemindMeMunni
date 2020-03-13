@@ -54,10 +54,9 @@ data class Series (
 
     fun hasFilterText(filter: String): Boolean {
         val lowerFilter = filter.toLowerCase(Locale.getDefault())
-        return if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) {
-            true
-        } else {
-            category.toLowerCase(Locale.getDefault()).contains(lowerFilter)
-        }
+        if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
+        if (category.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
+        if (notify && "notification".contains(lowerFilter)) return true
+        return false
     }
 }
