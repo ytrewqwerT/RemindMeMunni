@@ -2,60 +2,49 @@ package com.example.remindmemunni.common
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.remindmemunni.itemslist.ItemsFragment
 import com.example.remindmemunni.serieslist.SeriesFragment
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import java.time.LocalDateTime
 
-class ItemPagerAdapter(fm: FragmentManager)
-    : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class ItemPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
-    private val overdueItemsFragment by lazy {
-        ItemsFragment().apply {
-            val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-                .toEpoch()
-            val bundle = Bundle()
-            bundle.putLong(ItemsFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
-            arguments = bundle
-        }
-    }
-    private val upcomingItemsFragment by lazy {
-        ItemsFragment().apply {
-            val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-                .toEpoch()
-            val bundle = Bundle()
-            bundle.putLong(ItemsFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
-            arguments = bundle
-        }
-    }
-    private val seriesFragment by lazy { SeriesFragment() }
+    override fun getItemCount(): Int = NUM_PAGES
 
-    override fun getCount(): Int =
-        NUM_PAGES
-
-    override fun getItem(position: Int): Fragment {
+    override fun createFragment(position: Int): Fragment {
         return when (position) {
-            POS_PAST_ITEMS -> overdueItemsFragment
-            POS_FUTURE_ITEMS -> upcomingItemsFragment
-            POS_SERIES -> seriesFragment
-            else -> upcomingItemsFragment
+            POS_PAST_ITEMS -> overdueItemsFragment()
+            POS_FUTURE_ITEMS -> upcomingItemsFragment()
+            POS_SERIES -> seriesFragment()
+            else -> upcomingItemsFragment()
         }
     }
 
-    override fun getPageTitle(position: Int): CharSequence? = when (position) {
-        POS_PAST_ITEMS -> "Overdue"
-        POS_FUTURE_ITEMS -> "Upcoming"
-        POS_SERIES -> "Series"
-        else -> "???"
+    private fun overdueItemsFragment() = ItemsFragment().apply {
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
+            .toEpoch()
+        val bundle = Bundle()
+        bundle.putLong(ItemsFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
+        arguments = bundle
     }
 
-    fun setFilter(filterText: String?) {
-        overdueItemsFragment.setFilter(filterText)
-        upcomingItemsFragment.setFilter(filterText)
-        seriesFragment.setFilter(filterText)
+    private fun upcomingItemsFragment() = ItemsFragment().apply {
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
+            .toEpoch()
+        val bundle = Bundle()
+        bundle.putLong(ItemsFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
+        arguments = bundle
     }
+
+    private fun seriesFragment() = SeriesFragment()
+
+//    fun setFilter(filterText: String?) {
+//        overdueItemsFragment.setFilter(filterText)
+//        upcomingItemsFragment.setFilter(filterText)
+//        seriesFragment.setFilter(filterText)
+//    }
 
     companion object {
         const val NUM_PAGES = 3

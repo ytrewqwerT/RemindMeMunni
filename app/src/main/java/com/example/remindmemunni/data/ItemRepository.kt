@@ -84,6 +84,8 @@ class ItemRepository(
         itemDao.insert(series.series)
     }
 
+    fun getCategories(): LiveData<List<String>> = itemDao.getCategories()
+
     suspend fun delete(item: Item) { itemDao.delete(item) }
     suspend fun delete(series: Series) { itemDao.delete(series) }
 }

@@ -29,6 +29,11 @@ interface ItemDao {
     @Query("SELECT * FROM item_table WHERE (:seriesId)= seriesId ORDER BY time ASC")
     fun getItemsInSeries(seriesId: Int): LiveData<List<Item>>
 
+    @Query("SELECT DISTINCT category from item_table " +
+            "UNION " +
+            "SELECT DISTINCT category from series_table")
+    fun getCategories(): LiveData<List<String>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Item): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.databinding.ActivityMainBinding
@@ -27,6 +27,8 @@ import com.example.remindmemunni.series.SeriesActivity
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
 import com.google.android.material.slider.Slider
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,11 +37,10 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityMainBinding
     private val itemPagerAdapter by lazy {
-        ItemPagerAdapter(
-            supportFragmentManager
-        )
+        ItemPagerAdapter(this)
     }
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager2: ViewPager2
+    private lateinit var tabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +51,20 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        viewPager = findViewById(R.id.pager)
-        viewPager.adapter = itemPagerAdapter
+        viewPager2 = findViewById(R.id.pager)
+        tabLayout = findViewById(R.id.pager_tabs)
+        viewPager2.adapter = itemPagerAdapter
+        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+            tab.text = when (position) {
+                ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
+                ItemPagerAdapter.POS_SERIES -> "Series"
+                else -> "???"
+            }
+        }.attach()
+
         // Force-attaches all pages to activity to allow all-page search functionality
-        viewPager.offscreenPageLimit = ItemPagerAdapter.NUM_PAGES
+//        viewPager.offscreenPageLimit = ItemPagerAdapter.NUM_PAGES
 
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->
@@ -101,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                itemPagerAdapter.setFilter(newText)
+//                itemPagerAdapter.setFilter(newText)
                 return true
             }
 
@@ -111,7 +122,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.add_button -> {
-            when (viewPager.currentItem) {
+            when (viewPager2.currentItem) {
                 ItemPagerAdapter.POS_PAST_ITEMS -> {
                     val intent = Intent(this, NewItemActivity::class.java)
                     startActivity(intent)
@@ -128,7 +139,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> Log.w(
                     "MainActivity",
-                    "No add action associated to PagerAdapter page ${viewPager.currentItem}"
+                    "No add action associated to PagerAdapter page ${viewPager2.currentItem}"
                 )
             }
             true
