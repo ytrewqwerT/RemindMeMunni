@@ -63,9 +63,6 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        // Force-attaches all pages to activity to allow all-page search functionality
-//        viewPager.offscreenPageLimit = ItemPagerAdapter.NUM_PAGES
-
         val endPointSlider = findViewById<Slider>(R.id.endpoint_slider)
         endPointSlider.addOnChangeListener { _, value, _ ->
             viewModel.monthsOffset = value.toInt()
@@ -112,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-//                itemPagerAdapter.setFilter(newText)
+                viewModel.filterText.value = newText
                 return true
             }
 

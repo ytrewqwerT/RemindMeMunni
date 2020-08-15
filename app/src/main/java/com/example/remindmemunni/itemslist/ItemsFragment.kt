@@ -5,14 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.data.Item
+import com.example.remindmemunni.main.MainViewModel
 import com.example.remindmemunni.newitem.NewItemActivity
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +27,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private val recyclerViewAdapter by lazy {
         CustomRecyclerViewAdapter<Item>(
@@ -67,6 +71,11 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             this.addItemDecoration(decoration)
             registerForContextMenu(this)
         }
+
+        mainViewModel.filterText.observe(viewLifecycleOwner) {
+            viewModel.setFilter(it)
+        }
+
         return contentView
     }
 
@@ -119,10 +128,6 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
                 viewModel.delete(itemId)
             }
         }
-    }
-
-    fun setFilter(filterText: String?) {
-        viewModel.setFilter(filterText)
     }
 
     companion object {

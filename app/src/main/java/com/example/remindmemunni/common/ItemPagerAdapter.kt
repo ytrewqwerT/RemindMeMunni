@@ -40,12 +40,6 @@ class ItemPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     private fun seriesFragment() = SeriesFragment()
 
-//    fun setFilter(filterText: String?) {
-//        overdueItemsFragment.setFilter(filterText)
-//        upcomingItemsFragment.setFilter(filterText)
-//        seriesFragment.setFilter(filterText)
-//    }
-
     companion object {
         const val NUM_PAGES = 3
 

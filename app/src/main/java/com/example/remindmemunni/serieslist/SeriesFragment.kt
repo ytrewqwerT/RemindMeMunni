@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
+import com.example.remindmemunni.main.MainViewModel
 import com.example.remindmemunni.newseries.NewSeriesActivity
 import com.example.remindmemunni.series.SeriesActivity
 import com.example.remindmemunni.utils.InjectorUtils
@@ -25,6 +27,7 @@ class SeriesFragment : Fragment(),
     private val viewModel: SeriesListViewModel by activityViewModels {
         InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
     }
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
@@ -56,6 +59,11 @@ class SeriesFragment : Fragment(),
             this.addItemDecoration(decoration)
             registerForContextMenu(this)
         }
+
+        mainViewModel.filterText.observe(viewLifecycleOwner) {
+            viewModel.setFilter(it)
+        }
+
         return contentView
     }
 
@@ -112,9 +120,5 @@ class SeriesFragment : Fragment(),
         val intent = Intent(activity, SeriesActivity::class.java)
         intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
         startActivity(intent)
-    }
-
-    fun setFilter(filterText: String?) {
-        viewModel.setFilter(filterText)
     }
 }

@@ -24,6 +24,8 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     val allItems = itemRepository.allItems
     val allSeries = itemRepository.allSeries
 
+    val filterText = MutableLiveData<String?>()
+
     init {
         updateMunniCalc()
     }
