@@ -27,7 +27,9 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels {
+        InjectorUtils.provideMainViewModelFactory(requireActivity())
+    }
 
     private val recyclerViewAdapter by lazy {
         CustomRecyclerViewAdapter<Item>(
