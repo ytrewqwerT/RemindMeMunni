@@ -37,6 +37,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -53,9 +57,13 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidxLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.androidxLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidxLifecycleVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.androidxNavigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.androidxNavigationVersion"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.room:room-ktx:$rootProject.roomVersion"
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
 
     testImplementation 'junit:junit:4.12'
 

@@ -1,0 +1,158 @@
+package com.example.remindmemunni.main
+
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.remindmemunni.R
+import com.example.remindmemunni.common.ItemPagerAdapter
+import com.example.remindmemunni.databinding.FragmentMainBinding
+import com.example.remindmemunni.newitem.NewItemActivity
+import com.example.remindmemunni.newseries.NewSeriesActivity
+import com.example.remindmemunni.series.SeriesActivity
+import com.example.remindmemunni.utils.InjectorUtils
+import com.example.remindmemunni.utils.toStringTrimmed
+import com.google.android.material.tabs.TabLayoutMediator
+
+class MainFragment : Fragment() {
+    private var binding: FragmentMainBinding? = null
+    private val viewModel: MainViewModel by viewModels {
+        InjectorUtils.provideMainViewModelFactory(requireContext())
+    }
+
+    private val itemPagerAdapter by lazy { ItemPagerAdapter(this) }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding?.viewModel = viewModel
+        binding?.lifecycleOwner = viewLifecycleOwner
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding?.let { binding ->
+            binding.pager.adapter = itemPagerAdapter
+            TabLayoutMediator(binding.pagerTabs, binding.pager) { tab, position ->
+                tab.text = when (position) {
+                    ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
+                    ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
+                    ItemPagerAdapter.POS_SERIES -> "Series"
+                    else -> "???"
+                }
+            }.attach()
+
+            binding.endpointSlider.addOnChangeListener { _, value, _ ->
+                viewModel.monthsOffset = value.toInt()
+            }
+
+            binding.curMunniText.setOnKeyListener { _, keyCode, _ ->
+                when (keyCode) {
+                    KeyEvent.KEYCODE_ENTER -> {
+                        viewModel.curMunni.value = binding.curMunniText.text.toString().toDoubleOrNull()
+                        binding.curMunniText.clearFocus()
+                        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        imm?.hideSoftInputFromWindow(binding.curMunniText.windowToken, 0)
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            viewModel.curMunni.observe(viewLifecycleOwner) {
+                activity?.title = getString(R.string.app_name) + ": \$${it.toStringTrimmed()}"
+                binding.curMunniText.setText(it.toStringTrimmed())
+                viewModel.updateMunniCalc()
+            }
+
+            viewModel.allItems.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
+            viewModel.allSeries.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+
+        val searchView = menu.findItem(R.id.search_button).actionView as SearchView
+        searchView.isSubmitButtonEnabled = false
+        searchView.queryHint = getString(R.string.filter_hint)
+        searchView.maxWidth = 900
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return onQueryTextChange(query)
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.filterText.value = newText
+                return true
+            }
+
+        })
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.add_button -> {
+            when (binding?.pager?.currentItem) {
+                ItemPagerAdapter.POS_PAST_ITEMS -> {
+                    val intent = Intent(context, NewItemActivity::class.java)
+                    startActivity(intent)
+                }
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> {
+                    val intent = Intent(context, NewItemActivity::class.java)
+                    startActivity(intent)
+                }
+                ItemPagerAdapter.POS_SERIES -> {
+                    val intent = Intent(context, NewSeriesActivity::class.java)
+                    startActivityForResult(intent,
+                        NEW_SERIES_REQUEST
+                    )
+                }
+                else -> Log.w(
+                    "MainActivity",
+                    "No add action associated to PagerAdapter page ${binding?.pager?.currentItem}"
+                )
+            }
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            NEW_SERIES_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val newSeriesId = data?.getIntExtra(NewSeriesActivity.EXTRA_SERIES_ID, 0) ?: 0
+                    if (newSeriesId != 0) {
+                        val intent = Intent(context, SeriesActivity::class.java)
+                        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, newSeriesId)
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val NEW_SERIES_REQUEST = 1
+    }
+}

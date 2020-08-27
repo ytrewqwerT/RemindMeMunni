@@ -2,14 +2,13 @@ package com.example.remindmemunni.common
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.remindmemunni.itemslist.ItemsFragment
 import com.example.remindmemunni.serieslist.SeriesFragment
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import java.time.LocalDateTime
 
-class ItemPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
 
     override fun getItemCount(): Int = NUM_PAGES
 

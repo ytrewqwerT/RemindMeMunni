@@ -29,9 +29,7 @@ class SeriesFragment : Fragment(),
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
-        (CustomRecyclerViewAdapter<AggregatedSeries>(
-        this
-    ))
+        CustomRecyclerViewAdapter<AggregatedSeries>(this)
     }
     private lateinit var contentView: View
 
