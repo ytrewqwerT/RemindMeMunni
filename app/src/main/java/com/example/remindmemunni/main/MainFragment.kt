@@ -28,6 +28,11 @@ class MainFragment : Fragment() {
 
     private val itemPagerAdapter by lazy { ItemPagerAdapter(this) }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
