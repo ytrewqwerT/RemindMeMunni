@@ -31,14 +31,14 @@ class NewItemViewModel(
     private var _time = PrimitiveDateTime()
     private var seriesId: Int = 0
 
-    val name = MutableLiveData<String>("")
-    val cost = MutableLiveData<String>("")
-    val costType = MutableLiveData<String>("")
-    val timeText = MutableLiveData<String>("")
-    val series = MutableLiveData<String>("")
-    val incSeriesNum = MutableLiveData<Boolean>(false)
-    val category = MutableLiveData<String>("")
-    val notify = MutableLiveData<Boolean>(false)
+    val name = MutableLiveData("")
+    val cost = MutableLiveData("")
+    val costType = MutableLiveData("")
+    val timeText = MutableLiveData("")
+    val series = MutableLiveData("")
+    val incSeriesNum = MutableLiveData(false)
+    val category = MutableLiveData("")
+    val notify = MutableLiveData(false)
 
     init {
         allSeries = itemRepository.allSeries

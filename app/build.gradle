@@ -51,6 +51,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidxLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.androidxLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidxLifecycleVersion"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.room:room-ktx:$rootProject.roomVersion"

@@ -11,8 +11,6 @@ import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.DatePickerFragment
 import com.example.remindmemunni.common.TimePickerFragment
@@ -79,17 +77,17 @@ class NewItemActivity
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setSeries(seriesSpinnerAdapter.getItem(position))
         }
-        viewModel.allSeries.observe(this, Observer {series ->
+        viewModel.allSeries.observe(this) {series ->
             seriesSpinnerAdapter.clear()
             seriesSpinnerAdapter.add(dummySeries)
             seriesSpinnerAdapter.addAll(series)
-        })
+        }
 
         val checkBox = findViewById<CheckBox>(R.id.series_increment)
-        viewModel.series.observe(this, Observer {
+        viewModel.series.observe(this) {
             checkBox.isEnabled = it.isNotEmpty()
             checkBox.isChecked = it.isNotEmpty()
-        })
+        }
 
         val categoryEditText = findViewById<AutoCompleteTextView>(R.id.category_input_field)
         val categoryEditTextAdapter = ArrayAdapter<String>(this, R.layout.dropdown_menu_popup_item)
@@ -105,7 +103,7 @@ class NewItemActivity
         return true
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean  = when (menuItem?.itemId) {
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean  = when (menuItem.itemId) {
         android.R.id.home -> {
             onBackPressed()
             true

@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.example.remindmemunni.R
 import com.example.remindmemunni.itemslist.ItemsFragment
 import com.example.remindmemunni.newitem.NewItemActivity
@@ -30,12 +29,12 @@ class SeriesActivity : AppCompatActivity() {
 
         seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
 
-        viewModel.series.observe(this, Observer { series ->
+        viewModel.series.observe(this) { series ->
             title = series?.series?.name
-        })
+        }
 
         val recurrenceTextView = findViewById<TextView>(R.id.subtitle)
-        viewModel.series.observe(this, Observer {
+        viewModel.series.observe(this) {
             val series = it.series
             var text = series.getCostString()
             text += if (text.isNotEmpty()) " repeating " else "Repeats "
@@ -43,7 +42,7 @@ class SeriesActivity : AppCompatActivity() {
             val recurrenceText = series.getRecurrenceString()
             text += if (recurrenceText.isNotEmpty()) "every $recurrenceText" else "never"
             recurrenceTextView.text = text
-        })
+        }
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.add(R.id.series_list_fragment,
@@ -58,7 +57,7 @@ class SeriesActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean = when (menuItem?.itemId){
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId){
         android.R.id.home -> {
             finish()
             true

@@ -14,8 +14,8 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     val items: LiveData<List<Item>> = _items
     val newItemEvent = SingleLiveEvent<Int>()
 
-    val lowerTimeBound = MutableLiveData<Long>(0L)
-    val upperTimeBound = MutableLiveData<Long>(Long.MAX_VALUE)
+    val lowerTimeBound = MutableLiveData(0L)
+    val upperTimeBound = MutableLiveData(Long.MAX_VALUE)
 
     private var filterString: String = ""
     private val _filteredItems = MediatorLiveData<List<Item>>()

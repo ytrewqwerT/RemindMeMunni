@@ -7,8 +7,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,17 +39,17 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.filteredItems.observe(this, Observer { items ->
+        viewModel.filteredItems.observe(this) { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
-        })
+        }
 
-        viewModel.newItemEvent.observe(this, Observer { itemId ->
+        viewModel.newItemEvent.observe(this) { itemId ->
             val intent = Intent(activity, NewItemActivity::class.java)
             intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, itemId)
             startActivityForResult(intent,
                 SAVE_ITEM_OR_DELETE
             )
-        })
+        }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
         val upperBound = arguments?.getLong(EXTRA_UPPER_TIME_BOUND, Long.MAX_VALUE) ?: Long.MAX_VALUE

@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.RecurrenceSelectFragment
 import com.example.remindmemunni.common.UnfilteredArrayAdapter
@@ -75,7 +74,7 @@ class NewSeriesActivity : AppCompatActivity(),
         return true
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem?): Boolean = when (menuItem?.itemId) {
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
         android.R.id.home -> {
             finish()
             true

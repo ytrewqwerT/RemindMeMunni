@@ -14,11 +14,11 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     private var mPending = AtomicBoolean(false)
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-        super.observe(owner, Observer {
+        super.observe(owner) {
             if (mPending.compareAndSet(true, false)) {
                 observer.onChanged(it)
             }
-        })
+        }
     }
 
     override fun setValue(t: T?) {

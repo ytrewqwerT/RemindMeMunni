@@ -16,7 +16,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
@@ -83,14 +82,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.curMunni.observe(this, Observer {
+        viewModel.curMunni.observe(this) {
             title = getString(R.string.app_name) + ": \$${it.toStringTrimmed()}"
             munniEditText.setText(it.toStringTrimmed())
             viewModel.updateMunniCalc()
-        })
+        }
         
-        viewModel.allItems.observe(this, Observer { viewModel.updateMunniCalc() })
-        viewModel.allSeries.observe(this, Observer { viewModel.updateMunniCalc() })
+        viewModel.allItems.observe(this) { viewModel.updateMunniCalc() }
+        viewModel.allSeries.observe(this) { viewModel.updateMunniCalc() }
 
         createNotificationChannel()
     }
@@ -117,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.add_button -> {
             when (viewPager2.currentItem) {
                 ItemPagerAdapter.POS_PAST_ITEMS -> {

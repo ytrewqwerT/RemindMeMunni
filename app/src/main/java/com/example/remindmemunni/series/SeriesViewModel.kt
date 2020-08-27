@@ -7,7 +7,7 @@ import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.ItemRepository
 
 class SeriesViewModel(
-    private val itemRepository: ItemRepository,
+    itemRepository: ItemRepository,
     seriesId: Int
 ) : ViewModel() {
 

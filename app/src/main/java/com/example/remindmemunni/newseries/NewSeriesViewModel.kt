@@ -25,15 +25,15 @@ class NewSeriesViewModel(
     private var recurMonths: Int = 0
     private var recurDays: Int = 0
 
-    val name = MutableLiveData<String>("")
-    val cost = MutableLiveData<String>("")
-    val costType = MutableLiveData<String>("")
-    val nextNumInSeries = MutableLiveData<String>("")
-    val numInSeriesPrefix = MutableLiveData<String>("")
-    val recurrence = MutableLiveData<String>("")
-    val autoCreateItems = MutableLiveData<Boolean>(true)
-    val category = MutableLiveData<String>("")
-    val notify = MutableLiveData<Boolean>(false)
+    val name = MutableLiveData("")
+    val cost = MutableLiveData("")
+    val costType = MutableLiveData("")
+    val nextNumInSeries = MutableLiveData("")
+    val numInSeriesPrefix = MutableLiveData("")
+    val recurrence = MutableLiveData("")
+    val autoCreateItems = MutableLiveData(true)
+    val category = MutableLiveData("")
+    val notify = MutableLiveData(false)
 
     init {
         setCostType("Debit")

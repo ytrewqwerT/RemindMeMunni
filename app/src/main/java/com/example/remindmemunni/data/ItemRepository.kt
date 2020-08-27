@@ -23,7 +23,7 @@ class ItemRepository(
 
     // TODO: Either leave preference as Float and convert all other munnis to Float
     //  or hack a solution to store doubles in preferences.
-    val munni = MutableLiveData<Double>(sharedPref.getFloat("MUNNI", 0F).toDouble())
+    val munni = MutableLiveData(sharedPref.getFloat("MUNNI", 0F).toDouble())
     var munniCalcEndMonth: Int = sharedPref.getInt("CALC_MONTH", 0)
         set(value) {
             field = value
