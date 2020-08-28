@@ -13,12 +13,31 @@
         <action
             android:id="@+id/action_mainFragment_to_seriesFragment"
             app:destination="@id/seriesFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_newItemFragment"
+            app:destination="@id/newItemFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
         android:name="com.example.remindmemunni.series.SeriesFragment"
         android:label="SeriesFragment"
         tools:layout="@layout/fragment_series" >
+        <argument
+            android:name="SERIES_ID"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_seriesFragment_to_newItemFragment"
+            app:destination="@id/newItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newItemFragment"
+        android:name="com.example.remindmemunni.newitem.NewItemFragment"
+        android:label="NewItemFragment" >
+        <argument
+            android:name="ITEM_ID"
+            app:argType="integer"
+            android:defaultValue="0" />
         <argument
             android:name="SERIES_ID"
             app:argType="integer"

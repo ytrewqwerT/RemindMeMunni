@@ -1,12 +1,13 @@
 package com.example.remindmemunni.itemslist
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.main.MainViewModel
-import com.example.remindmemunni.newitem.NewItemActivity
+import com.example.remindmemunni.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
@@ -30,9 +31,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     }
 
     private val recyclerViewAdapter by lazy {
-        CustomRecyclerViewAdapter<Item>(
-            null
-        )
+        CustomRecyclerViewAdapter<Item>(null)
     }
     private lateinit var contentView: View
 
@@ -44,11 +43,17 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
 
         viewModel.newItemEvent.observe(this) { itemId ->
-            val intent = Intent(activity, NewItemActivity::class.java)
-            intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, itemId)
-            startActivityForResult(intent,
-                SAVE_ITEM_OR_DELETE
+            view?.findNavController()?.navigate(
+                R.id.newItemFragment,
+                bundleOf(NewItemFragment.EXTRA_ITEM_ID to itemId)
             )
+        }
+
+        setFragmentResultListener(NewItemFragment.REQUEST_SUCCESSFUL) { _, result ->
+            if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
+                val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
+                viewModel.delete(itemId)
+            }
         }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
@@ -95,9 +100,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             R.id.item_edit -> {
                 val item = recyclerViewAdapter.contextMenuItem
                 if (item != null) {
-                    val intent = Intent(activity, NewItemActivity::class.java)
-                    intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, item.id)
-                    startActivity(intent)
+                    view?.findNavController()?.navigate(
+                        R.id.newItemFragment,
+                        bundleOf(NewItemFragment.EXTRA_ITEM_ID to item.id)
+                    )
                 }
                 true
             }
@@ -121,17 +127,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SAVE_ITEM_OR_DELETE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                val itemId = data?.getIntExtra(NewItemActivity.EXTRA_ITEM_ID, 0) ?: 0
-                viewModel.delete(itemId)
-            }
-        }
-    }
-
     companion object {
-        const val SAVE_ITEM_OR_DELETE = 1
         const val EXTRA_LOWER_TIME_BOUND = "LOWER_TIME_BOUND"
         const val EXTRA_UPPER_TIME_BOUND = "UPPER_TIME_BOUND"
 

@@ -1,135 +1,133 @@
 package com.example.remindmemunni.newitem
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import android.widget.*
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.DatePickerFragment
 import com.example.remindmemunni.common.TimePickerFragment
 import com.example.remindmemunni.common.UnfilteredArrayAdapter
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Series
-import com.example.remindmemunni.databinding.ActivityNewItemBinding
+import com.example.remindmemunni.databinding.FragmentNewItemBinding
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.PrimitiveDateTime
 
-class NewItemActivity
-    : AppCompatActivity()
+class NewItemFragment
+    : Fragment()
     , TimePickerDialog.OnTimeSetListener
     , DatePickerDialog.OnDateSetListener {
 
-    private lateinit var binding: ActivityNewItemBinding
+    private var binding: FragmentNewItemBinding? = null
     private val viewModel: NewItemViewModel by viewModels {
-        InjectorUtils.provideNewItemViewModelFactory(this, itemId)
+        InjectorUtils.provideNewItemViewModelFactory(requireContext(), itemId)
     }
 
     private val time = PrimitiveDateTime()
 
     private var itemId: Int = 0
+    private var seriesId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = "New Item"
+        setHasOptionsMenu(true)
 
-        itemId = intent.getIntExtra(EXTRA_ITEM_ID, 0)
-        val seriesId = intent.getIntExtra(EXTRA_SERIES_ID, 0)
+        itemId = arguments?.getInt(EXTRA_ITEM_ID, 0) ?: 0
+        seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
 
-        if (itemId != 0) title = "Edit Item"
+        // Assume the item creation is unsuccessful; later changed to true upon success.
+        setFragmentResult("requestKey", bundleOf(RESULT_SUCCESS to false))
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentNewItemBinding.inflate(inflater, container, false)
+        binding?.viewModel = viewModel
+        binding?.lifecycleOwner = viewLifecycleOwner
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        activity?.title = "New Item"
+
+        if (itemId != 0) activity?.title = "Edit Item"
         if (seriesId != 0) viewModel.setSeries(seriesId)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_new_item)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-
-        setSupportActionBar(findViewById(R.id.toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val typeSpinner = findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
+        val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
         val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
-            this, R.array.cost_types_array, R.layout.dropdown_menu_popup_item
+            requireContext(), R.array.cost_types_array, R.layout.dropdown_menu_popup_item
         )
         typeSpinner.setAdapter(typeSpinnerAdapter)
         typeSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setCostType(typeSpinnerAdapter.getItem(position))
         }
 
-        val timeEditText = findViewById<EditText>(R.id.time_input_field)
+        val timeEditText = view.findViewById<EditText>(R.id.time_input_field)
         timeEditText.setOnClickListener {
-            DatePickerFragment()
-                .show(supportFragmentManager, "date_dialog")
+            DatePickerFragment().show(childFragmentManager, "date_dialog")
         }
 
-        val seriesSpinner = findViewById<AutoCompleteTextView>(R.id.series_dropdown)
-        val seriesSpinnerAdapter =
-            UnfilteredArrayAdapter<AggregatedSeries>(
-                this, R.layout.dropdown_menu_popup_item, ArrayList()
-            )
+        val seriesSpinner = view.findViewById<AutoCompleteTextView>(R.id.series_dropdown)
+        val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
+            requireContext(), R.layout.dropdown_menu_popup_item, ArrayList()
+        )
         val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
         seriesSpinner.setAdapter(seriesSpinnerAdapter)
         seriesSpinner.setOnItemClickListener { _, _, position, _ ->
             viewModel.setSeries(seriesSpinnerAdapter.getItem(position))
         }
-        viewModel.allSeries.observe(this) {series ->
+        viewModel.allSeries.observe(viewLifecycleOwner) {series ->
             seriesSpinnerAdapter.clear()
             seriesSpinnerAdapter.add(dummySeries)
             seriesSpinnerAdapter.addAll(series)
         }
 
-        val checkBox = findViewById<CheckBox>(R.id.series_increment)
-        viewModel.series.observe(this) {
+        val checkBox = view.findViewById<CheckBox>(R.id.series_increment)
+        viewModel.series.observe(viewLifecycleOwner) {
             checkBox.isEnabled = it.isNotEmpty()
             checkBox.isChecked = it.isNotEmpty()
         }
 
-        val categoryEditText = findViewById<AutoCompleteTextView>(R.id.category_input_field)
-        val categoryEditTextAdapter = ArrayAdapter<String>(this, R.layout.dropdown_menu_popup_item)
+        val categoryEditText = view.findViewById<AutoCompleteTextView>(R.id.category_input_field)
+        val categoryEditTextAdapter = ArrayAdapter<String>(requireContext(), R.layout.dropdown_menu_popup_item)
         categoryEditText.setAdapter(categoryEditTextAdapter)
-        viewModel.categories.observe(this) {
+        viewModel.categories.observe(viewLifecycleOwner) {
             categoryEditTextAdapter.clear()
             categoryEditTextAdapter.addAll(it)
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_new, menu)
-        return true
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_new, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean  = when (menuItem.itemId) {
-        android.R.id.home -> {
-            onBackPressed()
-            true
-        }
         R.id.done_button -> {
             val itemCreationResult = viewModel.createItem()
             if (itemCreationResult != null) {
                 Toast.makeText(
-                    applicationContext,
+                    requireContext(),
                     itemCreationResult,
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                setResult(Activity.RESULT_OK)
-                finish()
+                setFragmentResult("requestKey", bundleOf(RESULT_SUCCESS to true))
+                view?.findNavController()?.popBackStack()
             }
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
-    }
-
-    override fun onBackPressed() {
-        val resultIntent = Intent()
-        resultIntent.putExtra(EXTRA_ITEM_ID, itemId)
-        setResult(Activity.RESULT_CANCELED, resultIntent)
-        finish()
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
@@ -138,7 +136,7 @@ class NewItemActivity
         time.mDayOfMonth = dayOfMonth
         val timeDialog =
             TimePickerFragment()
-        timeDialog.show(supportFragmentManager, "time_dialog")
+        timeDialog.show(childFragmentManager, "time_dialog")
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
@@ -148,6 +146,8 @@ class NewItemActivity
     }
 
     companion object {
+        const val REQUEST_SUCCESSFUL = "SUCCESSFUL"
+        const val RESULT_SUCCESS = "SUCCESS"
         const val EXTRA_ITEM_ID = "ITEM_ID"
         const val EXTRA_SERIES_ID = "SERIES_ID"
     }

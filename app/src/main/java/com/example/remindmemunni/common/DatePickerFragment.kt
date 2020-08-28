@@ -20,10 +20,8 @@ class DatePickerFragment : DialogFragment() {
             day = arguments!!.getInt(EXTRA_DAY_OF_MONTH, 0)
         }
 
-        return DatePickerDialog(
-            requireContext(), activity as DatePickerDialog.OnDateSetListener,
-            year, month, day
-        )
+        val parentListener = parentFragment as? DatePickerDialog.OnDateSetListener
+        return DatePickerDialog(requireContext(), parentListener, year, month, day)
     }
 
     companion object {

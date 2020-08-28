@@ -14,7 +14,6 @@ import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.databinding.FragmentMainBinding
-import com.example.remindmemunni.newitem.NewItemActivity
 import com.example.remindmemunni.newseries.NewSeriesActivity
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
@@ -117,19 +116,15 @@ class MainFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.add_button -> {
             when (binding?.pager?.currentItem) {
-                ItemPagerAdapter.POS_PAST_ITEMS -> {
-                    val intent = Intent(context, NewItemActivity::class.java)
-                    startActivity(intent)
-                }
-                ItemPagerAdapter.POS_FUTURE_ITEMS -> {
-                    val intent = Intent(context, NewItemActivity::class.java)
-                    startActivity(intent)
+                ItemPagerAdapter.POS_PAST_ITEMS, ItemPagerAdapter.POS_FUTURE_ITEMS -> {
+                    val action = MainFragmentDirections
+                        .actionMainFragmentToNewItemFragment()
+                    view?.findNavController()?.navigate(action)
+
                 }
                 ItemPagerAdapter.POS_SERIES -> {
                     val intent = Intent(context, NewSeriesActivity::class.java)
-                    startActivityForResult(intent,
-                        NEW_SERIES_REQUEST
-                    )
+                    startActivityForResult(intent, NEW_SERIES_REQUEST)
                 }
                 else -> Log.w(
                     "MainActivity",

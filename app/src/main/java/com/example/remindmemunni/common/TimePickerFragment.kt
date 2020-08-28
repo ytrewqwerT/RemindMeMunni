@@ -18,11 +18,8 @@ class TimePickerFragment : DialogFragment() {
             minute = requireArguments().getInt(EXTRA_MINUTE, 0)
         }
 
-        return TimePickerDialog(
-            context, activity as TimePickerDialog.OnTimeSetListener,
-            hour, minute,
-            false
-        )
+        val parentListener = parentFragment as? TimePickerDialog.OnTimeSetListener
+        return TimePickerDialog(context, parentListener, hour, minute, false)
     }
 
     companion object {

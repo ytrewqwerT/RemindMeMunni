@@ -1,15 +1,14 @@
 package com.example.remindmemunni.series
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.itemslist.ItemsFragment
-import com.example.remindmemunni.newitem.NewItemActivity
 import com.example.remindmemunni.utils.InjectorUtils
 
 class SeriesFragment : Fragment() {
@@ -62,9 +61,9 @@ class SeriesFragment : Fragment() {
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId){
         R.id.add_button -> {
-            val intent = Intent(context, NewItemActivity::class.java)
-            intent.putExtra(NewItemActivity.EXTRA_SERIES_ID, seriesId)
-            startActivity(intent)
+            val action = SeriesFragmentDirections
+                .actionSeriesFragmentToNewItemFragment(SERIESID = seriesId)
+            view?.findNavController()?.navigate(action)
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
