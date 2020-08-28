@@ -16,8 +16,7 @@
 
         <activity android:name=".newseries.NewSeriesActivity" />
         <activity android:name=".newitem.NewItemActivity" />
-        <activity android:name=".series.SeriesActivity" />
-        <activity android:name=".main.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

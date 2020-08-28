@@ -10,12 +10,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.databinding.FragmentMainBinding
 import com.example.remindmemunni.newitem.NewItemActivity
 import com.example.remindmemunni.newseries.NewSeriesActivity
-import com.example.remindmemunni.series.SeriesActivity
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
 import com.google.android.material.tabs.TabLayoutMediator
@@ -26,13 +26,13 @@ class MainFragment : Fragment() {
         InjectorUtils.provideMainViewModelFactory(requireContext())
     }
 
-    private val itemPagerAdapter by lazy { ItemPagerAdapter(this) }
+    private lateinit var itemPagerAdapter: ItemPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setHasOptionsMenu(true)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,6 +46,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        itemPagerAdapter = ItemPagerAdapter(this)
         binding?.let { binding ->
             binding.pager.adapter = itemPagerAdapter
             TabLayoutMediator(binding.pagerTabs, binding.pager) { tab, position ->
@@ -148,9 +149,9 @@ class MainFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK) {
                     val newSeriesId = data?.getIntExtra(NewSeriesActivity.EXTRA_SERIES_ID, 0) ?: 0
                     if (newSeriesId != 0) {
-                        val intent = Intent(context, SeriesActivity::class.java)
-                        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, newSeriesId)
-                        startActivity(intent)
+                        val action = MainFragmentDirections
+                            .actionMainFragmentToSeriesFragment(newSeriesId)
+                        view?.findNavController()?.navigate(action)
                     }
                 }
             }

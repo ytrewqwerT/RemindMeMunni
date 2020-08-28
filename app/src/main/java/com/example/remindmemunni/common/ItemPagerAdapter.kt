@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.remindmemunni.itemslist.ItemsFragment
-import com.example.remindmemunni.serieslist.SeriesFragment
+import com.example.remindmemunni.serieslist.SeriesListFragment
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import java.time.LocalDateTime
 
@@ -14,14 +14,14 @@ class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            POS_PAST_ITEMS -> overdueItemsFragment()
-            POS_FUTURE_ITEMS -> upcomingItemsFragment()
-            POS_SERIES -> seriesFragment()
-            else -> upcomingItemsFragment()
+            POS_PAST_ITEMS -> overdueItemsListFragment()
+            POS_FUTURE_ITEMS -> upcomingItemsListFragment()
+            POS_SERIES -> seriesListFragment()
+            else -> upcomingItemsListFragment()
         }
     }
 
-    private fun overdueItemsFragment() = ItemsFragment().apply {
+    private fun overdueItemsListFragment() = ItemsFragment().apply {
         val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
             .toEpoch()
         val bundle = Bundle()
@@ -29,7 +29,7 @@ class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
         arguments = bundle
     }
 
-    private fun upcomingItemsFragment() = ItemsFragment().apply {
+    private fun upcomingItemsListFragment() = ItemsFragment().apply {
         val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
             .toEpoch()
         val bundle = Bundle()
@@ -37,7 +37,7 @@ class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
         arguments = bundle
     }
 
-    private fun seriesFragment() = SeriesFragment()
+    private fun seriesListFragment() = SeriesListFragment()
 
     companion object {
         const val NUM_PAGES = 3

@@ -6,6 +6,7 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,13 +14,13 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
+import com.example.remindmemunni.main.MainFragmentDirections
 import com.example.remindmemunni.main.MainViewModel
 import com.example.remindmemunni.newseries.NewSeriesActivity
-import com.example.remindmemunni.series.SeriesActivity
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
-class SeriesFragment : Fragment(),
+class SeriesListFragment : Fragment(),
     OnListItemInteractionListener<AggregatedSeries> {
 
     private val viewModel: SeriesListViewModel by activityViewModels {
@@ -113,8 +114,8 @@ class SeriesFragment : Fragment(),
     }
 
     override fun onInteraction(item: AggregatedSeries) {
-        val intent = Intent(activity, SeriesActivity::class.java)
-        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
-        startActivity(intent)
+        val action = MainFragmentDirections
+            .actionMainFragmentToSeriesFragment(item.series.id)
+        view?.findNavController()?.navigate(action)
     }
 }
