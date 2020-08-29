@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.databinding.FragmentMainBinding
+import com.example.remindmemunni.newitem.NewItemFragment
 import com.example.remindmemunni.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
@@ -29,15 +30,6 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
-        setFragmentResultListener(NewSeriesFragment.REQUEST_RESULT) { _, result ->
-            val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
-            if (newSeriesId != 0) {
-                val action = MainFragmentDirections
-                    .actionMainFragmentToSeriesFragment(newSeriesId)
-                view?.findNavController()?.navigate(action)
-            }
-        }
     }
 
     override fun onCreateView(
@@ -53,6 +45,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listenForFragmentResults()
         itemPagerAdapter = ItemPagerAdapter(this)
         binding?.let { binding ->
             binding.pager.adapter = itemPagerAdapter
@@ -146,5 +139,23 @@ class MainFragment : Fragment() {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun listenForFragmentResults() {
+        setFragmentResultListener(NewSeriesFragment.REQUEST_RESULT) { _, result ->
+            val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
+            if (newSeriesId != 0) {
+                val action = MainFragmentDirections
+                    .actionMainFragmentToSeriesFragment(newSeriesId)
+                view?.findNavController()?.navigate(action)
+            }
+        }
+
+        setFragmentResultListener(NewItemFragment.REQUEST_RESULT) { _, result ->
+            if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
+                val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
+                if (itemId != 0) viewModel.deleteItem(itemId)
+            }
+        }
     }
 }

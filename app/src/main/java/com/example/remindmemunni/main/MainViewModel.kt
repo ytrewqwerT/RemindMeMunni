@@ -3,8 +3,11 @@ package com.example.remindmemunni.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -53,4 +56,10 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
         _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)} = $remainingMunni"
     }
 
+    private fun deleteItem(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
+    fun deleteItem(item: Int) {
+        if (item != 0) viewModelScope.launch {
+            deleteItem(itemRepository.getDirectItem(item))
+        }
+    }
 }

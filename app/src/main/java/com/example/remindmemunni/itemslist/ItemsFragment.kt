@@ -5,7 +5,6 @@ import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -47,13 +46,6 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
                 R.id.newItemFragment,
                 bundleOf(NewItemFragment.EXTRA_ITEM_ID to itemId)
             )
-        }
-
-        setFragmentResultListener(NewItemFragment.REQUEST_RESULT) { _, result ->
-            if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
-                val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
-                if (itemId != 0) viewModel.delete(itemId)
-            }
         }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L

@@ -5,10 +5,12 @@ import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.itemslist.ItemsFragment
+import com.example.remindmemunni.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 
 class SeriesFragment : Fragment() {
@@ -34,6 +36,7 @@ class SeriesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listenForFragmentResults()
 
         seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
 
@@ -67,6 +70,15 @@ class SeriesFragment : Fragment() {
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
+    }
+
+    private fun listenForFragmentResults() {
+        setFragmentResultListener(NewItemFragment.REQUEST_RESULT) { _, result ->
+            if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
+                val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
+                if (itemId != 0) viewModel.deleteItem(itemId)
+            }
+        }
     }
 
     companion object {
