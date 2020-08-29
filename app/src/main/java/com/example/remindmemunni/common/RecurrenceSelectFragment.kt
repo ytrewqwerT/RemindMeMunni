@@ -58,7 +58,8 @@ class RecurrenceSelectFragment: DialogFragment() {
         super.onAttach(context)
 
         try {
-            listener = context as RecurrenceSelectListener
+            listener = parentFragment as? RecurrenceSelectListener
+                ?: context as RecurrenceSelectListener
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 "$context must implement ${RecurrenceSelectListener::class.simpleName}"
