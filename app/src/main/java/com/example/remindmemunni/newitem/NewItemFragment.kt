@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.DatePickerFragment
@@ -19,6 +20,7 @@ import com.example.remindmemunni.data.Series
 import com.example.remindmemunni.databinding.FragmentNewItemBinding
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import kotlinx.coroutines.launch
 
 class NewItemFragment : Fragment()
     , TimePickerDialog.OnTimeSetListener
@@ -116,16 +118,18 @@ class NewItemFragment : Fragment()
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean  = when (menuItem.itemId) {
         R.id.done_button -> {
-            val itemCreationResult = viewModel.createItem()
-            if (itemCreationResult != null) {
-                Toast.makeText(
-                    requireContext(),
-                    itemCreationResult,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_SUCCESS to true))
-                view?.findNavController()?.popBackStack()
+            lifecycleScope.launch {
+                val itemCreationResult = viewModel.createItem()
+                if (itemCreationResult != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        itemCreationResult,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_SUCCESS to true))
+                    view?.findNavController()?.popBackStack()
+                }
             }
             true
         }

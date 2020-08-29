@@ -1,6 +1,5 @@
 package com.example.remindmemunni.newitem
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Item
@@ -14,7 +13,7 @@ class NewItemViewModel(
     private val itemId: Int = 0
 ) : ViewModel() {
 
-    val allSeries: LiveData<List<AggregatedSeries>>
+    val allSeries: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
 
     private val itemsTransformer: LiveData<List<String>> =
         Transformations.map(itemRepository.allItems) { items ->
@@ -41,7 +40,6 @@ class NewItemViewModel(
     val notify = MutableLiveData(false)
 
     init {
-        allSeries = itemRepository.allSeries
         setCostType("Debit")
 
         _categories.addSource(itemsTransformer) {
@@ -62,7 +60,7 @@ class NewItemViewModel(
         }
     }
 
-    fun setCost(newCost: Double) {
+    private fun setCost(newCost: Double) {
         when {
             newCost == 0.0 -> {
                 cost.value = ""
@@ -119,7 +117,6 @@ class NewItemViewModel(
     }
 
     fun setTime(newTime: PrimitiveDateTime) {
-        Log.d("Nice", "$newTime")
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
@@ -127,7 +124,7 @@ class NewItemViewModel(
     }
     fun clearTime() { setTime(PrimitiveDateTime()) }
 
-    fun createItem(): String? {
+    suspend fun createItem(): String? {
         if (name.value.isNullOrEmpty()) return "Item needs a name!"
 
         var cc = if (cost.value?.isNotEmpty() == true) cost.value!!.toDouble() else 0.0
@@ -138,14 +135,12 @@ class NewItemViewModel(
             id = itemId, seriesId = seriesId, name = name.value!!,
             cost = cc, time = epochTime, category = category.value!!, notify = notify.value!!
         )
-        viewModelScope.launch { itemRepository.insert(item) }
+        itemRepository.insert(item)
 
         if (incSeriesNum.value == true && seriesId != 0) {
-            viewModelScope.launch {
-                val serie = itemRepository.getDirectSerie(seriesId)
-                serie.series.curNum += 1
-                itemRepository.insert(serie.series)
-            }
+            val serie = itemRepository.getDirectSerie(seriesId)
+            serie.series.curNum += 1
+            itemRepository.insert(serie.series)
         }
 
         return null
