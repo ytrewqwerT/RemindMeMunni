@@ -16,7 +16,6 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.RecurrenceSelectFragment
 import com.example.remindmemunni.common.UnfilteredArrayAdapter
 import com.example.remindmemunni.databinding.FragmentNewSeriesBinding
-import com.example.remindmemunni.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -36,6 +35,9 @@ class NewSeriesFragment : Fragment()
         setHasOptionsMenu(true)
 
         seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
+
+        // Assume the series creation is unsuccessful; later changed upon success.
+        setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to 0))
     }
 
     override fun onCreateView(
@@ -92,13 +94,8 @@ class NewSeriesFragment : Fragment()
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    setFragmentResult("requestKey", bundleOf(NewItemFragment.RESULT_SUCCESS to true))
+                    setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to newSeriesId))
                     view?.findNavController()?.popBackStack()
-
-//                    val resultIntent = Intent()
-//                    resultIntent.putExtra(EXTRA_SERIES_ID, newSeriesId)
-//                    setResult(Activity.RESULT_OK, resultIntent)
-//                    finish()
                 }
             }
             true
@@ -111,8 +108,7 @@ class NewSeriesFragment : Fragment()
     }
 
     companion object {
-        const val REQUEST_SUCCESSFUL = "SUCCESSFUL"
-        const val RESULT_SUCCESS = "SUCCESS"
+        const val REQUEST_RESULT = "NEW_SERIES_FRAGMENT_REQUEST_RESULT"
         const val EXTRA_SERIES_ID = "SERIES_ID"
     }
 }

@@ -42,7 +42,11 @@ class NewItemFragment : Fragment()
         seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
 
         // Assume the item creation is unsuccessful; later changed to true upon success.
-        setFragmentResult("requestKey", bundleOf(RESULT_SUCCESS to false))
+        // Also give the unsuccessful item's id for when the user was editing an item.
+        setFragmentResult(
+            REQUEST_RESULT,
+            bundleOf(RESULT_SUCCESS to false, EXTRA_ITEM_ID to itemId)
+        )
     }
 
     override fun onCreateView(
@@ -120,7 +124,7 @@ class NewItemFragment : Fragment()
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                setFragmentResult("requestKey", bundleOf(RESULT_SUCCESS to true))
+                setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_SUCCESS to true))
                 view?.findNavController()?.popBackStack()
             }
             true
@@ -144,7 +148,7 @@ class NewItemFragment : Fragment()
     }
 
     companion object {
-        const val REQUEST_SUCCESSFUL = "SUCCESSFUL"
+        const val REQUEST_RESULT = "NEW_ITEM_FRAGMENT_REQUEST_RESULT"
         const val RESULT_SUCCESS = "SUCCESS"
         const val EXTRA_ITEM_ID = "ITEM_ID"
         const val EXTRA_SERIES_ID = "SERIES_ID"

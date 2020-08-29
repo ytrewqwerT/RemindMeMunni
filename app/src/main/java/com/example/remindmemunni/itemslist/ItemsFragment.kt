@@ -49,10 +49,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             )
         }
 
-        setFragmentResultListener(NewItemFragment.REQUEST_SUCCESSFUL) { _, result ->
+        setFragmentResultListener(NewItemFragment.REQUEST_RESULT) { _, result ->
             if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
                 val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
-                viewModel.delete(itemId)
+                if (itemId != 0) viewModel.delete(itemId)
             }
         }
 

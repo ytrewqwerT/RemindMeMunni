@@ -30,7 +30,7 @@ class MainFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        setFragmentResultListener(NewSeriesFragment.REQUEST_SUCCESSFUL) { _, result ->
+        setFragmentResultListener(NewSeriesFragment.REQUEST_RESULT) { _, result ->
             val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
             if (newSeriesId != 0) {
                 val action = MainFragmentDirections
