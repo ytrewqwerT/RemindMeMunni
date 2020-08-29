@@ -1,9 +1,9 @@
 package com.example.remindmemunni.serieslist
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -75,9 +75,10 @@ class SeriesListFragment : Fragment(),
         R.id.series_edit -> {
             val series = recyclerViewAdapter.contextMenuItem
             if (series != null) {
-                val intent = Intent(activity, NewSeriesFragment::class.java)
-                intent.putExtra(NewSeriesFragment.EXTRA_SERIES_ID, series.series.id)
-                startActivity(intent)
+                view?.findNavController()?.navigate(
+                    R.id.newSeriesFragment,
+                    bundleOf(NewSeriesFragment.EXTRA_SERIES_ID to series.series.id)
+                )
             }
             true
         }
