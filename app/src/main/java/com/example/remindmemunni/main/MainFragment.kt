@@ -72,9 +72,12 @@ class MainFragment : Fragment() {
             binding.curMunniText.setOnKeyListener { _, keyCode, _ ->
                 when (keyCode) {
                     KeyEvent.KEYCODE_ENTER -> {
-                        viewModel.curMunni.value = binding.curMunniText.text.toString().toDoubleOrNull()
+                        viewModel.curMunni.value =
+                            binding.curMunniText.text.toString().toDoubleOrNull()
                         binding.curMunniText.clearFocus()
-                        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                        val imm = context?.getSystemService(
+                            Context.INPUT_METHOD_SERVICE
+                        ) as? InputMethodManager
                         imm?.hideSoftInputFromWindow(binding.curMunniText.windowToken, 0)
 
                         true

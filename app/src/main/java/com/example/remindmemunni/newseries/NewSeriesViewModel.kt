@@ -51,11 +51,11 @@ class NewSeriesViewModel(
             viewModelScope.launch {
                 val series = itemRepository.getDirectSerie(seriesId).series
                 name.value = series.name
-                if (series.cost < 0) {
-                    cost.value = (-series.cost).toString()
+                cost.value = if (series.cost < 0) {
+                    (-series.cost).toString()
                 } else {
-                    cost.value = series.cost.toString()
                     setCostType("Credit")
+                    series.cost.toString()
                 }
                 nextNumInSeries.value = series.curNum.toString()
                 numInSeriesPrefix.value = series.numPrefix
@@ -105,21 +105,5 @@ class NewSeriesViewModel(
             autoCreate = autoCreate, category = category, notify = notify
         )
         return itemRepository.insert(series)
-    }
-
-    class NewSeriesViewModelFactory(
-        private val itemRepository: ItemRepository,
-        private val seriesId: Int
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewSeriesViewModel(
-                    itemRepository,
-                    seriesId
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

@@ -22,11 +22,11 @@ data class Series (
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
         return ListItemViewable.ListItemContents(
-                name, "$numPrefix$curNum", getCostString()
+            name, "$numPrefix$curNum", getCostString()
         )
     }
 
-    override fun toString(): String = name      // TODO: Not do this
+    override fun toString(): String = name      // TODO: Not do this (?)
 
     fun addRecurrenceToTime(time: LocalDateTime): LocalDateTime {
         return time.plusMonths(recurMonths.toLong()).plusDays(recurDays.toLong())

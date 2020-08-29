@@ -1,6 +1,9 @@
 package com.example.remindmemunni.serieslist
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.Series
@@ -40,7 +43,7 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
     private fun updateFilteredSeries() {
         val series = series.value
         if (series == null) {
-            _filteredSeries.value = series
+            _filteredSeries.value = emptyList()
         } else {
             val result = ArrayList<AggregatedSeries>(series)
             if (filterString.isNotEmpty()) {
@@ -49,20 +52,6 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
                 }
             }
             _filteredSeries.value = result
-        }
-    }
-
-    class SeriesListViewModelFactory(
-        private val itemRepository: ItemRepository
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(SeriesListViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return SeriesListViewModel(
-                    itemRepository
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

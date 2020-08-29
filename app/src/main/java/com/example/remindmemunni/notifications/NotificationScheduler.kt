@@ -11,7 +11,7 @@ import com.example.remindmemunni.data.Item
 class NotificationScheduler(context: Context) {
     private val appContext = context.applicationContext
 
-    fun createNotification(title: String): Notification {
+    private fun createNotification(title: String): Notification {
         val channelId = appContext.getString(R.string.notification_channel_id)
         return Notification.Builder(appContext, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -25,7 +25,9 @@ class NotificationScheduler(context: Context) {
         val intent = Intent(appContext, NotificationPublisher::class.java)
         intent.putExtra(NotificationPublisher.NOTIFICATION_ID, notificationId)
         intent.putExtra(NotificationPublisher.NOTIFICATION_CONTENT, notif)
-        val pendingIntent = PendingIntent.getBroadcast(appContext, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            appContext, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT
+        )
 
         val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setExact(AlarmManager.RTC, item.time * 1000, pendingIntent)

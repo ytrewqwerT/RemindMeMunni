@@ -15,9 +15,6 @@ class BootReceiver : BroadcastReceiver() {
         if (context == null) return
 
         val notifyIntent = Intent(context, NotificationService::class.java)
-        NotificationService.enqueueWork(
-            context,
-            notifyIntent
-        )
+        NotificationService.enqueueWork(context, notifyIntent)
     }
 }

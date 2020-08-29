@@ -39,9 +39,7 @@ class PrimitiveDateTime(
              val localDateTime = LocalDateTime.ofInstant(
                  Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault()
              )
-             return fromLocalDateTime(
-                 localDateTime
-             )
+             return fromLocalDateTime(localDateTime)
          }
      }
 }

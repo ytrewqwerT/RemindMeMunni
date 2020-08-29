@@ -54,7 +54,6 @@ class ItemRepository(
     }
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
-    fun getItem(itemId: Int): LiveData<Item> = itemDao.getItem(itemId)
     suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId)
     suspend fun completeItem(item: Item): Int {
         var newItemId = 0
@@ -76,15 +75,13 @@ class ItemRepository(
 
     fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId)
-    suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
+    private suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
         val series = itemDao.getDirectSerie(seriesId)
         if (series.series.curNum == 0.0) return
         series.series.curNum += increment
         itemDao.insert(series.series)
     }
-
-    fun getCategories(): LiveData<List<String>> = itemDao.getCategories()
 
     suspend fun delete(item: Item) { itemDao.delete(item) }
     suspend fun delete(series: Series) { itemDao.delete(series) }

@@ -19,8 +19,8 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     private val indicatorPaint: Paint = Paint()
     private var items: List<T?> = emptyList()
     private var listPaddingSize = 1
-    private val customAdapter =
-        CustomRecyclerViewAdapter<T>(null)
+    private val customAdapter = CustomRecyclerViewAdapter<T>(null)
+
     private val snapHelper: SnapHelper = object : LinearSnapHelper() {
         override fun findTargetSnapPosition(
             layoutManager: LayoutManager?,
@@ -62,8 +62,6 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
         c?.drawLine(0F, lineHeight, width.toFloat(), lineHeight, indicatorPaint)
     }
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("Setting adapters is not supported")
     override fun setAdapter(adapter: Adapter<*>?) {
         throw UnsupportedOperationException(
             "${ScrollSpinner::class.simpleName} doesn't support setting adapters"

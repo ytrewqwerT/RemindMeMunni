@@ -17,19 +17,12 @@ abstract class ItemRoomDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: ItemRoomDatabase? = null
 
-        fun getDatabase(context: Context): ItemRoomDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) return tempInstance
-
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    ItemRoomDatabase::class.java,
-                    "item_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
-                INSTANCE = instance
-                return instance
-            }
+        fun getDatabase(context: Context): ItemRoomDatabase = INSTANCE ?: synchronized(this) {
+            Room.databaseBuilder(
+                context.applicationContext, ItemRoomDatabase::class.java, "item_database"
+            ).addMigrations(
+                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5
+            ).build().also { INSTANCE = it }
         }
     }
 }

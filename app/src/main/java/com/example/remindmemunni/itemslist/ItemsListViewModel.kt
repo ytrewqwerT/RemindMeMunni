@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: Int = 0)
     : ViewModel() {
 
-    private val sourceItems: LiveData<List<Item>>
+    private val sourceItems: LiveData<List<Item>> =
+        if (seriesId == 0) itemRepository.allItems else itemRepository.getItemsInSeries(seriesId)
+
     private val _items = MediatorLiveData<List<Item>>()
     val items: LiveData<List<Item>> = _items
     val newItemEvent = SingleLiveEvent<Int>()
@@ -22,11 +24,6 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     val filteredItems: LiveData<List<Item>> get() = _filteredItems
 
     init {
-        sourceItems = if (seriesId == 0) {
-            itemRepository.allItems
-        } else {
-            itemRepository.getItemsInSeries(seriesId)
-        }
         _items.addSource(sourceItems) { updateItemsList() }
         _items.addSource(lowerTimeBound) { updateItemsList() }
         _items.addSource(upperTimeBound) { updateItemsList() }
@@ -54,8 +51,7 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     }
     fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
     fun delete(item: Int) {
-        if (item == 0) return
-        viewModelScope.launch {
+        if (item != 0) viewModelScope.launch {
             delete(itemRepository.getDirectItem(item))
         }
     }
@@ -67,7 +63,7 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     private fun updateFilteredItems() {
         val items = items.value
         if (items == null) {
-            _filteredItems.value = items
+            _filteredItems.value = emptyList()
         } else {
             val result = ArrayList<Item>(items)
             if (filterString.isNotEmpty()) {
@@ -76,22 +72,6 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
                 }
             }
             _filteredItems.value = result
-        }
-    }
-
-    class ItemsListViewModelFactory(
-        private val itemRepository: ItemRepository,
-        private val seriesId: Int = 0
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ItemsListViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return ItemsListViewModel(
-                    itemRepository,
-                    seriesId
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

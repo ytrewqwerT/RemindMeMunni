@@ -57,9 +57,7 @@ class SeriesListFragment : Fragment(),
             registerForContextMenu(this)
         }
 
-        mainViewModel.filterText.observe(viewLifecycleOwner) {
-            viewModel.setFilter(it)
-        }
+        mainViewModel.filterText.observe(viewLifecycleOwner) { viewModel.setFilter(it) }
 
         return contentView
     }

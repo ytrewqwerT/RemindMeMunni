@@ -20,9 +20,7 @@ data class Item(
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
-        return ListItemViewable.ListItemContents(
-            name, getDateString(), getCostString()
-        )
+        return ListItemViewable.ListItemContents(name, getDateString(), getCostString())
     }
 
     override fun toString(): String {
@@ -31,14 +29,15 @@ data class Item(
         return "$id $name: ${getCostString()}, $date"
     }
 
-    fun getCostString(): String = when {
+    private fun getCostString(): String = when {
         cost < 0.0 -> "\$${-cost}"
         cost > 0.0 -> "\$${cost}cr"
         else -> ""
     }
 
-    fun getDateString(): String = getDateString(DateTimeFormatter.ofPattern("EEEE, d MMMM - HH:mm"))
-    fun getDateString(formatter: DateTimeFormatter): String {
+    private fun getDateString(): String =
+        getDateString(DateTimeFormatter.ofPattern("EEEE, d MMMM - HH:mm"))
+    private fun getDateString(formatter: DateTimeFormatter): String {
         if (time == 0L) return ""
         val offset = OffsetDateTime.now().offset
         val date = LocalDateTime.ofEpochSecond(time, 0, offset)
