@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mainFragment_to_newItemFragment"
             app:destination="@id/newItemFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_newSeriesFragment"
+            app:destination="@id/newSeriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
@@ -43,4 +46,8 @@
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
+    <fragment
+        android:id="@+id/newSeriesFragment"
+        android:name="com.example.remindmemunni.newseries.NewSeriesFragment"
+        android:label="NewSeriesFragment" />
 </navigation>

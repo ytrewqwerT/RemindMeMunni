@@ -20,8 +20,7 @@ import com.example.remindmemunni.databinding.FragmentNewItemBinding
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.PrimitiveDateTime
 
-class NewItemFragment
-    : Fragment()
+class NewItemFragment : Fragment()
     , TimePickerDialog.OnTimeSetListener
     , DatePickerDialog.OnDateSetListener {
 
@@ -109,7 +108,6 @@ class NewItemFragment
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_new, menu)
-        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean  = when (menuItem.itemId) {

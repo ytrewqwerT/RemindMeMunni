@@ -1,20 +1,19 @@
 package com.example.remindmemunni.main
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.databinding.FragmentMainBinding
-import com.example.remindmemunni.newseries.NewSeriesActivity
+import com.example.remindmemunni.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
 import com.google.android.material.tabs.TabLayoutMediator
@@ -30,6 +29,15 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        setFragmentResultListener(NewSeriesFragment.REQUEST_SUCCESSFUL) { _, result ->
+            val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
+            if (newSeriesId != 0) {
+                val action = MainFragmentDirections
+                    .actionMainFragmentToSeriesFragment(newSeriesId)
+                view?.findNavController()?.navigate(action)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -123,8 +131,9 @@ class MainFragment : Fragment() {
 
                 }
                 ItemPagerAdapter.POS_SERIES -> {
-                    val intent = Intent(context, NewSeriesActivity::class.java)
-                    startActivityForResult(intent, NEW_SERIES_REQUEST)
+                    val action = MainFragmentDirections
+                        .actionMainFragmentToNewSeriesFragment()
+                    view?.findNavController()?.navigate(action)
                 }
                 else -> Log.w(
                     "MainActivity",
@@ -134,26 +143,5 @@ class MainFragment : Fragment() {
             true
         }
         else -> super.onOptionsItemSelected(item)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            NEW_SERIES_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val newSeriesId = data?.getIntExtra(NewSeriesActivity.EXTRA_SERIES_ID, 0) ?: 0
-                    if (newSeriesId != 0) {
-                        val action = MainFragmentDirections
-                            .actionMainFragmentToSeriesFragment(newSeriesId)
-                        view?.findNavController()?.navigate(action)
-                    }
-                }
-            }
-        }
-    }
-
-    companion object {
-        const val NEW_SERIES_REQUEST = 1
     }
 }

@@ -16,7 +16,7 @@ import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.main.MainFragmentDirections
 import com.example.remindmemunni.main.MainViewModel
-import com.example.remindmemunni.newseries.NewSeriesActivity
+import com.example.remindmemunni.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
@@ -77,8 +77,8 @@ class SeriesListFragment : Fragment(),
         R.id.series_edit -> {
             val series = recyclerViewAdapter.contextMenuItem
             if (series != null) {
-                val intent = Intent(activity, NewSeriesActivity::class.java)
-                intent.putExtra(NewSeriesActivity.EXTRA_SERIES_ID, series.series.id)
+                val intent = Intent(activity, NewSeriesFragment::class.java)
+                intent.putExtra(NewSeriesFragment.EXTRA_SERIES_ID, series.series.id)
                 startActivity(intent)
             }
             true
