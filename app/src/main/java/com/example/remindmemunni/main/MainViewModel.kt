@@ -1,8 +1,6 @@
 package com.example.remindmemunni.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import java.time.LocalDate
@@ -20,8 +18,8 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
             updateMunniCalc()
         }
 
-    val allItems = itemRepository.allItems
-    val allSeries = itemRepository.allSeries
+    val allItems = itemRepository.allItems.asLiveData(viewModelScope.coroutineContext)
+    val allSeries = itemRepository.allSeries.asLiveData(viewModelScope.coroutineContext)
 
     val filterText = MutableLiveData<String?>()
 

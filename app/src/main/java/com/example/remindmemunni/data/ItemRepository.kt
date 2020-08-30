@@ -1,18 +1,19 @@
 package com.example.remindmemunni.data
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.remindmemunni.notifications.NotificationScheduler
+import kotlinx.coroutines.flow.Flow
 
+// TODO: Expose shared preferences as Flow instead of LiveData
 class ItemRepository(
     private val itemDao: ItemDao,
     private val sharedPref: SharedPreferences,
     private val notificationScheduler: NotificationScheduler
 ) {
 
-    val allItems: LiveData<List<Item>> = itemDao.getItems()
-    val allSeries: LiveData<List<AggregatedSeries>> = itemDao.getSeries()
+    val allItems: Flow<List<Item>> = itemDao.getItems()
+    val allSeries: Flow<List<AggregatedSeries>> = itemDao.getSeries()
 
     private val sharedPrefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
@@ -65,9 +66,9 @@ class ItemRepository(
         munni.value = (munni.value ?: 0.0) + item.cost
         return nextItem
     }
-    fun getItemsInSeries(seriesId: Int): LiveData<List<Item>> = itemDao.getItemsInSeries(seriesId)
+    fun getItemsInSeries(seriesId: Int): Flow<List<Item>> = itemDao.getItemsInSeries(seriesId)
 
-    fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
+    fun getSerie(seriesId: Int): Flow<AggregatedSeries> = itemDao.getSerie(seriesId)
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId)
     suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
@@ -76,6 +77,8 @@ class ItemRepository(
         series.series.curNum += increment
         itemDao.insert(series.series)
     }
+
+    fun getCategories(): Flow<List<String>> = itemDao.getCategories()
 
     suspend fun delete(item: Item) { itemDao.delete(item) }
     suspend fun delete(series: Series) { itemDao.delete(series) }

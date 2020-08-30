@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -25,9 +24,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
-    private val mainViewModel: MainViewModel by activityViewModels {
-        InjectorUtils.provideMainViewModelFactory(requireActivity())
-    }
+    private val mainViewModel: MainViewModel by viewModels(
+        ownerProducer = { parentFragment ?: requireActivity() },
+        factoryProducer = { InjectorUtils.provideMainViewModelFactory(requireActivity()) }
+    )
 
     private val recyclerViewAdapter by lazy {
         CustomRecyclerViewAdapter<Item>(null)
@@ -50,8 +50,8 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
         val upperBound = arguments?.getLong(EXTRA_UPPER_TIME_BOUND, Long.MAX_VALUE) ?: Long.MAX_VALUE
-        viewModel.lowerTimeBound.value = lowerBound
-        viewModel.upperTimeBound.value = upperBound
+        viewModel.lowerTimeBoundChannel.offer(lowerBound)
+        viewModel.upperTimeBoundChannel.offer(upperBound)
     }
 
     override fun onCreateView(
@@ -70,7 +70,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
 
         mainViewModel.filterText.observe(viewLifecycleOwner) {
-            viewModel.setFilter(it)
+            viewModel.filterStringChannel.offer(it ?: "")
         }
 
         return contentView

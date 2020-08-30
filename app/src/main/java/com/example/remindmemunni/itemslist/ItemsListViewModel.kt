@@ -1,46 +1,48 @@
 package com.example.remindmemunni.itemslist
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.utils.SingleLiveEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: Int = 0)
     : ViewModel() {
 
-    private val sourceItems: LiveData<List<Item>> =
+    private val sourceItems: Flow<List<Item>> =
         if (seriesId == 0) itemRepository.allItems else itemRepository.getItemsInSeries(seriesId)
+    val filteredItems: LiveData<List<Item>>
 
-    private val _items = MediatorLiveData<List<Item>>()
-    val items: LiveData<List<Item>> = _items
     val newItemEvent = SingleLiveEvent<Item>()
 
-    val lowerTimeBound = MutableLiveData(0L)
-    val upperTimeBound = MutableLiveData(Long.MAX_VALUE)
-
-    private var filterString: String = ""
-    private val _filteredItems = MediatorLiveData<List<Item>>()
-    val filteredItems: LiveData<List<Item>> get() = _filteredItems
+    // This implementation for receiving values may result in lost values on channel overflow, but
+    // overflow is unlikely since (as of writing) lower/upper bound is only set on fragment creation
+    // and the filter string is limited by the user's typing speed, which prooobably won't outpace
+    // the O(n) filtering operation.
+    val lowerTimeBoundChannel = Channel<Long>(CHANNEL_SIZE)
+    val upperTimeBoundChannel = Channel<Long>(CHANNEL_SIZE)
+    val filterStringChannel = Channel<String>(CHANNEL_SIZE)
 
     init {
-        _items.addSource(sourceItems) { updateItemsList() }
-        _items.addSource(lowerTimeBound) { updateItemsList() }
-        _items.addSource(upperTimeBound) { updateItemsList() }
-        _filteredItems.addSource(items) { updateFilteredItems() }
-    }
+        lowerTimeBoundChannel.offer(0L)
+        upperTimeBoundChannel.offer(Long.MAX_VALUE)
+        filterStringChannel.offer("")
 
-    private fun updateItemsList() {
-        val allItems = sourceItems.value ?: return
-        val lowerTime = lowerTimeBound.value ?: 0L
-        val upperTime = upperTimeBound.value ?: Long.MAX_VALUE
-        var lowerIndex = 0
-        while (lowerIndex < allItems.size && allItems[lowerIndex].time < lowerTime)
-            lowerIndex++
-        var upperIndex = lowerIndex
-        while (upperIndex < allItems.size && allItems[upperIndex].time < upperTime)
-            upperIndex++
-        _items.value = allItems.subList(lowerIndex, upperIndex)
+        filteredItems = sourceItems.combine(lowerTimeBoundChannel.receiveAsFlow()) { items, lower ->
+            items.filter { it.time >= lower }
+        }.combine(upperTimeBoundChannel.receiveAsFlow()) { items, upper ->
+            items.filter { it.time <= upper }
+        }.combine(filterStringChannel.receiveAsFlow()) { items, filterString ->
+            if (filterString.isBlank()) items
+            else items.filter { it.hasFilterText(filterString) }
+        }.asLiveData(viewModelScope.coroutineContext)
     }
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
@@ -65,22 +67,7 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
         }
     }
 
-    fun setFilter(filterText: String?) {
-        filterString = filterText ?: ""
-        updateFilteredItems()
-    }
-    private fun updateFilteredItems() {
-        val items = items.value
-        if (items == null) {
-            _filteredItems.value = emptyList()
-        } else {
-            val result = ArrayList<Item>(items)
-            if (filterString.isNotEmpty()) {
-                for (item in items) {
-                    if (!item.hasFilterText(filterString)) result.remove(item)
-                }
-            }
-            _filteredItems.value = result
-        }
+    companion object {
+        private const val CHANNEL_SIZE = 5
     }
 }

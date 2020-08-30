@@ -5,7 +5,7 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +23,13 @@ import com.google.android.material.snackbar.Snackbar
 class SeriesListFragment : Fragment(),
     OnListItemInteractionListener<AggregatedSeries> {
 
-    private val viewModel: SeriesListViewModel by activityViewModels {
+    private val viewModel: SeriesListViewModel by viewModels {
         InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
     }
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by viewModels(
+        ownerProducer = { parentFragment ?: requireActivity() },
+        factoryProducer = { InjectorUtils.provideMainViewModelFactory(requireActivity()) }
+    )
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
@@ -57,7 +60,9 @@ class SeriesListFragment : Fragment(),
             registerForContextMenu(this)
         }
 
-        mainViewModel.filterText.observe(viewLifecycleOwner) { viewModel.setFilter(it) }
+        mainViewModel.filterText.observe(viewLifecycleOwner) {
+            viewModel.filterStringChannel.offer(it ?: "")
+        }
 
         return contentView
     }

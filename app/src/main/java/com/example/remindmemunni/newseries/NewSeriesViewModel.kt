@@ -10,16 +10,8 @@ class NewSeriesViewModel(
     private val seriesId: Int = 0
 ) : ViewModel() {
 
-    private val itemsTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allItems) { items ->
-            items.map { item -> item.category }
-        }
-    private val seriesTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allSeries) { series ->
-            series.map { serie -> serie.series.category }
-        }
-    private val _categories = MediatorLiveData<Set<String>>()
-    val categories: LiveData<Set<String>> get() = _categories
+    val categories: LiveData<List<String>> =
+        itemRepository.getCategories().asLiveData(viewModelScope.coroutineContext)
 
     private var isDebit: Boolean = false
     private var recurMonths: Int = 0
@@ -37,15 +29,6 @@ class NewSeriesViewModel(
 
     init {
         setCostType("Debit")
-
-        _categories.addSource(itemsTransformer) {
-            val other = seriesTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
-        _categories.addSource(seriesTransformer) {
-            val other = itemsTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
 
         if (seriesId != 0) {
             viewModelScope.launch {

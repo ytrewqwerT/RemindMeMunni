@@ -14,18 +14,10 @@ class NewItemViewModel(
     private val isItemEdit: Boolean
 ) : ViewModel() {
 
-    val allSeries: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
-
-    private val itemsTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allItems) { items ->
-            items.map { item -> item.category }
-        }
-    private val seriesTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allSeries) { series ->
-            series.map { serie -> serie.series.category }
-        }
-    private val _categories = MediatorLiveData<Set<String>>()
-    val categories: LiveData<Set<String>> get() = _categories
+    val allSeries: LiveData<List<AggregatedSeries>> =
+        itemRepository.allSeries.asLiveData(viewModelScope.coroutineContext)
+    val categories: LiveData<List<String>> =
+        itemRepository.getCategories().asLiveData(viewModelScope.coroutineContext)
 
     private val itemId = templateItem.id
     private var _costIsDebit: Boolean = false
@@ -43,15 +35,6 @@ class NewItemViewModel(
 
     init {
         setCostType("Debit")
-
-        _categories.addSource(itemsTransformer) {
-            val other = seriesTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
-        _categories.addSource(seriesTransformer) {
-            val other = itemsTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
 
         viewModelScope.launch { setItem(templateItem) }
         if (itemId != 0) {
