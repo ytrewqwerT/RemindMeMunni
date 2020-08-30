@@ -65,8 +65,8 @@ class MainFragment : Fragment() {
             binding.curMunniText.setOnKeyListener { _, keyCode, _ ->
                 when (keyCode) {
                     KeyEvent.KEYCODE_ENTER -> {
-                        viewModel.curMunni.value =
-                            binding.curMunniText.text.toString().toDoubleOrNull()
+                        viewModel.setMunni(binding.curMunniText.text.toString().toDoubleOrNull())
+
                         binding.curMunniText.clearFocus()
                         val imm = context?.getSystemService(
                             Context.INPUT_METHOD_SERVICE
@@ -80,7 +80,7 @@ class MainFragment : Fragment() {
             }
 
             viewModel.curMunni.observe(viewLifecycleOwner) {
-                activity?.title = getString(R.string.app_name) + ": \$${it.toStringTrimmed()}"
+                activity?.title = "Current: \$${it.toStringTrimmed()}"
                 binding.curMunniText.setText(it.toStringTrimmed())
                 viewModel.updateMunniCalc()
             }
