@@ -26,9 +26,7 @@ data class AggregatedSeries (
     override fun toString(): String = series.toString()
 
     // Generates the next item in the series (curNum is NOT changed).
-    fun generateNextInSeries(): Item? {
-        if (series.recurMonths == 0 && series.recurDays == 0) return null
-
+    fun generateNextInSeries(): Item {
         val lastItem = items.lastOrNull()
         var newTime = 0L
         if (lastItem != null) {

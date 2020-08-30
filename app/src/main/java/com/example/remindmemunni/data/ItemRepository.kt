@@ -55,27 +55,21 @@ class ItemRepository(
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
     suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId)
-    suspend fun completeItem(item: Item): Int {
-        var newItemId = 0
+    suspend fun completeItem(item: Item): Item? {
+        var nextItem: Item? = null
         if (item.seriesId != 0) {
             val series = getDirectSerie(item.seriesId)
-            if (item == series.items.last()) {
-                val newItem = series.generateNextInSeries()
-                if (newItem != null) {
-                    newItemId = insert(newItem)
-                    if (series.series.autoCreate) incrementSeries(item.seriesId)
-                }
-            }
+            if (item == series.items.last()) nextItem = series.generateNextInSeries()
         }
         delete(item)
         munni.value = (munni.value ?: 0.0) + item.cost
-        return newItemId
+        return nextItem
     }
     fun getItemsInSeries(seriesId: Int): LiveData<List<Item>> = itemDao.getItemsInSeries(seriesId)
 
     fun getSerie(seriesId: Int): LiveData<AggregatedSeries> = itemDao.getSerie(seriesId)
     suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId)
-    private suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
+    suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
         val series = itemDao.getDirectSerie(seriesId)
         if (series.series.curNum == 0.0) return

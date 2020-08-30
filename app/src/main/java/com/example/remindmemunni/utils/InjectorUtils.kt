@@ -1,6 +1,7 @@
 package com.example.remindmemunni.utils
 
 import android.content.Context
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase
 import com.example.remindmemunni.itemslist.ItemsListViewModelFactory
@@ -27,8 +28,8 @@ object InjectorUtils {
         ItemsListViewModelFactory(getItemRepository(context), seriesId)
     fun provideMainViewModelFactory(context: Context) =
         MainViewModelFactory(getItemRepository(context))
-    fun provideNewItemViewModelFactory(context: Context, itemId: Int) =
-        NewItemViewModelFactory(getItemRepository(context), itemId)
+    fun provideNewItemViewModelFactory(context: Context, templateItem: Item, isItemEdit: Boolean) =
+        NewItemViewModelFactory(getItemRepository(context), templateItem, isItemEdit)
     fun provideNewSeriesViewModelFactory(context: Context, seriesId: Int) =
         NewSeriesViewModelFactory(getItemRepository(context), seriesId)
     fun provideSeriesListViewModelFactory(context: Context) =

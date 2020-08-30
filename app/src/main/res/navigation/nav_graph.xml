@@ -38,13 +38,8 @@
         android:name="com.example.remindmemunni.newitem.NewItemFragment"
         android:label="NewItemFragment" >
         <argument
-            android:name="ITEM_ID"
-            app:argType="integer"
-            android:defaultValue="0" />
-        <argument
-            android:name="SERIES_ID"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:name="ITEM_DATA"
+            app:argType="com.example.remindmemunni.data.Item" />
     </fragment>
     <fragment
         android:id="@+id/newSeriesFragment"

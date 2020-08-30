@@ -10,7 +10,8 @@ import java.time.format.DateTimeFormatter
 
 class NewItemViewModel(
     private val itemRepository: ItemRepository,
-    private val itemId: Int = 0
+    templateItem: Item,
+    private val isItemEdit: Boolean
 ) : ViewModel() {
 
     val allSeries: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
@@ -26,6 +27,7 @@ class NewItemViewModel(
     private val _categories = MediatorLiveData<Set<String>>()
     val categories: LiveData<Set<String>> get() = _categories
 
+    private val itemId = templateItem.id
     private var _costIsDebit: Boolean = false
     private var _time = PrimitiveDateTime()
     private var seriesId: Int = 0
@@ -51,6 +53,7 @@ class NewItemViewModel(
             _categories.value = other.union(it)
         }
 
+        viewModelScope.launch { setItem(templateItem) }
         if (itemId != 0) {
             viewModelScope.launch {
                 val item = itemRepository.getDirectItem(itemId)
@@ -92,7 +95,7 @@ class NewItemViewModel(
             val serie = itemRepository.getDirectSerie(item.seriesId)
             seriesId = item.seriesId
             series.value = serie.series.name
-            incSeriesNum.value = serie.series.isNumbered()
+            incSeriesNum.value = !isItemEdit && serie.series.isNumbered()
         }
     }
 
@@ -106,14 +109,8 @@ class NewItemViewModel(
             series.value = newSerie.name
 
             val nextItem = newSeries.generateNextInSeries()
-            if (nextItem != null) {
-                viewModelScope.launch { setItem(nextItem) }
-            }
+            viewModelScope.launch { setItem(nextItem) }
         }
-    }
-
-    fun setSeries(newSeries: Int) {
-        viewModelScope.launch { setSeries(itemRepository.getDirectSerie(newSeries)) }
     }
 
     fun setTime(newTime: PrimitiveDateTime) {

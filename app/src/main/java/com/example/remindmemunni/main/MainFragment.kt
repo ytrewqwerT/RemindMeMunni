@@ -12,8 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.databinding.FragmentMainBinding
-import com.example.remindmemunni.newitem.NewItemFragment
 import com.example.remindmemunni.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
@@ -122,7 +122,7 @@ class MainFragment : Fragment() {
             when (binding?.pager?.currentItem) {
                 ItemPagerAdapter.POS_PAST_ITEMS, ItemPagerAdapter.POS_FUTURE_ITEMS -> {
                     val action = MainFragmentDirections
-                        .actionMainFragmentToNewItemFragment()
+                        .actionMainFragmentToNewItemFragment(Item())
                     view?.findNavController()?.navigate(action)
 
                 }
@@ -148,13 +148,6 @@ class MainFragment : Fragment() {
                 val action = MainFragmentDirections
                     .actionMainFragmentToSeriesFragment(newSeriesId)
                 view?.findNavController()?.navigate(action)
-            }
-        }
-
-        setFragmentResultListener(NewItemFragment.REQUEST_RESULT) { _, result ->
-            if (result.getBoolean(NewItemFragment.RESULT_SUCCESS, false).not()) {
-                val itemId = result.getInt(NewItemFragment.EXTRA_ITEM_ID, 0)
-                if (itemId != 0) viewModel.deleteItem(itemId)
             }
         }
     }

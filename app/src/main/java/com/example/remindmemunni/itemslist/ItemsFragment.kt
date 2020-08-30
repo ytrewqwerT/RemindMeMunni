@@ -41,10 +41,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             items?.let { recyclerViewAdapter.setItems(it) }
         }
 
-        viewModel.newItemEvent.observe(this) { itemId ->
+        viewModel.newItemEvent.observe(this) { item ->
             view?.findNavController()?.navigate(
                 R.id.newItemFragment,
-                bundleOf(NewItemFragment.EXTRA_ITEM_ID to itemId)
+                bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
             )
         }
 
@@ -94,7 +94,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
                 if (item != null) {
                     view?.findNavController()?.navigate(
                         R.id.newItemFragment,
-                        bundleOf(NewItemFragment.EXTRA_ITEM_ID to item.id)
+                        bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
                     )
                 }
                 true

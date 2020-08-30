@@ -16,6 +16,7 @@ import com.example.remindmemunni.common.DatePickerFragment
 import com.example.remindmemunni.common.TimePickerFragment
 import com.example.remindmemunni.common.UnfilteredArrayAdapter
 import com.example.remindmemunni.data.AggregatedSeries
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.Series
 import com.example.remindmemunni.databinding.FragmentNewItemBinding
 import com.example.remindmemunni.utils.InjectorUtils
@@ -28,27 +29,20 @@ class NewItemFragment : Fragment()
 
     private var binding: FragmentNewItemBinding? = null
     private val viewModel: NewItemViewModel by viewModels {
-        InjectorUtils.provideNewItemViewModelFactory(requireContext(), itemId)
+        InjectorUtils.provideNewItemViewModelFactory(requireContext(), templateItem, isItemEdit)
     }
 
     private val time = PrimitiveDateTime()
 
-    private var itemId: Int = 0
-    private var seriesId: Int = 0
+    private lateinit var templateItem: Item
+    private var isItemEdit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        itemId = arguments?.getInt(EXTRA_ITEM_ID, 0) ?: 0
-        seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
-
-        // Assume the item creation is unsuccessful; later changed to true upon success.
-        // Also give the unsuccessful item's id for when the user was editing an item.
-        setFragmentResult(
-            REQUEST_RESULT,
-            bundleOf(RESULT_SUCCESS to false, EXTRA_ITEM_ID to itemId)
-        )
+        templateItem = arguments?.getParcelable(EXTRA_ITEM_DATA) ?: Item()
+        isItemEdit = templateItem.id != 0
     }
 
     override fun onCreateView(
@@ -63,10 +57,7 @@ class NewItemFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = "New Item"
-
-        if (itemId != 0) activity?.title = "Edit Item"
-        if (seriesId != 0) viewModel.setSeries(seriesId)
+        activity?.title = if (isItemEdit) "Edit Item" else "New Item"
 
         val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
         val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
@@ -154,7 +145,6 @@ class NewItemFragment : Fragment()
     companion object {
         const val REQUEST_RESULT = "NEW_ITEM_FRAGMENT_REQUEST_RESULT"
         const val RESULT_SUCCESS = "SUCCESS"
-        const val EXTRA_ITEM_ID = "ITEM_ID"
-        const val EXTRA_SERIES_ID = "SERIES_ID"
+        const val EXTRA_ITEM_DATA = "ITEM_DATA"
     }
 }

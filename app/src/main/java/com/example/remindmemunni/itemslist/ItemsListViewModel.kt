@@ -14,7 +14,7 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
 
     private val _items = MediatorLiveData<List<Item>>()
     val items: LiveData<List<Item>> = _items
-    val newItemEvent = SingleLiveEvent<Int>()
+    val newItemEvent = SingleLiveEvent<Item>()
 
     val lowerTimeBound = MutableLiveData(0L)
     val upperTimeBound = MutableLiveData(Long.MAX_VALUE)
@@ -45,9 +45,18 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
 
     fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
     fun complete(item: Item) = viewModelScope.launch {
-        val newItemId = itemRepository.completeItem(item)
         val series = itemRepository.getDirectSerie(item.seriesId)
-        if (newItemId != 0 && !series.series.autoCreate) newItemEvent.value = newItemId
+        val nextItem = itemRepository.completeItem(item)
+
+        // Nested if wasn't correctly smart-casting nextItem to non-null in IDE. :S
+        nextItem?.let {
+            if (series.series.autoCreate) {
+                insert(it)
+                itemRepository.incrementSeries(series.series.id)
+            } else {
+                newItemEvent.value = it
+            }
+        }
     }
     fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
     fun delete(item: Int) {
