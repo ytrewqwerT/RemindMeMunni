@@ -72,6 +72,9 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         mainViewModel.filterText.observe(viewLifecycleOwner) {
             viewModel.filterStringChannel.offer(it ?: "")
         }
+        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
+            viewModel.filterCategoryChannel.offer(it)
+        }
 
         return contentView
     }

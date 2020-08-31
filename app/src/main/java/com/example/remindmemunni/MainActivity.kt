@@ -1,15 +1,21 @@
 package com.example.remindmemunni
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainActivityViewModel by viewModels {
+        InjectorUtils.provideMainActivityViewModelFactory(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,6 +33,23 @@ class MainActivity : AppCompatActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        
+        val navMenu = navView.menu
+        navMenu.add(MainActivityViewModel.CATEGORY_ALL).also {
+            it.isCheckable = true
+            navView.setCheckedItem(it)
+        }
+        navMenu.add(MainActivityViewModel.CATEGORY_NONE).isCheckable = true
+
+        val categoryMenu = navMenu.addSubMenu("Categories")
+        viewModel.categories.observe(this) { categories ->
+            categoryMenu.clear()
+            for (category in categories) categoryMenu.add(category).isCheckable = true
+        }
+
+        navView.setNavigationItemSelectedListener {
+            val success = viewModel.setCategoryFilter("${it.title}")
+            if (success) drawerLayout.close()
+            success
+        }
     }
 }

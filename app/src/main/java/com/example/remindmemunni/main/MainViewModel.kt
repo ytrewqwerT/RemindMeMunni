@@ -27,6 +27,7 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
         itemRepository.allSeries.asLiveData(viewModelScope.coroutineContext)
 
     val filterText = MutableLiveData<String?>()
+    val categoryFilter = MutableLiveData<String?>()
 
     init {
         updateMunniCalc()

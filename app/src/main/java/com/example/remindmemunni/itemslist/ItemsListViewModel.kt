@@ -31,11 +31,13 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
     val lowerTimeBoundChannel = Channel<Long>(CHANNEL_SIZE)
     val upperTimeBoundChannel = Channel<Long>(CHANNEL_SIZE)
     val filterStringChannel = Channel<String>(CHANNEL_SIZE)
+    val filterCategoryChannel = Channel<String?>(CHANNEL_SIZE)
 
     init {
         lowerTimeBoundChannel.offer(0L)
         upperTimeBoundChannel.offer(Long.MAX_VALUE)
         filterStringChannel.offer("")
+        filterCategoryChannel.offer(null)
 
         val filteredItemsFlow = sourceItems.combine(lowerTimeBoundChannel.receiveAsFlow()) { items, lower ->
             items.filter { it.time >= lower }
@@ -44,6 +46,9 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
         }.combine(filterStringChannel.receiveAsFlow()) { items, filterString ->
             if (filterString.isBlank()) items
             else items.filter { it.hasFilterText(filterString) }
+        }.combine(filterCategoryChannel.receiveAsFlow()) { items, filterCategory ->
+            if (filterCategory == null) items
+            else items.filter { it.category == filterCategory }
         }
 
         // Using Flow.asLiveData() doesn't seem to update the LiveData after the creation of a new

@@ -7,9 +7,11 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import com.example.remindmemunni.MainActivityViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
@@ -23,6 +25,9 @@ class MainFragment : Fragment() {
     private var binding: FragmentMainBinding? = null
     private val viewModel: MainViewModel by viewModels {
         InjectorUtils.provideMainViewModelFactory(requireContext())
+    }
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels {
+        InjectorUtils.provideMainActivityViewModelFactory(requireContext())
     }
 
     private lateinit var itemPagerAdapter: ItemPagerAdapter
@@ -80,13 +85,17 @@ class MainFragment : Fragment() {
             }
 
             viewModel.curMunni.observe(viewLifecycleOwner) {
-                activity?.title = "Current: \$${it.toStringTrimmed()}"
+                activity?.title = "\$${it.toStringTrimmed()}"
                 binding.curMunniText.setText(it.toStringTrimmed())
                 viewModel.updateMunniCalc()
             }
 
             viewModel.allItems.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
             viewModel.allSeries.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
+
+            mainActivityViewModel.categoryFilter.observe(viewLifecycleOwner) {
+                viewModel.categoryFilter.value = it
+            }
         }
     }
 
@@ -132,7 +141,7 @@ class MainFragment : Fragment() {
                     view?.findNavController()?.navigate(action)
                 }
                 else -> Log.w(
-                    "MainActivity",
+                    "MainFragment",
                     "No add action associated to PagerAdapter page ${binding?.pager?.currentItem}"
                 )
             }
