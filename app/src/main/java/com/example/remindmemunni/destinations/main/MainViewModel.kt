@@ -1,4 +1,4 @@
-package com.example.remindmemunni.main
+package com.example.remindmemunni.destinations.main
 
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.ItemRepository

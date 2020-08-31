@@ -1,19 +1,17 @@
-package com.example.remindmemunni.newitem
+package com.example.remindmemunni.destinations.newseries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 
-class NewItemViewModelFactory(
+class NewSeriesViewModelFactory(
     private val itemRepository: ItemRepository,
-    private val templateItem: Item,
-    private val isItemEdit: Boolean
+    private val seriesId: Int
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NewItemViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return NewItemViewModel(itemRepository, templateItem, isItemEdit) as T
+            return NewSeriesViewModel(itemRepository, seriesId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

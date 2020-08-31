@@ -6,14 +6,14 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.main.MainViewModel" />
+            type="com.example.remindmemunni.destinations.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutDescription="@xml/main_bottom_bar_collapse"
-        tools:context=".main.MainFragment">
+        tools:context=".destinations.main.MainFragment">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/pager_tabs"

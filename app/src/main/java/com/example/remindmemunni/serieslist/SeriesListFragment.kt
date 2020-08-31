@@ -14,9 +14,9 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
-import com.example.remindmemunni.main.MainFragmentDirections
-import com.example.remindmemunni.main.MainViewModel
-import com.example.remindmemunni.newseries.NewSeriesFragment
+import com.example.remindmemunni.destinations.main.MainFragmentDirections
+import com.example.remindmemunni.destinations.main.MainViewModel
+import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 

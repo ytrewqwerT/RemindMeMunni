@@ -1,4 +1,4 @@
-package com.example.remindmemunni.newitem
+package com.example.remindmemunni.destinations.newitem
 
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.AggregatedSeries

@@ -1,4 +1,4 @@
-package com.example.remindmemunni.main
+package com.example.remindmemunni.destinations.main
 
 import android.content.Context
 import android.os.Bundle
@@ -16,7 +16,7 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.databinding.FragmentMainBinding
-import com.example.remindmemunni.newseries.NewSeriesFragment
+import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.toStringTrimmed
 import com.google.android.material.tabs.TabLayoutMediator

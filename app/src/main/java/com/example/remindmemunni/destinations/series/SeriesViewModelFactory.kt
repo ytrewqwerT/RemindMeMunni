@@ -1,4 +1,4 @@
-package com.example.remindmemunni.series
+package com.example.remindmemunni.destinations.series
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

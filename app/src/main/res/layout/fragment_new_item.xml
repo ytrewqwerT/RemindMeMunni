@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.newitem.NewItemViewModel" />
+            type="com.example.remindmemunni.destinations.newitem.NewItemViewModel" />
     </data>
 
     <ScrollView
@@ -16,7 +16,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".newitem.NewItemFragment">
+            tools:context=".destinations.newitem.NewItemFragment">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_input_layout"

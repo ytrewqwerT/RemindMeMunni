@@ -5,12 +5,12 @@ import com.example.remindmemunni.MainActivityViewModelFactory
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase
+import com.example.remindmemunni.destinations.main.MainViewModelFactory
+import com.example.remindmemunni.destinations.newitem.NewItemViewModelFactory
+import com.example.remindmemunni.destinations.newseries.NewSeriesViewModelFactory
+import com.example.remindmemunni.destinations.series.SeriesViewModelFactory
 import com.example.remindmemunni.itemslist.ItemsListViewModelFactory
-import com.example.remindmemunni.main.MainViewModelFactory
-import com.example.remindmemunni.newitem.NewItemViewModelFactory
-import com.example.remindmemunni.newseries.NewSeriesViewModelFactory
 import com.example.remindmemunni.notifications.NotificationScheduler
-import com.example.remindmemunni.series.SeriesViewModelFactory
 import com.example.remindmemunni.serieslist.SeriesListViewModelFactory
 
 object InjectorUtils {

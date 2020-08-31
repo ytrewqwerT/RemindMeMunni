@@ -1,4 +1,4 @@
-package com.example.remindmemunni.newseries
+package com.example.remindmemunni.destinations.newseries
 
 import android.os.Bundle
 import android.view.*

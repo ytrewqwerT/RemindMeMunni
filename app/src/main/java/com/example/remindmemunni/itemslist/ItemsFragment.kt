@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.data.Item
-import com.example.remindmemunni.main.MainViewModel
-import com.example.remindmemunni.newitem.NewItemFragment
+import com.example.remindmemunni.destinations.main.MainViewModel
+import com.example.remindmemunni.destinations.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 

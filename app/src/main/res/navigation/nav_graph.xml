@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.remindmemunni.main.MainFragment"
+        android:name="com.example.remindmemunni.destinations.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" >
         <action
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
-        android:name="com.example.remindmemunni.series.SeriesFragment"
+        android:name="com.example.remindmemunni.destinations.series.SeriesFragment"
         android:label="SeriesFragment"
         tools:layout="@layout/fragment_series" >
         <argument
@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/newItemFragment"
-        android:name="com.example.remindmemunni.newitem.NewItemFragment"
+        android:name="com.example.remindmemunni.destinations.newitem.NewItemFragment"
         android:label="NewItemFragment" >
         <argument
             android:name="ITEM_DATA"
@@ -43,6 +43,6 @@
     </fragment>
     <fragment
         android:id="@+id/newSeriesFragment"
-        android:name="com.example.remindmemunni.newseries.NewSeriesFragment"
+        android:name="com.example.remindmemunni.destinations.newseries.NewSeriesFragment"
         android:label="NewSeriesFragment" />
 </navigation>
