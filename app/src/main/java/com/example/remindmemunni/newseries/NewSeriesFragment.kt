@@ -94,7 +94,8 @@ class NewSeriesFragment : Fragment()
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to newSeriesId))
+                    // Only return newSeriesId if a new series was created (rather than edited)
+                    if (seriesId == 0) setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to newSeriesId))
                     view?.findNavController()?.popBackStack()
                 }
             }
