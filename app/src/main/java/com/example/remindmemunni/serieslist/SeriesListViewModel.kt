@@ -1,21 +1,45 @@
 package com.example.remindmemunni.serieslist
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.Series
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
-    val series: LiveData<List<AggregatedSeries>> = itemRepository.allSeries
+    private val series: Flow<List<AggregatedSeries>> = itemRepository.allSeries
+    private val _filteredSeries = MutableLiveData<List<AggregatedSeries>>()
+    val filteredSeries: LiveData<List<AggregatedSeries>> = _filteredSeries
 
-    private var filterString: String = ""
-    private val _filteredSeries = MediatorLiveData<List<AggregatedSeries>>()
-    val filteredSeries: LiveData<List<AggregatedSeries>> get() = _filteredSeries
+    // Not the greatest solution (see the comment in [ItemsListViewModel]), but it's sufficient.
+    val filterStringChannel = Channel<String>(CHANNEL_SIZE)
+    val filterCategoryChannel = Channel<String?>(CHANNEL_SIZE)
 
     init {
-        _filteredSeries.addSource(series) { updateFilteredSeries() }
+        filterStringChannel.offer("")
+        filterCategoryChannel.offer(null)
+
+        val filteredSeriesFlow = series.combine(filterStringChannel.receiveAsFlow()) { series, filterString ->
+            if (filterString.isBlank()) series
+            else series.filter { it.series.hasFilterText(filterString) }
+        }.combine(filterCategoryChannel.receiveAsFlow()) { series, filterCategory ->
+            if (filterCategory == null) series
+            else series.filter { it.series.category == filterCategory }
+        }
+        // Flow.asLiveData() doesn't seem to want to emit updates after changes to a series...
+        // (Similar issue in [ItemsListViewModel])
+        viewModelScope.launch {
+            filteredSeriesFlow.collect { _filteredSeries.value = it }
+        }
     }
 
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
@@ -33,36 +57,7 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
         }
     }
 
-    fun setFilter(filterText: String?) {
-        filterString = filterText ?: ""
-        updateFilteredSeries()
-    }
-    private fun updateFilteredSeries() {
-        val series = series.value
-        if (series == null) {
-            _filteredSeries.value = series
-        } else {
-            val result = ArrayList<AggregatedSeries>(series)
-            if (filterString.isNotEmpty()) {
-                for (serie in series) {
-                    if (!serie.series.hasFilterText(filterString)) result.remove(serie)
-                }
-            }
-            _filteredSeries.value = result
-        }
-    }
-
-    class SeriesListViewModelFactory(
-        private val itemRepository: ItemRepository
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(SeriesListViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return SeriesListViewModel(
-                    itemRepository
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
+    companion object {
+        private const val CHANNEL_SIZE = 5
     }
 }

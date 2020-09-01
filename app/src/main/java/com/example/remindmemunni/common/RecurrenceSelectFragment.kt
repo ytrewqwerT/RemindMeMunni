@@ -1,6 +1,5 @@
 package com.example.remindmemunni.common
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -17,7 +16,6 @@ class RecurrenceSelectFragment: DialogFragment() {
         fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int)
     }
 
-    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val inflater = it.layoutInflater
@@ -26,18 +24,13 @@ class RecurrenceSelectFragment: DialogFragment() {
             val daysScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
             daysScrollSpinner.setItems(
-                NumberListItem.createSequentialList(
-                    0,
-                    31
-                ).asReversed()
+                NumberListItem.createSequentialList(0, 31).asReversed()
             )
+
             val monthsScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
             monthsScrollSpinner.setItems(
-                NumberListItem.createSequentialList(
-                    0,
-                    24
-                ).asReversed()
+                NumberListItem.createSequentialList(0, 24).asReversed()
             )
 
             MaterialAlertDialogBuilder(it)
@@ -58,7 +51,8 @@ class RecurrenceSelectFragment: DialogFragment() {
         super.onAttach(context)
 
         try {
-            listener = context as RecurrenceSelectListener
+            listener = parentFragment as? RecurrenceSelectListener
+                ?: context as RecurrenceSelectListener
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 "$context must implement ${RecurrenceSelectListener::class.simpleName}"

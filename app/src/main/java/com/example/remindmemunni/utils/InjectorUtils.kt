@@ -1,15 +1,16 @@
 package com.example.remindmemunni.utils
 
 import android.content.Context
+import com.example.remindmemunni.MainActivityViewModelFactory
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase
-import com.example.remindmemunni.itemslist.ItemsListViewModel
-import com.example.remindmemunni.main.MainViewModel
-import com.example.remindmemunni.newitem.NewItemViewModel
-import com.example.remindmemunni.newseries.NewSeriesViewModel
+import com.example.remindmemunni.destinations.newitem.NewItemViewModelFactory
+import com.example.remindmemunni.destinations.newseries.NewSeriesViewModelFactory
+import com.example.remindmemunni.destinations.series.SeriesViewModelFactory
+import com.example.remindmemunni.itemslist.ItemsListViewModelFactory
 import com.example.remindmemunni.notifications.NotificationScheduler
-import com.example.remindmemunni.series.SeriesViewModel
-import com.example.remindmemunni.serieslist.SeriesListViewModel
+import com.example.remindmemunni.serieslist.SeriesListViewModelFactory
 
 object InjectorUtils {
 
@@ -19,21 +20,20 @@ object InjectorUtils {
             "com.example.remindmemunni.GLOBAL_PREFERENCES",
             Context.MODE_PRIVATE
         )
-        val notificationScheduler =
-            NotificationScheduler(context.applicationContext)
+        val notificationScheduler = NotificationScheduler(context.applicationContext)
         return ItemRepository(itemDao, sharedPref, notificationScheduler)
     }
 
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =
-        ItemsListViewModel.ItemsListViewModelFactory(getItemRepository(context), seriesId)
-    fun provideMainViewModelFactory(context: Context) =
-        MainViewModel.MainViewModelFactory(getItemRepository(context))
-    fun provideNewItemViewModelFactory(context: Context, itemId: Int) =
-        NewItemViewModel.NewItemViewModelFactory(getItemRepository(context), itemId)
+        ItemsListViewModelFactory(getItemRepository(context), seriesId)
+    fun provideMainActivityViewModelFactory(context: Context) =
+        MainActivityViewModelFactory(getItemRepository(context))
+    fun provideNewItemViewModelFactory(context: Context, templateItem: Item, isItemEdit: Boolean) =
+        NewItemViewModelFactory(getItemRepository(context), templateItem, isItemEdit)
     fun provideNewSeriesViewModelFactory(context: Context, seriesId: Int) =
-        NewSeriesViewModel.NewSeriesViewModelFactory(getItemRepository(context), seriesId)
+        NewSeriesViewModelFactory(getItemRepository(context), seriesId)
     fun provideSeriesListViewModelFactory(context: Context) =
-        SeriesListViewModel.SeriesListViewModelFactory(getItemRepository(context))
+        SeriesListViewModelFactory(getItemRepository(context))
     fun provideSeriesViewModelFactory(context: Context, seriesId: Int) =
-        SeriesViewModel.SeriesViewModelFactory(getItemRepository(context), seriesId)
+        SeriesViewModelFactory(getItemRepository(context), seriesId)
 }

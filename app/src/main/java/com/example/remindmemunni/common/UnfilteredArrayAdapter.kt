@@ -25,20 +25,14 @@ class UnfilteredArrayAdapter<T>(context: Context, resource: Int, objects: Mutabl
                 : UnfilteredArrayAdapter<CharSequence> {
 
             val strings = context.resources.getTextArray(textArrayResId)
-            return UnfilteredArrayAdapter(
-                context,
-                textViewResId,
-                strings.toMutableList()
-            )
+            return UnfilteredArrayAdapter(context, textViewResId, strings.toMutableList())
         }
     }
 
     inner class NoFilter: Filter() {
-        override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val results = FilterResults()
-            results.values = items
-            results.count = items.size
-            return results
+        override fun performFiltering(constraint: CharSequence?) = FilterResults().apply {
+            values = items
+            count = items.size
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {

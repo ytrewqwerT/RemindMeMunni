@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="navbarColor">#222</color>
+    <color name="navDrawerHeaderBackground">@color/colorPrimaryDark</color>
+    <color name="navDrawerSliderTrackInactive">@color/colorPrimary</color>
+</resources>

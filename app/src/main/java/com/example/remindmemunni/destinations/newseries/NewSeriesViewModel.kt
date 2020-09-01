@@ -1,4 +1,4 @@
-package com.example.remindmemunni.newseries
+package com.example.remindmemunni.destinations.newseries
 
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.ItemRepository
@@ -10,52 +10,35 @@ class NewSeriesViewModel(
     private val seriesId: Int = 0
 ) : ViewModel() {
 
-    private val itemsTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allItems) { items ->
-            items.map { item -> item.category }
-        }
-    private val seriesTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allSeries) { series ->
-            series.map { serie -> serie.series.category }
-        }
-    private val _categories = MediatorLiveData<Set<String>>()
-    val categories: LiveData<Set<String>> get() = _categories
+    val categories: LiveData<List<String>> =
+        itemRepository.getCategories().asLiveData(viewModelScope.coroutineContext)
 
     private var isDebit: Boolean = false
     private var recurMonths: Int = 0
     private var recurDays: Int = 0
 
-    val name = MutableLiveData<String>("")
-    val cost = MutableLiveData<String>("")
-    val costType = MutableLiveData<String>("")
-    val nextNumInSeries = MutableLiveData<String>("")
-    val numInSeriesPrefix = MutableLiveData<String>("")
-    val recurrence = MutableLiveData<String>("")
-    val autoCreateItems = MutableLiveData<Boolean>(true)
-    val category = MutableLiveData<String>("")
-    val notify = MutableLiveData<Boolean>(false)
+    val name = MutableLiveData("")
+    val cost = MutableLiveData("")
+    val costType = MutableLiveData("")
+    val nextNumInSeries = MutableLiveData("")
+    val numInSeriesPrefix = MutableLiveData("")
+    val recurrence = MutableLiveData("")
+    val autoCreateItems = MutableLiveData(true)
+    val category = MutableLiveData("")
+    val notify = MutableLiveData(false)
 
     init {
         setCostType("Debit")
-
-        _categories.addSource(itemsTransformer) {
-            val other = seriesTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
-        _categories.addSource(seriesTransformer) {
-            val other = itemsTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
 
         if (seriesId != 0) {
             viewModelScope.launch {
                 val series = itemRepository.getDirectSerie(seriesId).series
                 name.value = series.name
-                if (series.cost < 0) {
-                    cost.value = (-series.cost).toString()
+                cost.value = if (series.cost < 0) {
+                    (-series.cost).toString()
                 } else {
-                    cost.value = series.cost.toString()
                     setCostType("Credit")
+                    series.cost.toString()
                 }
                 nextNumInSeries.value = series.curNum.toString()
                 numInSeriesPrefix.value = series.numPrefix
@@ -105,21 +88,5 @@ class NewSeriesViewModel(
             autoCreate = autoCreate, category = category, notify = notify
         )
         return itemRepository.insert(series)
-    }
-
-    class NewSeriesViewModelFactory(
-        private val itemRepository: ItemRepository,
-        private val seriesId: Int
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewSeriesViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewSeriesViewModel(
-                    itemRepository,
-                    seriesId
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

@@ -1,19 +1,20 @@
 package com.example.remindmemunni.itemslist
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.data.Item
-import com.example.remindmemunni.newitem.NewItemActivity
+import com.example.remindmemunni.destinations.main.MainViewModel
+import com.example.remindmemunni.destinations.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
@@ -24,33 +25,34 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
+    private val mainViewModel: MainViewModel by viewModels(
+        ownerProducer = { parentFragment ?: requireActivity() },
+        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
+    )
 
     private val recyclerViewAdapter by lazy {
-        CustomRecyclerViewAdapter<Item>(
-            null
-        )
+        CustomRecyclerViewAdapter<Item>(null)
     }
     private lateinit var contentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.filteredItems.observe(this, Observer { items ->
+        viewModel.filteredItems.observe(this) { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
-        })
+        }
 
-        viewModel.newItemEvent.observe(this, Observer { itemId ->
-            val intent = Intent(activity, NewItemActivity::class.java)
-            intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, itemId)
-            startActivityForResult(intent,
-                SAVE_ITEM_OR_DELETE
+        viewModel.newItemEvent.observe(this) { item ->
+            view?.findNavController()?.navigate(
+                R.id.newItemFragment,
+                bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
             )
-        })
+        }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
         val upperBound = arguments?.getLong(EXTRA_UPPER_TIME_BOUND, Long.MAX_VALUE) ?: Long.MAX_VALUE
-        viewModel.lowerTimeBound.value = lowerBound
-        viewModel.upperTimeBound.value = upperBound
+        viewModel.lowerTimeBoundChannel.offer(lowerBound)
+        viewModel.upperTimeBoundChannel.offer(upperBound)
     }
 
     override fun onCreateView(
@@ -67,6 +69,14 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             this.addItemDecoration(decoration)
             registerForContextMenu(this)
         }
+
+        mainViewModel.filterText.observe(viewLifecycleOwner) {
+            viewModel.filterStringChannel.offer(it ?: "")
+        }
+        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
+            viewModel.filterCategoryChannel.offer(it)
+        }
+
         return contentView
     }
 
@@ -86,9 +96,10 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             R.id.item_edit -> {
                 val item = recyclerViewAdapter.contextMenuItem
                 if (item != null) {
-                    val intent = Intent(activity, NewItemActivity::class.java)
-                    intent.putExtra(NewItemActivity.EXTRA_ITEM_ID, item.id)
-                    startActivity(intent)
+                    view?.findNavController()?.navigate(
+                        R.id.newItemFragment,
+                        bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
+                    )
                 }
                 true
             }
@@ -112,21 +123,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SAVE_ITEM_OR_DELETE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                val itemId = data?.getIntExtra(NewItemActivity.EXTRA_ITEM_ID, 0) ?: 0
-                viewModel.delete(itemId)
-            }
-        }
-    }
-
-    fun setFilter(filterText: String?) {
-        viewModel.setFilter(filterText)
-    }
-
     companion object {
-        const val SAVE_ITEM_OR_DELETE = 1
         const val EXTRA_LOWER_TIME_BOUND = "LOWER_TIME_BOUND"
         const val EXTRA_UPPER_TIME_BOUND = "UPPER_TIME_BOUND"
 

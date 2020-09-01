@@ -14,15 +14,12 @@ class TimePickerFragment : DialogFragment() {
         var minute = c.get(Calendar.MINUTE)
 
         if (arguments?.getBoolean(EXTRA_HAS_TIME) == true) {
-            hour = arguments!!.getInt(EXTRA_HOUR, 0)
-            minute = arguments!!.getInt(EXTRA_MINUTE, 0)
+            hour = requireArguments().getInt(EXTRA_HOUR, 0)
+            minute = requireArguments().getInt(EXTRA_MINUTE, 0)
         }
 
-        return TimePickerDialog(
-            context, activity as TimePickerDialog.OnTimeSetListener,
-            hour, minute,
-            false
-        )
+        val parentListener = parentFragment as? TimePickerDialog.OnTimeSetListener
+        return TimePickerDialog(context, parentListener, hour, minute, false)
     }
 
     companion object {

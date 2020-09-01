@@ -26,19 +26,15 @@ data class AggregatedSeries (
     override fun toString(): String = series.toString()
 
     // Generates the next item in the series (curNum is NOT changed).
-    fun generateNextInSeries(): Item? {
-        if (series.recurMonths == 0 && series.recurDays == 0) return null
-
+    fun generateNextInSeries(): Item {
         val lastItem = items.lastOrNull()
         var newTime = 0L
         if (lastItem != null) {
             var lastTime = PrimitiveDateTime.fromEpoch(lastItem.time).toLocalDateTime()
-            newTime = if (lastTime != null) {
+            newTime = if (lastTime == null) 0L else {
                 lastTime = lastTime.plusMonths(series.recurMonths.toLong())
                 lastTime = lastTime.plusDays(series.recurDays.toLong())
                 PrimitiveDateTime.fromLocalDateTime(lastTime).toEpoch()
-            } else {
-                0L
             }
         }
         var name = series.name

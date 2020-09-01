@@ -15,9 +15,9 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
 
     private var items: List<T?> = emptyList()
     private val onClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { v ->
+        View.OnClickListener {
             @Suppress("UNCHECKED_CAST")
-            listener?.onInteraction(v.tag as T)
+            listener?.onInteraction(it.tag as T)
         }
     }
     var contextMenuItem: T? = null
@@ -35,25 +35,24 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
         holder.subLeftView.text = contents?.mSubLeftText
         holder.subRightView.text = contents?.mSubRightText
 
-        if (contents?.mSubLeftText?.isNotEmpty() != true) {
-            holder.subLeftView.visibility = View.GONE
+        holder.subLeftView.visibility = if (contents?.mSubLeftText?.isNotEmpty() != true) {
+            View.GONE
         } else {
-            holder.subLeftView.visibility = View.VISIBLE
-        }
-        if (contents?.mSubRightText?.isNotEmpty() != true) {
-            holder.subRightView.visibility = View.GONE
-        } else {
-            holder.subRightView.visibility = View.VISIBLE
+            View.VISIBLE
         }
 
-        with(holder.view) {
-            tag = items[position]
-            setOnClickListener(onClickListener)
+        holder.subRightView.visibility = if (contents?.mSubRightText?.isNotEmpty() != true) {
+            View.GONE
+        } else {
+            View.VISIBLE
         }
+
+        holder.view.tag = items[position]
+        holder.view.setOnClickListener(onClickListener)
     }
 
     override fun getItemCount(): Int = items.size
-    fun getItem(position: Int): T? = items.getOrNull(position)
+    fun getItem(position: Int): T? = items[position]
 
     inner class ViewHolder(val view: View)
         : RecyclerView.ViewHolder(view)
@@ -66,6 +65,7 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
         init {
             view.setOnCreateContextMenuListener(this)
         }
+
         override fun onCreateContextMenu(
             menu: ContextMenu?,
             v: View?,

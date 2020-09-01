@@ -1,12 +1,13 @@
 package com.example.remindmemunni.serieslist
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,32 +15,35 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
-import com.example.remindmemunni.newseries.NewSeriesActivity
-import com.example.remindmemunni.series.SeriesActivity
+import com.example.remindmemunni.destinations.main.MainFragmentDirections
+import com.example.remindmemunni.destinations.main.MainViewModel
+import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
-class SeriesFragment : Fragment(),
+class SeriesListFragment : Fragment(),
     OnListItemInteractionListener<AggregatedSeries> {
 
-    private val viewModel: SeriesListViewModel by activityViewModels {
+    private val viewModel: SeriesListViewModel by viewModels {
         InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
     }
+    private val mainViewModel: MainViewModel by viewModels(
+        ownerProducer = { parentFragment ?: requireActivity() },
+        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
+    )
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
-        (CustomRecyclerViewAdapter<AggregatedSeries>(
-        this
-    ))
+        CustomRecyclerViewAdapter<AggregatedSeries>(this)
     }
     private lateinit var contentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.filteredSeries.observe(this, Observer { series ->
+        viewModel.filteredSeries.observe(this) { series ->
             series?.let { recyclerViewAdapter.setItems(it) }
-        })
+        }
     }
 
     override fun onCreateView(
@@ -56,6 +60,14 @@ class SeriesFragment : Fragment(),
             this.addItemDecoration(decoration)
             registerForContextMenu(this)
         }
+
+        mainViewModel.filterText.observe(viewLifecycleOwner) {
+            viewModel.filterStringChannel.offer(it ?: "")
+        }
+        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
+            viewModel.filterCategoryChannel.offer(it)
+        }
+
         return contentView
     }
 
@@ -72,9 +84,10 @@ class SeriesFragment : Fragment(),
         R.id.series_edit -> {
             val series = recyclerViewAdapter.contextMenuItem
             if (series != null) {
-                val intent = Intent(activity, NewSeriesActivity::class.java)
-                intent.putExtra(NewSeriesActivity.EXTRA_SERIES_ID, series.series.id)
-                startActivity(intent)
+                view?.findNavController()?.navigate(
+                    R.id.newSeriesFragment,
+                    bundleOf(NewSeriesFragment.EXTRA_SERIES_ID to series.series.id)
+                )
             }
             true
         }
@@ -109,12 +122,8 @@ class SeriesFragment : Fragment(),
     }
 
     override fun onInteraction(item: AggregatedSeries) {
-        val intent = Intent(activity, SeriesActivity::class.java)
-        intent.putExtra(SeriesActivity.EXTRA_SERIES_ID, item.series.id)
-        startActivity(intent)
-    }
-
-    fun setFilter(filterText: String?) {
-        viewModel.setFilter(filterText)
+        val action = MainFragmentDirections
+            .actionMainFragmentToSeriesFragment(item.series.id)
+        view?.findNavController()?.navigate(action)
     }
 }

@@ -1,6 +1,5 @@
-package com.example.remindmemunni.newitem
+package com.example.remindmemunni.destinations.newitem
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Item
@@ -11,48 +10,33 @@ import java.time.format.DateTimeFormatter
 
 class NewItemViewModel(
     private val itemRepository: ItemRepository,
-    private val itemId: Int = 0
+    templateItem: Item,
+    private val isItemEdit: Boolean
 ) : ViewModel() {
 
-    val allSeries: LiveData<List<AggregatedSeries>>
+    val allSeries: LiveData<List<AggregatedSeries>> =
+        itemRepository.allSeries.asLiveData(viewModelScope.coroutineContext)
+    val categories: LiveData<List<String>> =
+        itemRepository.getCategories().asLiveData(viewModelScope.coroutineContext)
 
-    private val itemsTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allItems) { items ->
-            items.map { item -> item.category }
-        }
-    private val seriesTransformer: LiveData<List<String>> =
-        Transformations.map(itemRepository.allSeries) { series ->
-            series.map { serie -> serie.series.category }
-        }
-    private val _categories = MediatorLiveData<Set<String>>()
-    val categories: LiveData<Set<String>> get() = _categories
-
+    private val itemId = templateItem.id
     private var _costIsDebit: Boolean = false
     private var _time = PrimitiveDateTime()
     private var seriesId: Int = 0
 
-    val name = MutableLiveData<String>("")
-    val cost = MutableLiveData<String>("")
-    val costType = MutableLiveData<String>("")
-    val timeText = MutableLiveData<String>("")
-    val series = MutableLiveData<String>("")
-    val incSeriesNum = MutableLiveData<Boolean>(false)
-    val category = MutableLiveData<String>("")
-    val notify = MutableLiveData<Boolean>(false)
+    val name = MutableLiveData("")
+    val cost = MutableLiveData("")
+    val costType = MutableLiveData("")
+    val timeText = MutableLiveData("")
+    val series = MutableLiveData("")
+    val incSeriesNum = MutableLiveData(false)
+    val category = MutableLiveData("")
+    val notify = MutableLiveData(false)
 
     init {
-        allSeries = itemRepository.allSeries
         setCostType("Debit")
 
-        _categories.addSource(itemsTransformer) {
-            val other = seriesTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
-        _categories.addSource(seriesTransformer) {
-            val other = itemsTransformer.value ?: emptyList()
-            _categories.value = other.union(it)
-        }
-
+        viewModelScope.launch { setItem(templateItem) }
         if (itemId != 0) {
             viewModelScope.launch {
                 val item = itemRepository.getDirectItem(itemId)
@@ -62,7 +46,7 @@ class NewItemViewModel(
         }
     }
 
-    fun setCost(newCost: Double) {
+    private fun setCost(newCost: Double) {
         when {
             newCost == 0.0 -> {
                 cost.value = ""
@@ -94,7 +78,7 @@ class NewItemViewModel(
             val serie = itemRepository.getDirectSerie(item.seriesId)
             seriesId = item.seriesId
             series.value = serie.series.name
-            incSeriesNum.value = serie.series.isNumbered()
+            incSeriesNum.value = !isItemEdit && serie.series.isNumbered()
         }
     }
 
@@ -108,18 +92,11 @@ class NewItemViewModel(
             series.value = newSerie.name
 
             val nextItem = newSeries.generateNextInSeries()
-            if (nextItem != null) {
-                viewModelScope.launch { setItem(nextItem) }
-            }
+            viewModelScope.launch { setItem(nextItem) }
         }
     }
 
-    fun setSeries(newSeries: Int) {
-        viewModelScope.launch { setSeries(itemRepository.getDirectSerie(newSeries)) }
-    }
-
     fun setTime(newTime: PrimitiveDateTime) {
-        Log.d("Nice", "$newTime")
         _time = newTime
         val retrievedTime = _time.toLocalDateTime()
         val formatter = DateTimeFormatter.ofPattern("HH:mm - dd/MM/yy")
@@ -127,7 +104,7 @@ class NewItemViewModel(
     }
     fun clearTime() { setTime(PrimitiveDateTime()) }
 
-    fun createItem(): String? {
+    suspend fun createItem(): String? {
         if (name.value.isNullOrEmpty()) return "Item needs a name!"
 
         var cc = if (cost.value?.isNotEmpty() == true) cost.value!!.toDouble() else 0.0
@@ -138,32 +115,14 @@ class NewItemViewModel(
             id = itemId, seriesId = seriesId, name = name.value!!,
             cost = cc, time = epochTime, category = category.value!!, notify = notify.value!!
         )
-        viewModelScope.launch { itemRepository.insert(item) }
+        itemRepository.insert(item)
 
         if (incSeriesNum.value == true && seriesId != 0) {
-            viewModelScope.launch {
-                val serie = itemRepository.getDirectSerie(seriesId)
-                serie.series.curNum += 1
-                itemRepository.insert(serie.series)
-            }
+            val serie = itemRepository.getDirectSerie(seriesId)
+            serie.series.curNum += 1
+            itemRepository.insert(serie.series)
         }
 
         return null
-    }
-
-    class NewItemViewModelFactory(
-        private val itemRepository: ItemRepository,
-        private val itemId: Int
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(NewItemViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return NewItemViewModel(
-                    itemRepository,
-                    itemId
-                ) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

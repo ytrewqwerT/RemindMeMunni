@@ -15,15 +15,13 @@ class DatePickerFragment : DialogFragment() {
         var day = c.get(Calendar.DAY_OF_MONTH)
 
         if (arguments?.getBoolean(EXTRA_HAS_DATE) == true) {
-            year = arguments!!.getInt(EXTRA_YEAR, 0)
-            month = arguments!!.getInt(EXTRA_MONTH, 0)
-            day = arguments!!.getInt(EXTRA_DAY_OF_MONTH, 0)
+            year = requireArguments().getInt(EXTRA_YEAR, 0)
+            month = requireArguments().getInt(EXTRA_MONTH, 0)
+            day = requireArguments().getInt(EXTRA_DAY_OF_MONTH, 0)
         }
 
-        return DatePickerDialog(
-            requireContext(), activity as DatePickerDialog.OnDateSetListener,
-            year, month, day
-        )
+        val parentListener = parentFragment as? DatePickerDialog.OnDateSetListener
+        return DatePickerDialog(requireContext(), parentListener, year, month, day)
     }
 
     companion object {
