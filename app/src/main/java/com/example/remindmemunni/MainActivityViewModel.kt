@@ -79,7 +79,7 @@ class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewMo
             }
 
             val formatter = DateTimeFormatter.ofPattern("MMMM")
-            _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)} = $remainingMunni"
+            _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)}: \$$remainingMunni"
         }
     }
 
