@@ -1,36 +1,32 @@
 package com.example.remindmemunni.destinations.main
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.example.remindmemunni.MainActivityViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
-import com.example.remindmemunni.databinding.FragmentMainBinding
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
-import com.example.remindmemunni.utils.toStringTrimmed
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
-    private var binding: FragmentMainBinding? = null
-    private val viewModel: MainViewModel by viewModels {
-        InjectorUtils.provideMainViewModelFactory(requireContext())
-    }
+    private val viewModel: MainViewModel by viewModels()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels {
         InjectorUtils.provideMainActivityViewModelFactory(requireContext())
     }
 
     private lateinit var itemPagerAdapter: ItemPagerAdapter
+    private var pager: ViewPager2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,66 +38,39 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
-        binding?.viewModel = viewModel
-        binding?.lifecycleOwner = viewLifecycleOwner
-        return binding?.root
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listenForFragmentResults()
+
         itemPagerAdapter = ItemPagerAdapter(this)
-        binding?.let { binding ->
-            binding.pager.adapter = itemPagerAdapter
-            TabLayoutMediator(binding.pagerTabs, binding.pager) { tab, position ->
-                tab.text = when (position) {
-                    ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
-                    ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
-                    ItemPagerAdapter.POS_SERIES -> "Series"
-                    else -> "???"
-                }
-            }.attach()
-
-            binding.endpointSlider.addOnChangeListener { _, value, _ ->
-                viewModel.monthsOffset = value.toInt()
+        val pagerTabs = view.findViewById<TabLayout>(R.id.pager_tabs)
+        pager = view.findViewById(R.id.pager)
+        pager!!.adapter = itemPagerAdapter
+        TabLayoutMediator(pagerTabs, pager!!) { tab, position ->
+            tab.text = when (position) {
+                ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
+                ItemPagerAdapter.POS_SERIES -> "Series"
+                else -> "???"
             }
+        }.apply { attach() }
 
-            binding.curMunniText.setOnKeyListener { _, keyCode, _ ->
-                when (keyCode) {
-                    KeyEvent.KEYCODE_ENTER -> {
-                        viewModel.setMunni(binding.curMunniText.text.toString().toDoubleOrNull())
-
-                        binding.curMunniText.clearFocus()
-                        val imm = context?.getSystemService(
-                            Context.INPUT_METHOD_SERVICE
-                        ) as? InputMethodManager
-                        imm?.hideSoftInputFromWindow(binding.curMunniText.windowToken, 0)
-
-                        true
-                    }
-                    else -> false
-                }
+        mainActivityViewModel.categoryFilter.observe(viewLifecycleOwner) {
+            activity?.title = when(it) {
+                null -> MainActivityViewModel.CATEGORY_ALL
+                "" -> MainActivityViewModel.CATEGORY_NONE
+                else -> it
             }
-
-            viewModel.curMunni.observe(viewLifecycleOwner) {
-                activity?.title = "\$${it.toStringTrimmed()}"
-                binding.curMunniText.setText(it.toStringTrimmed())
-                viewModel.updateMunniCalc()
-            }
-
-            viewModel.allItems.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
-            viewModel.allSeries.observe(viewLifecycleOwner) { viewModel.updateMunniCalc() }
-
-            mainActivityViewModel.categoryFilter.observe(viewLifecycleOwner) {
-                viewModel.categoryFilter.value = it
-            }
+            viewModel.categoryFilter.value = it
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        pager = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -128,7 +97,7 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.add_button -> {
-            when (binding?.pager?.currentItem) {
+            when (pager?.currentItem) {
                 ItemPagerAdapter.POS_PAST_ITEMS, ItemPagerAdapter.POS_FUTURE_ITEMS -> {
                     val action = MainFragmentDirections
                         .actionMainFragmentToNewItemFragment(Item())
@@ -142,7 +111,7 @@ class MainFragment : Fragment() {
                 }
                 else -> Log.w(
                     "MainFragment",
-                    "No add action associated to PagerAdapter page ${binding?.pager?.currentItem}"
+                    "No add action associated to PagerAdapter page ${pager?.currentItem}"
                 )
             }
             true

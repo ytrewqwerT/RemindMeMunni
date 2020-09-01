@@ -5,6 +5,7 @@ import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +27,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     }
     private val mainViewModel: MainViewModel by viewModels(
         ownerProducer = { parentFragment ?: requireActivity() },
-        factoryProducer = { InjectorUtils.provideMainViewModelFactory(requireActivity()) }
+        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
     )
 
     private val recyclerViewAdapter by lazy {

@@ -5,7 +5,6 @@ import com.example.remindmemunni.MainActivityViewModelFactory
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase
-import com.example.remindmemunni.destinations.main.MainViewModelFactory
 import com.example.remindmemunni.destinations.newitem.NewItemViewModelFactory
 import com.example.remindmemunni.destinations.newseries.NewSeriesViewModelFactory
 import com.example.remindmemunni.destinations.series.SeriesViewModelFactory
@@ -27,8 +26,6 @@ object InjectorUtils {
 
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =
         ItemsListViewModelFactory(getItemRepository(context), seriesId)
-    fun provideMainViewModelFactory(context: Context) =
-        MainViewModelFactory(getItemRepository(context))
     fun provideMainActivityViewModelFactory(context: Context) =
         MainActivityViewModelFactory(getItemRepository(context))
     fun provideNewItemViewModelFactory(context: Context, templateItem: Item, isItemEdit: Boolean) =

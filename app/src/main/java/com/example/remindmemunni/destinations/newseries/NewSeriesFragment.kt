@@ -52,8 +52,7 @@ class NewSeriesFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = "New Series"
-        if (seriesId != 0) activity?.title = "Edit Series"
+        activity?.title = if (seriesId == 0) "New Series" else "Edit Series"
 
         val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
         val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(

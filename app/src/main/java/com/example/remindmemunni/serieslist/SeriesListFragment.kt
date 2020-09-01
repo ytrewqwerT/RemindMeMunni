@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +29,7 @@ class SeriesListFragment : Fragment(),
     }
     private val mainViewModel: MainViewModel by viewModels(
         ownerProducer = { parentFragment ?: requireActivity() },
-        factoryProducer = { InjectorUtils.provideMainViewModelFactory(requireActivity()) }
+        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
     )
 
     private val recyclerViewAdapter by lazy {
