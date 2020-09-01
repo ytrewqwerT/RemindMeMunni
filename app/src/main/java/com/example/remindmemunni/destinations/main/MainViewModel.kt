@@ -30,6 +30,7 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     val categoryFilter = MutableLiveData<String?>()
 
     init {
+        monthsOffset = monthsOffset.coerceAtLeast(0)
         updateMunniCalc()
     }
 
