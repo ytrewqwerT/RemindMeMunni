@@ -31,6 +31,14 @@
             android:layout_margin="10dp" />
 
         <TextView
+            android:id="@+id/cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.cost}"
+            android:textSize="20sp"
+            android:layout_margin="10dp" />
+
+        <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,12 +46,13 @@
             android:textSize="20sp"
             android:layout_margin="10dp" />
 
-        <TextView
-            android:id="@+id/cost"
+        <CheckBox
+            android:id="@+id/notify"
+            android:text="@string/notify"
+            android:checked="@{viewModel.notify}"
+            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.cost}"
-            android:textSize="20sp"
             android:layout_margin="10dp" />
     </LinearLayout>
 </layout>
