@@ -1,35 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/text_margin">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/main_text"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.remindmemunni.destinations.item.ItemViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/sub_left_text"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_text" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".destinations.item.ItemFragment">
 
-    <TextView
-        android:id="@+id/sub_right_text"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/list_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_text" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/series"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.series}"
+            android:textSize="20sp"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.category}"
+            android:textSize="20sp"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.time}"
+            android:textSize="20sp"
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.cost}"
+            android:textSize="20sp"
+            android:layout_margin="10dp" />
+    </LinearLayout>
+</layout>

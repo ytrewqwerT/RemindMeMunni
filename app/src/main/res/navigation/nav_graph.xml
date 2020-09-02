@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainFragment_to_newSeriesFragment"
             app:destination="@id/newSeriesFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_itemFragment"
+            app:destination="@id/itemFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
@@ -32,17 +35,35 @@
         <action
             android:id="@+id/action_seriesFragment_to_newItemFragment"
             app:destination="@id/newItemFragment" />
+        <action
+            android:id="@+id/action_seriesFragment_to_itemFragment"
+            app:destination="@id/itemFragment" />
     </fragment>
     <fragment
-        android:id="@+id/newItemFragment"
-        android:name="com.example.remindmemunni.destinations.newitem.NewItemFragment"
-        android:label="NewItemFragment" >
+        android:id="@+id/itemFragment"
+        android:name="com.example.remindmemunni.destinations.item.ItemFragment"
+        android:label="fragment_item"
+        tools:layout="@layout/fragment_item" >
+        <action
+            android:id="@+id/action_itemFragment_to_newItemFragment"
+            app:destination="@id/newItemFragment" />
         <argument
-            android:name="ITEM_DATA"
-            app:argType="com.example.remindmemunni.data.Item" />
+            android:name="ITEM_ID"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/newSeriesFragment"
         android:name="com.example.remindmemunni.destinations.newseries.NewSeriesFragment"
-        android:label="NewSeriesFragment" />
+        android:label="NewSeriesFragment"
+        tools:layout="@layout/fragment_new_series"/>
+    <fragment
+        android:id="@+id/newItemFragment"
+        android:name="com.example.remindmemunni.destinations.newitem.NewItemFragment"
+        android:label="NewItemFragment"
+        tools:layout="@layout/fragment_new_item">
+        <argument
+            android:name="ITEM_DATA"
+            app:argType="com.example.remindmemunni.data.Item" />
+    </fragment>
 </navigation>

@@ -5,6 +5,7 @@ import com.example.remindmemunni.MainViewModelFactory
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase
+import com.example.remindmemunni.destinations.item.ItemViewModelFactory
 import com.example.remindmemunni.destinations.newitem.NewItemViewModelFactory
 import com.example.remindmemunni.destinations.newseries.NewSeriesViewModelFactory
 import com.example.remindmemunni.destinations.series.SeriesViewModelFactory
@@ -24,6 +25,8 @@ object InjectorUtils {
         return ItemRepository(itemDao, sharedPref, notificationScheduler)
     }
 
+    fun provideItemViewModelFactory(context: Context, itemId: Int) =
+        ItemViewModelFactory(getItemRepository(context), itemId)
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =
         ItemsListViewModelFactory(getItemRepository(context), seriesId)
     fun provideMainViewModelFactory(context: Context) =

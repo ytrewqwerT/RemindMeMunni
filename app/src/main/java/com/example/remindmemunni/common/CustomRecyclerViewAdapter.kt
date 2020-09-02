@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.R
-import kotlinx.android.synthetic.main.fragment_item.view.*
+import kotlinx.android.synthetic.main.fragment_list_item.view.*
 
 class CustomRecyclerViewAdapter<T : ListItemViewable?>(
     private val listener: OnListItemInteractionListener<T>?
@@ -25,7 +25,7 @@ class CustomRecyclerViewAdapter<T : ListItemViewable?>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_item, parent, false)
+            .inflate(R.layout.fragment_list_item, parent, false)
         return ViewHolder(view)
     }
 

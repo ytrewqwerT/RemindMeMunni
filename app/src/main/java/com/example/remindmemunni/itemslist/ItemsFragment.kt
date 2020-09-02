@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
+import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.Item
+import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.destinations.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
 
-class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
+class ItemsFragment(private val seriesId: Int = 0) : Fragment(),
+    OnListItemInteractionListener<Item> {
 
     private val uid = nextId++
 
@@ -30,7 +33,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     }
 
     private val recyclerViewAdapter by lazy {
-        CustomRecyclerViewAdapter<Item>(null)
+        CustomRecyclerViewAdapter(this)
     }
     private lateinit var contentView: View
 
@@ -128,5 +131,9 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
 
         private var nextId = 0
         private var contextMenuSourceId = 0
+    }
+
+    override fun onInteraction(item: Item) {
+        view?.findNavController()?.navigate(R.id.itemFragment, bundleOf(ItemFragment.EXTRA_ITEM_ID to item.id))
     }
 }

@@ -31,13 +31,13 @@ data class Item(
         return "$id $name: ${getCostString()}, $date"
     }
 
-    private fun getCostString(): String = when {
+    fun getCostString(): String = when {
         cost < 0.0 -> "\$${-cost}"
         cost > 0.0 -> "\$${cost}cr"
         else -> ""
     }
 
-    private fun getDateString(): String =
+    fun getDateString(): String =
         getDateString(DateTimeFormatter.ofPattern("EEEE, d MMMM - HH:mm"))
     private fun getDateString(formatter: DateTimeFormatter): String {
         if (time == 0L) return ""

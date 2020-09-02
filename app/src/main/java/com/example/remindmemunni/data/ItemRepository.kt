@@ -60,6 +60,7 @@ class ItemRepository(
     }
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
+    fun getItem(itemId: Int): Flow<Item> = itemDao.getItem(itemId)
     suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId)
     suspend fun completeItem(item: Item): Item? {
         var nextItem: Item? = null
