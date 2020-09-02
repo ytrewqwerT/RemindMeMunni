@@ -5,18 +5,18 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.destinations.main.MainFragmentDirections
-import com.example.remindmemunni.destinations.main.MainViewModel
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
@@ -27,10 +27,9 @@ class SeriesListFragment : Fragment(),
     private val viewModel: SeriesListViewModel by viewModels {
         InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
     }
-    private val mainViewModel: MainViewModel by viewModels(
-        ownerProducer = { parentFragment ?: requireActivity() },
-        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
-    )
+    private val mainViewModel: MainViewModel by activityViewModels {
+        InjectorUtils.provideMainViewModelFactory(requireContext())
+    }
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
@@ -61,7 +60,7 @@ class SeriesListFragment : Fragment(),
             registerForContextMenu(this)
         }
 
-        mainViewModel.filterText.observe(viewLifecycleOwner) {
+        mainViewModel.searchFilter.observe(viewLifecycleOwner) {
             viewModel.filterStringChannel.offer(it ?: "")
         }
         mainViewModel.categoryFilter.observe(viewLifecycleOwner) {

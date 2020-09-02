@@ -7,10 +7,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.example.remindmemunni.MainActivityViewModel
+import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
@@ -20,9 +19,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
-    private val viewModel: MainViewModel by viewModels()
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels {
-        InjectorUtils.provideMainActivityViewModelFactory(requireContext())
+    private val mainViewModel: MainViewModel by activityViewModels {
+        InjectorUtils.provideMainViewModelFactory(requireContext())
     }
 
     private lateinit var itemPagerAdapter: ItemPagerAdapter
@@ -58,13 +56,12 @@ class MainFragment : Fragment() {
             }
         }.apply { attach() }
 
-        mainActivityViewModel.categoryFilter.observe(viewLifecycleOwner) {
+        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
             activity?.title = when(it) {
-                null -> MainActivityViewModel.CATEGORY_ALL
-                "" -> MainActivityViewModel.CATEGORY_NONE
+                null -> MainViewModel.CATEGORY_ALL
+                "" -> MainViewModel.CATEGORY_NONE
                 else -> it
             }
-            viewModel.categoryFilter.value = it
         }
     }
 
@@ -87,7 +84,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.filterText.value = newText
+                mainViewModel.searchFilter.value = newText
                 return true
             }
 

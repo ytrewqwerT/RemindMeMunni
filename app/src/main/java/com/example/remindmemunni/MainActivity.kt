@@ -17,8 +17,8 @@ import com.example.remindmemunni.utils.toStringTrimmed
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: MainActivityViewModel by viewModels {
-        InjectorUtils.provideMainActivityViewModelFactory(this)
+    private val viewModel: MainViewModel by viewModels {
+        InjectorUtils.provideMainViewModelFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,11 +43,11 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         val navMenu = navView.menu
-        navMenu.add(MainActivityViewModel.CATEGORY_ALL).also {
+        navMenu.add(MainViewModel.CATEGORY_ALL).also {
             it.isCheckable = true
             navView.setCheckedItem(it)
         }
-        navMenu.add(MainActivityViewModel.CATEGORY_NONE).isCheckable = true
+        navMenu.add(MainViewModel.CATEGORY_NONE).isCheckable = true
 
         val categoryMenu = navMenu.addSubMenu("Categories")
         viewModel.categories.observe(this) { categories ->

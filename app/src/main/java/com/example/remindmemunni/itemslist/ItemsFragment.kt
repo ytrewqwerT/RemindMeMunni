@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.data.Item
-import com.example.remindmemunni.destinations.main.MainViewModel
 import com.example.remindmemunni.destinations.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
@@ -25,10 +25,9 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
     private val viewModel: ItemsListViewModel by viewModels {
         InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
     }
-    private val mainViewModel: MainViewModel by viewModels(
-        ownerProducer = { parentFragment ?: requireActivity() },
-        factoryProducer = { ViewModelProvider.NewInstanceFactory() }
-    )
+    private val mainViewModel: MainViewModel by activityViewModels {
+        InjectorUtils.provideMainViewModelFactory(requireContext())
+    }
 
     private val recyclerViewAdapter by lazy {
         CustomRecyclerViewAdapter<Item>(null)
@@ -70,7 +69,7 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment() {
             registerForContextMenu(this)
         }
 
-        mainViewModel.filterText.observe(viewLifecycleOwner) {
+        mainViewModel.searchFilter.observe(viewLifecycleOwner) {
             viewModel.filterStringChannel.offer(it ?: "")
         }
         mainViewModel.categoryFilter.observe(viewLifecycleOwner) {

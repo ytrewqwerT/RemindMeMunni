@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     private var latestCategories: List<String> = emptyList()
     private val _categories = itemRepository.getCategories().map { categories ->
         categories.filter { it.isNotBlank() }
@@ -19,6 +19,7 @@ class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewMo
 
     private val _categoryFilter = MutableLiveData<String?>()
     val categoryFilter: LiveData<String?> = _categoryFilter
+    val searchFilter = MutableLiveData<String?>()
 
     val curMunni: LiveData<Double> =
         itemRepository.munni.asLiveData(viewModelScope.coroutineContext)
@@ -44,7 +45,6 @@ class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewMo
     // Returns true if a category was successfully set (including; false if
     fun setCategoryFilter(category: String): Boolean {
         if (latestCategories.contains(category).not()) return false
-
         _categoryFilter.value = when (category) {
             CATEGORY_ALL -> null
             CATEGORY_NONE -> ""
@@ -53,9 +53,7 @@ class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewMo
         return true
     }
 
-    fun setMunni(value: Double?) {
-        itemRepository.setMunni(value ?: 0.0)
-    }
+    fun setMunni(value: Double?) { itemRepository.setMunni(value ?: 0.0) }
 
     fun updateMunniCalc() {
         // Get end of [Current month + months] (aka start of next month) as epoch seconds
@@ -66,20 +64,16 @@ class MainActivityViewModel(private val itemRepository: ItemRepository) : ViewMo
         val endEpoch = PrimitiveDateTime.fromLocalDateTime(endLocalDateTime).toEpoch()
 
         viewModelScope.launch {
-            var remainingMunni = itemRepository.latestMunni
-
             val items = itemRepository.allItems.first()
-            for (item in items) {
-                if (item.time < endEpoch) remainingMunni += item.cost
-            }
-
             val series = itemRepository.allSeries.first()
-            for (serie in series) {
-                remainingMunni += serie.getHiddenCost(endLocalDateTime)
-            }
+
+            var remainingMunni = itemRepository.latestMunni
+            for (item in items) if (item.time < endEpoch) remainingMunni += item.cost
+            for (serie in series) remainingMunni += serie.getHiddenCost(endLocalDateTime)
 
             val formatter = DateTimeFormatter.ofPattern("MMMM")
-            _munniRemaining.value = "End of ${endLocalDateTime.minusMonths(1).format(formatter)}: \$$remainingMunni"
+            val endTimeStr = endLocalDateTime.minusMonths(1).format(formatter)
+            _munniRemaining.value = "End of ${endTimeStr}: \$$remainingMunni"
         }
     }
 
