@@ -1,9 +1,7 @@
 package com.example.remindmemunni.destinations.item
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -49,6 +47,17 @@ class ItemFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_item_fragment, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId) {
+        R.id.item_finish -> true
+        R.id.item_edit -> true
+        R.id.item_delete -> true
+        else -> false
     }
 
     private fun hideWhenEmpty(view: View, source: LiveData<String>) {
