@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.ItemRepository
-import com.example.remindmemunni.data.Series
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewModel() {
+class SeriesListViewModel(itemRepository: ItemRepository) : ViewModel() {
 
     private val series: Flow<List<AggregatedSeries>> = itemRepository.allSeries
     private val _filteredSeries = MutableLiveData<List<AggregatedSeries>>()
@@ -39,21 +38,6 @@ class SeriesListViewModel(private val itemRepository: ItemRepository) : ViewMode
         // (Similar issue in [ItemsListViewModel])
         viewModelScope.launch {
             filteredSeriesFlow.collect { _filteredSeries.value = it }
-        }
-    }
-
-    fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
-    fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
-    fun insert(serie: AggregatedSeries) {
-        viewModelScope.launch {
-            itemRepository.insert(serie.series)
-            for (item in serie.items) itemRepository.insert(item)
-        }
-    }
-    fun delete(serie: AggregatedSeries) {
-        viewModelScope.launch {
-            itemRepository.delete(serie.series)
-            for (item in serie.items) itemRepository.delete(item)
         }
     }
 

@@ -3,24 +3,33 @@ package com.example.remindmemunni.destinations.main
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.example.remindmemunni.Action
+import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
-import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
+import com.example.remindmemunni.utils.createNewItem
+import com.example.remindmemunni.utils.createNewSerie
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels {
         InjectorUtils.provideMainViewModelFactory(requireContext())
+    }
+    private val actionViewModel: ActionViewModel by viewModels {
+        InjectorUtils.provideActionViewModelFactory(requireContext())
     }
 
     private lateinit var itemPagerAdapter: ItemPagerAdapter
@@ -63,6 +72,8 @@ class MainFragment : Fragment() {
                 else -> it
             }
         }
+
+        actionViewModel.oneTimeAction.observe(viewLifecycleOwner) { processAction(it) }
     }
 
     override fun onDestroyView() {
@@ -96,15 +107,10 @@ class MainFragment : Fragment() {
         R.id.add_button -> {
             when (pager?.currentItem) {
                 ItemPagerAdapter.POS_PAST_ITEMS, ItemPagerAdapter.POS_FUTURE_ITEMS -> {
-                    val action = MainFragmentDirections
-                        .actionMainFragmentToNewItemFragment(Item())
-                    view?.findNavController()?.navigate(action)
-
+                    actionViewModel.createNewItem()
                 }
                 ItemPagerAdapter.POS_SERIES -> {
-                    val action = MainFragmentDirections
-                        .actionMainFragmentToNewSeriesFragment()
-                    view?.findNavController()?.navigate(action)
+                    actionViewModel.createNewSerie()
                 }
                 else -> Log.w(
                     "MainFragment",
@@ -123,6 +129,72 @@ class MainFragment : Fragment() {
                 val action = MainFragmentDirections
                     .actionMainFragmentToSeriesFragment(newSeriesId)
                 view?.findNavController()?.navigate(action)
+            }
+        }
+    }
+
+    private fun processAction(action: Action) {
+        when(action) {
+            is Action.ItemView -> {
+                view?.findNavController()?.navigate(
+                    MainFragmentDirections.actionMainFragmentToItemFragment(action.item.id)
+                )
+            }
+            is Action.ItemEdit -> {
+                view?.findNavController()?.navigate(
+                    MainFragmentDirections.actionMainFragmentToNewItemFragment(action.item)
+                )
+            }
+            is Action.ItemFinish -> {
+                view?.let {
+                    Snackbar.make(it, "Complete ${action.item.name}", Snackbar.LENGTH_LONG)
+                        .show()
+                }
+            }
+            is Action.ItemDelete -> {
+                view?.let {
+                    val item = action.item
+                    Snackbar.make(it, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
+                        .setAction("Undo") { actionViewModel.insert(item) }
+                        .show()
+                }
+            }
+
+            is Action.SerieView -> {
+                view?.findNavController()?.navigate(
+                    MainFragmentDirections.actionMainFragmentToSeriesFragment(action.serie.id)
+                )
+            }
+            is Action.SerieEdit -> {
+                view?.findNavController()?.navigate(
+                    MainFragmentDirections.actionMainFragmentToNewSeriesFragment(action.serie.id)
+                )
+            }
+            is Action.SerieDelete -> {
+                val series = action.serie
+                view?.let { view ->
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Deleting ${series.series.name}")
+                        .setMessage("Do you want to delete the items in this series?")
+                        .setPositiveButton("Yes") { _, _ ->
+                            actionViewModel.delete(series)
+                            Snackbar.make(
+                                view,
+                                "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                            ).setAction("Undo") {
+                                actionViewModel.insert(series)
+                            }.show()
+                        }.setNegativeButton("No") { _, _ ->
+                            actionViewModel.delete(series.series)
+                            Snackbar.make(
+                                view,
+                                "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                            ).setAction("Undo") {
+                                actionViewModel.insert(series.series)
+                            }.show()
+                        }.setNeutralButton("Cancel") { _, _ -> }
+                        .create().show()
+                }
             }
         }
     }

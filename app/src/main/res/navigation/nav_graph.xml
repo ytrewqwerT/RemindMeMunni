@@ -56,7 +56,12 @@
         android:id="@+id/newSeriesFragment"
         android:name="com.example.remindmemunni.destinations.newseries.NewSeriesFragment"
         android:label="NewSeriesFragment"
-        tools:layout="@layout/fragment_new_series"/>
+        tools:layout="@layout/fragment_new_series">
+        <argument
+            android:name="SERIES_ID"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/newItemFragment"
         android:name="com.example.remindmemunni.destinations.newitem.NewItemFragment"

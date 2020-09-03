@@ -8,15 +8,21 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.example.remindmemunni.Action
+import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.R
-import com.example.remindmemunni.itemslist.ItemsFragment
+import com.example.remindmemunni.itemslist.ItemsListFragment
 import com.example.remindmemunni.utils.InjectorUtils
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class SeriesFragment : Fragment() {
 
     private val viewModel: SeriesViewModel by viewModels {
         InjectorUtils.provideSeriesViewModelFactory(requireContext(), seriesId)
+    }
+    private val actionViewModel: ActionViewModel by viewModels {
+        InjectorUtils.provideActionViewModelFactory(requireContext())
     }
 
     private var seriesId: Int = 0
@@ -52,7 +58,9 @@ class SeriesFragment : Fragment() {
             recurrenceTextView.text = text
         }
 
-        childFragmentManager.commit { add(R.id.series_list_fragment, ItemsFragment(seriesId)) }
+        actionViewModel.oneTimeAction.observe(viewLifecycleOwner) { processAction(it) }
+
+        childFragmentManager.commit { add(R.id.series_list_fragment, ItemsListFragment(seriesId)) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -72,6 +80,35 @@ class SeriesFragment : Fragment() {
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
+    }
+
+    private fun processAction(action: Action) {
+        when(action) {
+            is Action.ItemView -> {
+                view?.findNavController()?.navigate(
+                    SeriesFragmentDirections.actionSeriesFragmentToItemFragment(action.item.id)
+                )
+            }
+            is Action.ItemEdit -> {
+                view?.findNavController()?.navigate(
+                    SeriesFragmentDirections.actionSeriesFragmentToNewItemFragment(action.item)
+                )
+            }
+            is Action.ItemFinish -> {
+                view?.let {
+                    Snackbar.make(it, "Complete ${action.item.name}", Snackbar.LENGTH_LONG)
+                        .show()
+                }
+            }
+            is Action.ItemDelete -> {
+                view?.let {
+                    val item = action.item
+                    Snackbar.make(it, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
+                        .setAction("Undo") { actionViewModel.insert(item) }
+                        .show()
+                }
+            }
+        }
     }
 
     companion object {

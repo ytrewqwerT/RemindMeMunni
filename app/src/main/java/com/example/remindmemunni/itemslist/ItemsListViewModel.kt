@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
-import com.example.remindmemunni.utils.SingleLiveEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -14,15 +13,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: Int = 0)
+class ItemsListViewModel(itemRepository: ItemRepository, seriesId: Int = 0)
     : ViewModel() {
 
     private val sourceItems: Flow<List<Item>> =
         if (seriesId == 0) itemRepository.allItems else itemRepository.getItemsInSeries(seriesId)
     private val _filteredItems = MutableLiveData<List<Item>>()
     val filteredItems: LiveData<List<Item>> = _filteredItems
-
-    val newItemEvent = SingleLiveEvent<Item>()
 
     // This implementation for receiving values may result in lost values on channel overflow, but
     // overflow is unlikely since (as of writing) lower/upper bound is only set on fragment creation
@@ -57,28 +54,6 @@ class ItemsListViewModel(private val itemRepository: ItemRepository, seriesId: I
         //   filteredItems = filteredItemsFlow.asLiveData(viewModelScope.coroutineContext)
         viewModelScope.launch {
             filteredItemsFlow.collect { _filteredItems.value = it }
-        }
-    }
-
-    fun insert(item: Item) = viewModelScope.launch { itemRepository.insert(item) }
-    fun complete(item: Item) = viewModelScope.launch {
-        val series = itemRepository.getDirectSerie(item.seriesId)
-        val nextItem = itemRepository.completeItem(item)
-
-        // Nested if wasn't correctly smart-casting nextItem to non-null in IDE. :S
-        nextItem?.let {
-            if (series.series.autoCreate) {
-                insert(it)
-                itemRepository.incrementSeries(series.series.id)
-            } else {
-                newItemEvent.value = it
-            }
-        }
-    }
-    fun delete(item: Item) = viewModelScope.launch { itemRepository.delete(item) }
-    fun delete(item: Int) {
-        if (item != 0) viewModelScope.launch {
-            delete(itemRepository.getDirectItem(item))
         }
     }
 

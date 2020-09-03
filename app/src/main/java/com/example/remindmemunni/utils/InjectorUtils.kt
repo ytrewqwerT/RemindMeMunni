@@ -1,6 +1,7 @@
 package com.example.remindmemunni.utils
 
 import android.content.Context
+import com.example.remindmemunni.ActionViewModelFactory
 import com.example.remindmemunni.MainViewModelFactory
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
@@ -25,6 +26,8 @@ object InjectorUtils {
         return ItemRepository(itemDao, sharedPref, notificationScheduler)
     }
 
+    fun provideActionViewModelFactory(context: Context) =
+        ActionViewModelFactory(getItemRepository(context))
     fun provideItemViewModelFactory(context: Context, itemId: Int) =
         ItemViewModelFactory(getItemRepository(context), itemId)
     fun provideItemsListViewModelFactory(context: Context, seriesId: Int = 0) =

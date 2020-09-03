@@ -2,32 +2,32 @@ package com.example.remindmemunni.itemslist
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.CustomRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.Item
-import com.example.remindmemunni.destinations.item.ItemFragment
-import com.example.remindmemunni.destinations.newitem.NewItemFragment
 import com.example.remindmemunni.utils.InjectorUtils
-import com.google.android.material.snackbar.Snackbar
 
-class ItemsFragment(private val seriesId: Int = 0) : Fragment(),
+class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
     OnListItemInteractionListener<Item> {
 
     private val uid = nextId++
 
     private val viewModel: ItemsListViewModel by viewModels {
-        InjectorUtils.provideItemsListViewModelFactory(requireActivity(), seriesId)
+        InjectorUtils.provideItemsListViewModelFactory(requireContext(), seriesId)
     }
+    private val actionViewModel: ActionViewModel by viewModels(
+        ownerProducer = { requireParentFragment() },
+        factoryProducer = { InjectorUtils.provideActionViewModelFactory(requireContext()) }
+    )
     private val mainViewModel: MainViewModel by activityViewModels {
         InjectorUtils.provideMainViewModelFactory(requireContext())
     }
@@ -42,13 +42,6 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment(),
 
         viewModel.filteredItems.observe(this) { items ->
             items?.let { recyclerViewAdapter.setItems(it) }
-        }
-
-        viewModel.newItemEvent.observe(this) { item ->
-            view?.findNavController()?.navigate(
-                R.id.newItemFragment,
-                bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
-            )
         }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
@@ -96,29 +89,15 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment(),
         if (contextMenuSourceId != uid) return super.onContextItemSelected(menuItem)
         return when (menuItem.itemId) {
             R.id.item_edit -> {
-                val item = recyclerViewAdapter.contextMenuItem
-                if (item != null) {
-                    view?.findNavController()?.navigate(
-                        R.id.newItemFragment,
-                        bundleOf(NewItemFragment.EXTRA_ITEM_DATA to item)
-                    )
-                }
+                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.edit(it) }
                 true
             }
             R.id.item_finish -> {
-                val item = recyclerViewAdapter.contextMenuItem
-                Snackbar.make(contentView, "Complete ${item?.name}", Snackbar.LENGTH_LONG).show()
-                if (item != null) viewModel.complete(item)
+                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.complete(it) }
                 true
             }
             R.id.item_delete -> {
-                val item = recyclerViewAdapter.contextMenuItem
-                if (item != null) {
-                    viewModel.delete(item)
-                    Snackbar.make(contentView, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
-                        .setAction("Undo") { viewModel.insert(item) }
-                        .show()
-                }
+                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.delete(it) }
                 true
             }
             else -> super.onContextItemSelected(menuItem)
@@ -133,7 +112,5 @@ class ItemsFragment(private val seriesId: Int = 0) : Fragment(),
         private var contextMenuSourceId = 0
     }
 
-    override fun onInteraction(item: Item) {
-        view?.findNavController()?.navigate(R.id.itemFragment, bundleOf(ItemFragment.EXTRA_ITEM_ID to item.id))
-    }
+    override fun onInteraction(item: Item) { actionViewModel.view(item) }
 }
