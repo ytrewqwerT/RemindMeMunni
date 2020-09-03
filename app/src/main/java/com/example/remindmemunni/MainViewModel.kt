@@ -77,6 +77,8 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
         }
     }
 
+    suspend fun getSerie(serieId: Int) = itemRepository.getDirectSerie(serieId)
+
     companion object {
         const val CATEGORY_ALL = "All"
         const val CATEGORY_NONE = "Uncategorised"

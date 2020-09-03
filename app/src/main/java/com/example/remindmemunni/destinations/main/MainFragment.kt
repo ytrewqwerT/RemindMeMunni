@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.remindmemunni.Action
@@ -19,12 +20,14 @@ import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
+import com.example.remindmemunni.destinations.series.SeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.createNewItem
 import com.example.remindmemunni.utils.createNewSerie
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels {
@@ -139,6 +142,22 @@ class MainFragment : Fragment() {
             }
             result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
                 actionViewModel.complete(it)
+            }
+        }
+        setFragmentResultListener(SeriesFragment.REQUEST_RESULT) { _, result ->
+            val deepDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_DEEP, 0)
+            if (deepDeleteId != 0) {
+                lifecycleScope.launch {
+                    val serie = mainViewModel.getSerie(deepDeleteId)
+                    actionViewModel.delete(serie)
+                }
+            }
+            val shallowDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_SHALLOW, 0)
+            if (shallowDeleteId != 0) {
+                lifecycleScope.launch {
+                    val serie = mainViewModel.getSerie(shallowDeleteId)
+                    actionViewModel.delete(serie.series)
+                }
             }
         }
     }

@@ -3,10 +3,9 @@ package com.example.remindmemunni.destinations.series
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
+import androidx.fragment.app.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.remindmemunni.Action
@@ -68,8 +67,7 @@ class SeriesFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.search_button)?.isVisible = false
+        inflater.inflate(R.menu.menu_series_fragment, menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -83,7 +81,34 @@ class SeriesFragment : Fragment() {
             }
             true
         }
+        R.id.serie_edit -> {
+            view?.findNavController()?.navigate(
+                SeriesFragmentDirections.actionSeriesFragmentToNewSeriesFragment(seriesId)
+            )
+            true
+        }
+        R.id.serie_delete -> {
+            promptSerieDelete()
+            true
+        }
         else -> super.onOptionsItemSelected(menuItem)
+    }
+
+    private fun promptSerieDelete() {
+        val series = viewModel.series.value ?: return
+        view?.let { view ->
+            AlertDialog.Builder(requireContext())
+                .setTitle("Deleting ${series.series.name}")
+                .setMessage("Do you want to delete the items in this series?")
+                .setPositiveButton("Yes") { _, _ ->
+                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_DEEP to seriesId))
+                    view.findNavController().popBackStack()
+                }.setNegativeButton("No") { _, _ ->
+                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_SHALLOW to seriesId))
+                    view.findNavController().popBackStack()
+                }.setNeutralButton("Cancel") { _, _ -> }
+                .create().show()
+        }
     }
 
     private fun listenForFragmentResults() {
@@ -96,6 +121,7 @@ class SeriesFragment : Fragment() {
             }
         }
     }
+
     private fun processAction(action: Action) {
         when(action) {
             is Action.ItemView -> {
@@ -126,6 +152,9 @@ class SeriesFragment : Fragment() {
     }
 
     companion object {
+        const val REQUEST_RESULT = "SERIES_FRAGMENT_REQUEST_RESULT"
+        const val RESULT_DELETE_DEEP = "RESULT_DELETE_DEEP"
+        const val RESULT_DELETE_SHALLOW = "RESULT_DELETE_SHALLOW"
         const val EXTRA_SERIES_ID = "SERIES_ID"
     }
 }
