@@ -5,12 +5,15 @@ import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.remindmemunni.Action
 import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.R
+import com.example.remindmemunni.data.Item
+import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.itemslist.ItemsListFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.google.android.material.snackbar.Snackbar
@@ -42,6 +45,7 @@ class SeriesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listenForFragmentResults()
 
         seriesId = arguments?.getInt(EXTRA_SERIES_ID, 0) ?: 0
 
@@ -82,6 +86,16 @@ class SeriesFragment : Fragment() {
         else -> super.onOptionsItemSelected(menuItem)
     }
 
+    private fun listenForFragmentResults() {
+        setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
+            result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
+                actionViewModel.delete(it)
+            }
+            result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
+                actionViewModel.complete(it)
+            }
+        }
+    }
     private fun processAction(action: Action) {
         when(action) {
             is Action.ItemView -> {

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -12,7 +13,8 @@ class ItemViewModel(
     private val itemRepository: ItemRepository,
     itemId: Int
 ) : ViewModel() {
-
+    var item: Item? = null
+        private set
     private val _name = MutableLiveData("")
     private val _series = MutableLiveData("")
     private val _category = MutableLiveData("")
@@ -29,6 +31,7 @@ class ItemViewModel(
     init {
         viewModelScope.launch {
             itemRepository.getItem(itemId).collect {
+                item = it
                 _name.value = it.name
                 setSeries(it.seriesId)
                 setCategory(it.category)

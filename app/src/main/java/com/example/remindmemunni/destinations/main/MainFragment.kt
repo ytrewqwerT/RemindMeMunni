@@ -16,6 +16,8 @@ import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ItemPagerAdapter
+import com.example.remindmemunni.data.Item
+import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
 import com.example.remindmemunni.utils.InjectorUtils
 import com.example.remindmemunni.utils.createNewItem
@@ -129,6 +131,14 @@ class MainFragment : Fragment() {
                 val action = MainFragmentDirections
                     .actionMainFragmentToSeriesFragment(newSeriesId)
                 view?.findNavController()?.navigate(action)
+            }
+        }
+        setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
+            result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
+                actionViewModel.delete(it)
+            }
+            result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
+                actionViewModel.complete(it)
             }
         }
     }
