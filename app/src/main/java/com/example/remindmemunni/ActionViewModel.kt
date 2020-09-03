@@ -34,7 +34,7 @@ class ActionViewModel(private val itemRepository: ItemRepository) : ViewModel() 
             }
         }
     }
-    fun delete(item: Item) {
+    fun deleteSerieShallow(item: Item) {
         viewModelScope.launch { itemRepository.delete(item) }
         _oneTimeAction.value = Action.ItemDelete(item)
     }
@@ -47,11 +47,14 @@ class ActionViewModel(private val itemRepository: ItemRepository) : ViewModel() 
     fun insert(serie: Series) = viewModelScope.launch { itemRepository.insert(serie) }
     fun edit(serie: Series) { _oneTimeAction.value = Action.SerieEdit(serie) }
     fun promptDelete(serie: AggregatedSeries) { _oneTimeAction.value = Action.SerieDelete(serie) }
-    fun delete(serie: AggregatedSeries) {
+    fun deleteSerieDeep(serie: AggregatedSeries) {
         viewModelScope.launch {
             itemRepository.delete(serie.series)
             for (item in serie.items) itemRepository.delete(item)
         }
     }
-    fun delete(serie: Series) = viewModelScope.launch { itemRepository.delete(serie) }
+    fun deleteSerieShallow(serie: AggregatedSeries) = viewModelScope.launch {
+        itemRepository.delete(serie.series)
+        for (item in serie.items) itemRepository.insert(item.copy(seriesId = 0))
+    }
 }

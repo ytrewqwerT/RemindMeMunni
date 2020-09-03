@@ -138,7 +138,7 @@ class MainFragment : Fragment() {
         }
         setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
             result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
-                actionViewModel.delete(it)
+                actionViewModel.deleteSerieShallow(it)
             }
             result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
                 actionViewModel.complete(it)
@@ -149,14 +149,14 @@ class MainFragment : Fragment() {
             if (deepDeleteId != 0) {
                 lifecycleScope.launch {
                     val serie = mainViewModel.getSerie(deepDeleteId)
-                    actionViewModel.delete(serie)
+                    actionViewModel.deleteSerieDeep(serie)
                 }
             }
             val shallowDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_SHALLOW, 0)
             if (shallowDeleteId != 0) {
                 lifecycleScope.launch {
                     val serie = mainViewModel.getSerie(shallowDeleteId)
-                    actionViewModel.delete(serie.series)
+                    actionViewModel.deleteSerieShallow(serie)
                 }
             }
         }
@@ -206,7 +206,7 @@ class MainFragment : Fragment() {
                         .setTitle("Deleting ${series.series.name}")
                         .setMessage("Do you want to delete the items in this series?")
                         .setPositiveButton("Yes") { _, _ ->
-                            actionViewModel.delete(series)
+                            actionViewModel.deleteSerieDeep(series)
                             Snackbar.make(
                                 view,
                                 "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
@@ -214,7 +214,7 @@ class MainFragment : Fragment() {
                                 actionViewModel.insert(series)
                             }.show()
                         }.setNegativeButton("No") { _, _ ->
-                            actionViewModel.delete(series.series)
+                            actionViewModel.deleteSerieShallow(series)
                             Snackbar.make(
                                 view,
                                 "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
