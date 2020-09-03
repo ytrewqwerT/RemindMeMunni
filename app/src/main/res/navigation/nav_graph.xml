@@ -12,16 +12,24 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_seriesFragment"
-            app:destination="@id/seriesFragment" />
+            app:destination="@id/seriesFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <action
             android:id="@+id/action_mainFragment_to_newItemFragment"
-            app:destination="@id/newItemFragment" />
+            app:destination="@id/newItemFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <action
             android:id="@+id/action_mainFragment_to_newSeriesFragment"
-            app:destination="@id/newSeriesFragment" />
+            app:destination="@id/newSeriesFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <action
             android:id="@+id/action_mainFragment_to_itemFragment"
-            app:destination="@id/itemFragment" />
+            app:destination="@id/itemFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
@@ -34,13 +42,19 @@
             android:defaultValue="0" />
         <action
             android:id="@+id/action_seriesFragment_to_newItemFragment"
-            app:destination="@id/newItemFragment" />
+            app:destination="@id/newItemFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <action
             android:id="@+id/action_seriesFragment_to_itemFragment"
-            app:destination="@id/itemFragment" />
+            app:destination="@id/itemFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <action
             android:id="@+id/action_seriesFragment_to_newSeriesFragment"
-            app:destination="@id/newSeriesFragment" />
+            app:destination="@id/newSeriesFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
     </fragment>
     <fragment
         android:id="@+id/itemFragment"
@@ -49,7 +63,9 @@
         tools:layout="@layout/fragment_item" >
         <action
             android:id="@+id/action_itemFragment_to_newItemFragment"
-            app:destination="@id/newItemFragment" />
+            app:destination="@id/newItemFragment"
+            app:enterAnim="@animator/fade_slide_in"
+            app:popExitAnim="@animator/fade_slide_out" />
         <argument
             android:name="ITEM_ID"
             app:argType="integer"

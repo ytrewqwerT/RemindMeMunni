@@ -75,9 +75,9 @@ class SeriesFragment : Fragment() {
         R.id.add_button -> {
             lifecycleScope.launch {
                 val newItem = viewModel.generateNextItemInSeries()
-                val action = SeriesFragmentDirections
-                    .actionSeriesFragmentToNewItemFragment(ITEMDATA = newItem)
-                view?.findNavController()?.navigate(action)
+                view?.findNavController()?.navigate(
+                    SeriesFragmentDirections.actionSeriesFragmentToNewItemFragment(ITEMDATA = newItem)
+                )
             }
             true
         }

@@ -131,9 +131,9 @@ class MainFragment : Fragment() {
         setFragmentResultListener(NewSeriesFragment.REQUEST_RESULT) { _, result ->
             val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
             if (newSeriesId != 0) {
-                val action = MainFragmentDirections
-                    .actionMainFragmentToSeriesFragment(newSeriesId)
-                view?.findNavController()?.navigate(action)
+                view?.findNavController()?.navigate(
+                    MainFragmentDirections.actionMainFragmentToSeriesFragment(newSeriesId)
+                )
             }
         }
         setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
