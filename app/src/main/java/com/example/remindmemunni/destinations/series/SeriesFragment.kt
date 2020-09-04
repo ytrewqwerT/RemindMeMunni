@@ -114,7 +114,7 @@ class SeriesFragment : Fragment() {
     private fun listenForFragmentResults() {
         setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
             result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
-                actionViewModel.deleteSerieShallow(it)
+                actionViewModel.deleteItem(it)
             }
             result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
                 actionViewModel.complete(it)

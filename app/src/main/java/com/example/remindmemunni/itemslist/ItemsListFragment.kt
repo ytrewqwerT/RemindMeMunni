@@ -97,7 +97,7 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
                 true
             }
             R.id.item_delete -> {
-                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.deleteSerieShallow(it) }
+                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.deleteItem(it) }
                 true
             }
             else -> super.onContextItemSelected(menuItem)

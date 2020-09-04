@@ -34,7 +34,7 @@ class ActionViewModel(private val itemRepository: ItemRepository) : ViewModel() 
             }
         }
     }
-    fun deleteSerieShallow(item: Item) {
+    fun deleteItem(item: Item) {
         viewModelScope.launch { itemRepository.delete(item) }
         _oneTimeAction.value = Action.ItemDelete(item)
     }
