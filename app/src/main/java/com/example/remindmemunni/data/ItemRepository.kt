@@ -6,6 +6,7 @@ import com.example.remindmemunni.notifications.NotificationScheduler
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.filterNotNull
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class ItemRepository(
@@ -60,8 +61,8 @@ class ItemRepository(
     }
     suspend fun insert(series: Series): Int = itemDao.insert(series).toInt()
 
-    fun getItem(itemId: Int): Flow<Item> = itemDao.getItem(itemId)
-    suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId)
+    fun getItem(itemId: Int): Flow<Item> = itemDao.getItem(itemId).filterNotNull()
+    suspend fun getDirectItem(itemId: Int): Item = itemDao.getDirectItem(itemId) ?: Item()
     suspend fun completeItem(item: Item): Item? {
         var nextItem: Item? = null
         if (item.seriesId != 0) {
@@ -74,11 +75,11 @@ class ItemRepository(
     }
     fun getItemsInSeries(seriesId: Int): Flow<List<Item>> = itemDao.getItemsInSeries(seriesId)
 
-    fun getSerie(seriesId: Int): Flow<AggregatedSeries> = itemDao.getSerie(seriesId)
-    suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId)
+    fun getSerie(seriesId: Int): Flow<AggregatedSeries> = itemDao.getSerie(seriesId).filterNotNull()
+    suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId) ?: AggregatedSeries(Series(), emptyList())
     suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
-        val series = itemDao.getDirectSerie(seriesId)
+        val series = getDirectSerie(seriesId)
         if (series.series.curNum == 0.0) return
         series.series.curNum += increment
         itemDao.insert(series.series)
