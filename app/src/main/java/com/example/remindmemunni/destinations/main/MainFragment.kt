@@ -91,7 +91,7 @@ class MainFragment : Fragment() {
 
         val searchView = menu.findItem(R.id.search_button).actionView as SearchView
         searchView.isSubmitButtonEnabled = false
-        searchView.queryHint = getString(R.string.filter_hint)
+        searchView.queryHint = getString(R.string.filter_items_series)
         searchView.maxWidth = 900
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

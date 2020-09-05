@@ -61,7 +61,7 @@ class NewItemFragment : Fragment()
 
         val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
         val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
-            requireContext(), R.array.cost_types_array, R.layout.dropdown_menu_popup_item
+            requireContext(), R.array.credit_debit_array, R.layout.dropdown_menu_popup_item
         )
         typeSpinner.setAdapter(typeSpinnerAdapter)
         typeSpinner.setOnItemClickListener { _, _, position, _ ->

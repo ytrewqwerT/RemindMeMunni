@@ -20,7 +20,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_input_layout"
-                android:hint="@string/new_item_name"
+                android:hint="@string/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -37,7 +37,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/cost_input_layout"
-                android:hint="@string/new_item_cost"
+                android:hint="@string/optional_cost"
                 app:prefixText="$ "
                 app:prefixTextAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:hint="@string/new_item_type"
+                android:hint="@string/type"
                 android:labelFor="@id/cost_type_dropdown"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/time_input_layout"
-                android:hint="@string/new_item_time"
+                android:hint="@string/optional_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -96,7 +96,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:text="@string/clear_field"
+                android:text="@string/clear"
                 android:onClick="@{() -> viewModel.clearTime()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:id="@+id/series_dropdown_container"
-                android:hint="@string/new_item_series"
+                android:hint="@string/optional_series"
                 android:labelFor="@id/series_dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
 
             <CheckBox
                 android:id="@+id/series_increment"
-                android:text="@string/increment_series"
+                android:text="@string/increment_series_counter"
                 android:checked="@={viewModel.incSeriesNum}"
                 android:enabled="false"
                 android:layout_width="wrap_content"
