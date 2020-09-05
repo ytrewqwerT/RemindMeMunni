@@ -26,13 +26,10 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
             layoutManager: LayoutManager?,
             velocityX: Int, velocityY: Int
         ): Int {
-            return when (
-                val position = super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
-            ) {
-                NO_POSITION -> NO_POSITION
-                else -> boundSize(position)
-            }
+            val position = super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
+            return position.takeIf { it == NO_POSITION } ?: boundSize(position)
         }
+
         private fun boundSize(position: Int): Int = when {
             position < listPaddingSize -> listPaddingSize
             position > items.size - listPaddingSize -> items.size - listPaddingSize - 1

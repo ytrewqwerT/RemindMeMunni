@@ -1,8 +1,8 @@
 package com.example.remindmemunni.utils
 
 import android.content.Context
-import com.example.remindmemunni.ActionViewModelFactory
 import com.example.remindmemunni.MainViewModelFactory
+import com.example.remindmemunni.common.ActionViewModelFactory
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.ItemRoomDatabase

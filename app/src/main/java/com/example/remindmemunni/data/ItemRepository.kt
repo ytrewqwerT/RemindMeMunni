@@ -22,24 +22,12 @@ class ItemRepository(
     //  or hack a solution to store doubles in preferences.
     var latestMunni: Double = sharedPref.getFloat("MUNNI", 0F).toDouble()
         private set
-    val munni: Flow<Double> = channelFlow {
-        offer(latestMunni)
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
-            if (changedKey == "MUNNI") {
-                latestMunni = sharedPref.getFloat("MUNNI", 0F).toDouble()
-                offer(latestMunni)
-            }
-        }
-        sharedPref.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { sharedPref.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
+    val munni: Flow<Double> = munniFlow()
 
     var munniCalcEndMonth: Int = sharedPref.getInt("CALC_MONTH", 0)
         set(value) {
             field = value
-            sharedPref.edit(true) {
-                putInt("CALC_MONTH", value)
-            }
+            sharedPref.edit(true) { putInt("CALC_MONTH", value) }
         }
 
     init {
@@ -49,9 +37,7 @@ class ItemRepository(
     }
 
     fun setMunni(value: Double) {
-        sharedPref.edit(true) {
-            putFloat("MUNNI", value.toFloat())
-        }
+        sharedPref.edit(true) { putFloat("MUNNI", value.toFloat()) }
     }
 
     suspend fun insert(item: Item): Int {
@@ -76,7 +62,8 @@ class ItemRepository(
     fun getItemsInSeries(seriesId: Int): Flow<List<Item>> = itemDao.getItemsInSeries(seriesId)
 
     fun getSerie(seriesId: Int): Flow<AggregatedSeries> = itemDao.getSerie(seriesId).filterNotNull()
-    suspend fun getDirectSerie(seriesId: Int): AggregatedSeries = itemDao.getDirectSerie(seriesId) ?: AggregatedSeries(Series(), emptyList())
+    suspend fun getDirectSerie(seriesId: Int): AggregatedSeries =
+        itemDao.getDirectSerie(seriesId) ?: AggregatedSeries(Series(), emptyList())
     suspend fun incrementSeries(seriesId: Int, increment: Double = 1.0) {
         if (seriesId == 0) return
         val series = getDirectSerie(seriesId)
@@ -89,4 +76,16 @@ class ItemRepository(
 
     suspend fun delete(item: Item) { itemDao.delete(item) }
     suspend fun delete(series: Series) { itemDao.delete(series) }
+
+    private fun munniFlow(): Flow<Double> = channelFlow {
+        offer(latestMunni)
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == "MUNNI") {
+                latestMunni = sharedPref.getFloat("MUNNI", 0F).toDouble()
+                offer(latestMunni)
+            }
+        }
+        sharedPref.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { sharedPref.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
 }

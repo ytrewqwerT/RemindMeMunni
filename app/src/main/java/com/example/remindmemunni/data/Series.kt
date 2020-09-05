@@ -2,7 +2,9 @@ package com.example.remindmemunni.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ListItemViewable
+import com.example.remindmemunni.utils.Strings
 import java.time.LocalDateTime
 import java.util.*
 
@@ -33,19 +35,23 @@ data class Series (
     }
 
     fun getCostString(): String = when {
-        cost < 0.0 -> "\$${-cost}"
-        cost > 0.0 -> "\$${cost}cr"
+        cost < 0.0 -> Strings.get(R.string.format_cost_debit, -cost)
+        cost > 0.0 -> Strings.get(R.string.format_cost_credit, cost)
         else -> ""
     }
 
     fun getRecurrenceString(): String {
         var result = ""
         if (recurMonths > 0) {
-            result += if (recurMonths == 1) "$recurMonths Month" else "$recurMonths Months"
+            result += if (recurMonths == 1) {
+                Strings.get(R.string.one_month)
+            } else Strings.get(R.string.format_num_months, recurMonths)
         }
         if (recurDays > 0) {
-            if (result.isNotEmpty()) result += " and "
-            result += if (recurDays == 1) "$recurDays Day" else "$recurDays Days"
+            if (result.isNotEmpty()) result += Strings.get(R.string.and_conjunctor)
+            result += if (recurDays == 1) {
+                Strings.get(R.string.one_day)
+            } else Strings.get(R.string.format_num_days, recurDays)
         }
         return result
     }
@@ -56,7 +62,8 @@ data class Series (
         val lowerFilter = filter.toLowerCase(Locale.getDefault())
         if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
         if (category.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
-        if (notify && "notification".contains(lowerFilter)) return true
+        val notifyStr = Strings.get(R.string.notify).toLowerCase(Locale.getDefault())
+        if (notify && notifyStr.contains(lowerFilter)) return true
         return false
     }
 }

@@ -35,7 +35,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:text="@string/current_munni_$"
+                android:text="@string/current_munni"
                 android:textColor="@android:color/white"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="center_vertical"

@@ -22,19 +22,17 @@ class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
     }
 
     private fun overdueItemsListFragment() = ItemsListFragment().apply {
-        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-            .toEpoch()
-        val bundle = Bundle()
-        bundle.putLong(ItemsListFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
-        arguments = bundle
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now()).toEpoch()
+        arguments = Bundle().apply {
+            putLong(ItemsListFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
+        }
     }
 
     private fun upcomingItemsListFragment() = ItemsListFragment().apply {
-        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-            .toEpoch()
-        val bundle = Bundle()
-        bundle.putLong(ItemsListFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
-        arguments = bundle
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now()).toEpoch()
+        arguments = Bundle().apply {
+            putLong(ItemsListFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
+        }
     }
 
     private fun seriesListFragment() = SeriesListFragment()

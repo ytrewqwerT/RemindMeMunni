@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.common
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -29,9 +29,7 @@ class ActionViewModel(private val itemRepository: ItemRepository) : ViewModel() 
                 insert(nextItem)
                 itemRepository.incrementSeries(series.series.id)
                 _oneTimeAction.value = Action.ItemFinish(item)
-            } else {
-                _oneTimeAction.value = Action.ItemEdit(nextItem)
-            }
+            } else _oneTimeAction.value = Action.ItemEdit(nextItem)
         }
     }
     fun deleteItem(item: Item) {

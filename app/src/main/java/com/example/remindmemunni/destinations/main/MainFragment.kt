@@ -12,10 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.example.remindmemunni.Action
-import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
+import com.example.remindmemunni.common.Action
+import com.example.remindmemunni.common.ActionViewModel
 import com.example.remindmemunni.common.ItemPagerAdapter
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.item.ItemFragment

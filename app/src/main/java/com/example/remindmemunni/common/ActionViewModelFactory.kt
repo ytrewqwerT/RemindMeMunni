@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

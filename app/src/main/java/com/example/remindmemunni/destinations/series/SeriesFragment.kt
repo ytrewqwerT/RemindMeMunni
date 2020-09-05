@@ -8,9 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.*
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import com.example.remindmemunni.Action
-import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.R
+import com.example.remindmemunni.common.Action
+import com.example.remindmemunni.common.ActionViewModel
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.itemslist.ItemsListFragment

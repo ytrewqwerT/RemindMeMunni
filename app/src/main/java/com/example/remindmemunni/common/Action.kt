@@ -1,4 +1,4 @@
-package com.example.remindmemunni
+package com.example.remindmemunni.common
 
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Item

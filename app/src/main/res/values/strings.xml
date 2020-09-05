@@ -22,6 +22,8 @@
     <string name="name">Name</string>
     <string name="type">Type</string>
 
+    <string name="and_conjunctor">\u0020and\u0020</string>
+
     <string name="optional_cost">Cost (Optional)</string>
     <string name="optional_next_num_in_series">Next # in Series (Optional)</string>
     <string name="optional_next_num_prefix">Next # Prefix (Optional)</string>
@@ -29,9 +31,12 @@
     <string name="optional_time">Time (optional)</string>
 
     <string name="auto_create_subsequent_items">Automatically create subsequent items</string>
-    <string name="current_munni_$">Current Munni: $</string>
+    <string name="current_munni">Current Munni: $</string>
     <string name="filter_items_series">Filter items/series</string>
     <string name="increment_series_counter">Increment series counter</string>
+    <string name="one_day">1 Day</string>
+    <string name="one_item">1 Item</string>
+    <string name="one_month">1 Month</string>
     <string name="set_frequency">Set Frequency</string>
     <string name="show_hide">Show/Hide</string>
 
@@ -39,4 +44,11 @@
         <item>@string/credit</item>
         <item>@string/debit</item>
     </string-array>
+
+    <string name="format_cost_credit">$%1$scr</string>
+    <string name="format_cost_debit">$%1$s</string>
+    <string name="format_cost_per_item">%1$s per Item</string>
+    <string name="format_num_days">%1$d Days</string>
+    <string name="format_num_items">%1$d Items</string>
+    <string name="format_num_months">%1$d Months</string>
 </resources>

@@ -37,15 +37,11 @@ class ListItemRecyclerViewAdapter<T : ListItemViewable?>(
 
         holder.subLeftView.visibility = if (contents?.mSubLeftText?.isNotEmpty() != true) {
             View.GONE
-        } else {
-            View.VISIBLE
-        }
+        } else View.VISIBLE
 
         holder.subRightView.visibility = if (contents?.mSubRightText?.isNotEmpty() != true) {
             View.GONE
-        } else {
-            View.VISIBLE
-        }
+        } else View.VISIBLE
 
         holder.view.tag = items[position]
         holder.view.setOnClickListener(onClickListener)

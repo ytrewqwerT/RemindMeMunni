@@ -1,6 +1,6 @@
 package com.example.remindmemunni.utils
 
-import com.example.remindmemunni.ActionViewModel
+import com.example.remindmemunni.common.ActionViewModel
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.Series
 
