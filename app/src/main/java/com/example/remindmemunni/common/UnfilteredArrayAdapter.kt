@@ -21,9 +21,9 @@ class UnfilteredArrayAdapter<T>(context: Context, resource: Int, objects: Mutabl
     fun addAll(items: List<T>) { this.items.addAll(items) }
 
     companion object {
-        fun createFromResource(context: Context, textArrayResId: Int, textViewResId: Int)
-                : UnfilteredArrayAdapter<CharSequence> {
-
+        fun createFromResource(
+            context: Context, textArrayResId: Int, textViewResId: Int
+        ): UnfilteredArrayAdapter<CharSequence> {
             val strings = context.resources.getTextArray(textArrayResId)
             return UnfilteredArrayAdapter(context, textViewResId, strings.toMutableList())
         }

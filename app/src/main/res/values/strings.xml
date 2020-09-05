@@ -1,41 +1,42 @@
 <resources>
     <string name="app_name">RemindMeMunni</string>
-    <string name="new_object">New</string>
+
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
+    <string name="complete">Complete</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete">Delete</string>
     <string name="done">Done</string>
-    <string name="clear_field">Clear</string>
+    <string name="edit">Edit</string>
+    <string name="new_object">New</string>
+    <string name="notify">Notify</string>
+    <string name="repeat">Repeat</string>
+    <string name="search">Search</string>
 
-    <string name="new_item_name">Name</string>
-    <string name="new_item_cost">Cost (Optional)</string>
-    <string name="new_item_type">Type</string>
-    <string name="new_item_time">Time (optional)</string>
-    <string name="new_item_series">Series (Optional)</string>
-
-    <string name="new_series_name">Name</string>
-    <string name="new_series_cost">Cost (Optional)</string>
-    <string name="new_series_type">Type</string>
-    <string name="new_series_next_num">Next # in Series (Optional)</string>
-    <string name="new_series_num_prefix">Next # Prefix (Optional)</string>
-    <string name="new_series_repeat">Repeat</string>
-
-    <string name="cost_debit">Debit</string>
-    <string name="cost_credit">Credit</string>
+    <string name="alerts">Alerts</string>
+    <string name="category">Category</string>
+    <string name="credit">Credit</string>
+    <string name="debit">Debit</string>
     <string name="days">Days,</string>
     <string name="months">Months</string>
-    <string name="increment_series">Increment series counter</string>
-    <string name="edit">Edit</string>
-    <string name="complete">Complete</string>
-    <string name="delete">Delete</string>
-    <string name="item_auto_create">Automatically create subsequent items</string>
-    <string name="current_munni_field_label">Current Munni: $</string>
+    <string name="name">Name</string>
+    <string name="type">Type</string>
+
+    <string name="optional_cost">Cost (Optional)</string>
+    <string name="optional_next_num_in_series">Next # in Series (Optional)</string>
+    <string name="optional_next_num_prefix">Next # Prefix (Optional)</string>
+    <string name="optional_series">Series (Optional)</string>
+    <string name="optional_time">Time (optional)</string>
+
+    <string name="auto_create_subsequent_items">Automatically create subsequent items</string>
+    <string name="current_munni_$">Current Munni: $</string>
+    <string name="filter_items_series">Filter items/series</string>
+    <string name="increment_series_counter">Increment series counter</string>
+    <string name="set_frequency">Set Frequency</string>
     <string name="show_hide">Show/Hide</string>
-    <string name="category">Category</string>
-    <string name="search">Search</string>
-    <string name="filter_hint">Filter items/series</string>
-    <string name="notification_channel_name">Alerts</string>
-    <string name="notification_channel_id">alerts</string>
-    <string name="notify">Notify</string>
-    <string-array name="cost_types_array">
-        <item>@string/cost_credit</item>
-        <item>@string/cost_debit</item>
+
+    <string-array name="credit_debit_array">
+        <item>@string/credit</item>
+        <item>@string/debit</item>
     </string-array>
 </resources>

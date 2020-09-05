@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
-import com.example.remindmemunni.common.CustomRecyclerViewAdapter
+import com.example.remindmemunni.common.ListItemRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.utils.InjectorUtils
@@ -32,7 +32,7 @@ class SeriesListFragment : Fragment(),
 
     private val recyclerViewAdapter by lazy {
         @Suppress("RemoveExplicitTypeArguments")
-        CustomRecyclerViewAdapter<AggregatedSeries>(this)
+        ListItemRecyclerViewAdapter<AggregatedSeries>(this)
     }
     private lateinit var contentView: View
 
@@ -80,11 +80,11 @@ class SeriesListFragment : Fragment(),
 
     override fun onContextItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.series_edit -> {
-            recyclerViewAdapter.contextMenuItem?.let { actionViewModel.edit(it.series) }
+            recyclerViewAdapter.contextMenuParent?.let { actionViewModel.edit(it.series) }
             true
         }
         R.id.series_delete -> {
-            recyclerViewAdapter.contextMenuItem?.let { actionViewModel.promptDelete(it) }
+            recyclerViewAdapter.contextMenuParent?.let { actionViewModel.promptDelete(it) }
             true
         }
         else -> super.onContextItemSelected(item)

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.remindmemunni.ActionViewModel
 import com.example.remindmemunni.MainViewModel
 import com.example.remindmemunni.R
-import com.example.remindmemunni.common.CustomRecyclerViewAdapter
+import com.example.remindmemunni.common.ListItemRecyclerViewAdapter
 import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.utils.InjectorUtils
@@ -33,7 +33,7 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
     }
 
     private val recyclerViewAdapter by lazy {
-        CustomRecyclerViewAdapter(this)
+        ListItemRecyclerViewAdapter(this)
     }
     private lateinit var contentView: View
 
@@ -89,15 +89,15 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
         if (contextMenuSourceId != uid) return super.onContextItemSelected(menuItem)
         return when (menuItem.itemId) {
             R.id.item_edit -> {
-                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.edit(it) }
+                recyclerViewAdapter.contextMenuParent?.let { actionViewModel.edit(it) }
                 true
             }
             R.id.item_finish -> {
-                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.complete(it) }
+                recyclerViewAdapter.contextMenuParent?.let { actionViewModel.complete(it) }
                 true
             }
             R.id.item_delete -> {
-                recyclerViewAdapter.contextMenuItem?.let { actionViewModel.deleteItem(it) }
+                recyclerViewAdapter.contextMenuParent?.let { actionViewModel.deleteItem(it) }
                 true
             }
             else -> super.onContextItemSelected(menuItem)
