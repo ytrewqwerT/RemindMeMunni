@@ -57,7 +57,7 @@ class NewItemFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = if (isItemEdit) "Edit Item" else "New Item"
+        activity?.title = getString(if (isItemEdit) R.string.edit_item else R.string.new_item)
         setupTypeSpinner(view.findViewById(R.id.cost_type_dropdown))
         setupTimeEditText(view.findViewById(R.id.time_input_field))
         setupSeriesSpinner(view.findViewById(R.id.series_dropdown))

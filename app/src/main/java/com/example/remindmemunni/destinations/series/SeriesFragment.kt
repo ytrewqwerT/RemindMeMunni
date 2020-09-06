@@ -100,19 +100,18 @@ class SeriesFragment : Fragment() {
 
     private fun promptSerieDelete() {
         val series = viewModel.series.value ?: return
-        view?.let { view ->
-            AlertDialog.Builder(requireContext())
-                .setTitle("Deleting ${series.series.name}")
-                .setMessage("Do you want to delete the items in this series?")
-                .setPositiveButton("Yes") { _, _ ->
-                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_DEEP to seriesId))
-                    view.findNavController().popBackStack()
-                }.setNegativeButton("No") { _, _ ->
-                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_SHALLOW to seriesId))
-                    view.findNavController().popBackStack()
-                }.setNeutralButton("Cancel") { _, _ -> }
-                .create().show()
-        }
+        val view = view ?: return
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.format_deleting_series, series.series.name))
+            .setMessage(getString(R.string.prompt_delete_items_in_series))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_DEEP to seriesId))
+                view.findNavController().popBackStack()
+            }.setNegativeButton(getString(R.string.no)) { _, _ ->
+                setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_DELETE_SHALLOW to seriesId))
+                view.findNavController().popBackStack()
+            }.setNeutralButton(getString(R.string.cancel)) { _, _ -> }
+            .create().show()
     }
 
     private fun listenForFragmentResults() {
@@ -140,16 +139,23 @@ class SeriesFragment : Fragment() {
             }
             is Action.ItemFinish -> {
                 view?.let {
-                    Snackbar.make(it, "Complete ${action.item.name}", Snackbar.LENGTH_LONG)
-                        .show()
+                    Snackbar.make(
+                        it,
+                        getString(R.string.format_completed_item, action.item.name),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
             is Action.ItemDelete -> {
                 view?.let {
                     val item = action.item
-                    Snackbar.make(it, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
-                        .setAction("Undo") { actionViewModel.insert(item) }
-                        .show()
+                    Snackbar.make(
+                        it,
+                        getString(R.string.format_deleted_name, item.name),
+                        Snackbar.LENGTH_LONG
+                    ).setAction(getString(R.string.undo)) {
+                        actionViewModel.insert(item)
+                    }.show()
                 }
             }
         }

@@ -9,18 +9,27 @@
     <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="new_object">New</string>
+    <string name="no">No</string>
     <string name="notify">Notify</string>
     <string name="repeat">Repeat</string>
     <string name="search">Search</string>
+    <string name="undo">Undo</string>
+    <string name="yes">Yes</string>
 
     <string name="alerts">Alerts</string>
     <string name="category">Category</string>
+    <string name="cost">Cost</string>
     <string name="credit">Credit</string>
     <string name="debit">Debit</string>
     <string name="days">Days,</string>
     <string name="months">Months</string>
     <string name="name">Name</string>
+    <string name="series">Series</string>
+    <string name="time">Time</string>
     <string name="type">Type</string>
+
+    <string name="overdue">Overdue</string>
+    <string name="upcoming">Upcoming</string>
 
     <string name="and_conjunctor">\u0020and\u0020</string>
 
@@ -32,12 +41,17 @@
 
     <string name="auto_create_subsequent_items">Automatically create subsequent items</string>
     <string name="current_munni">Current Munni: $</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="edit_series">Edit Series</string>
     <string name="filter_items_series">Filter items/series</string>
     <string name="increment_series_counter">Increment series counter</string>
     <string name="item_needs_name">Item needs a name!</string>
+    <string name="new_item">New Item</string>
+    <string name="new_series">New Series</string>
     <string name="one_day">1 Day</string>
     <string name="one_item">1 Item</string>
     <string name="one_month">1 Month</string>
+    <string name="prompt_delete_items_in_series">Do you want to delete the items in this series?</string>
     <string name="set_frequency">Set Frequency</string>
     <string name="show_hide">Show/Hide</string>
     <string name="series_needs_name">Series needs a name!</string>
@@ -47,10 +61,13 @@
         <item>@string/debit</item>
     </string-array>
 
+    <string name="format_completed_item">Completed %1$s</string>
     <string name="format_cost_credit">$%1$scr</string>
     <string name="format_cost_debit">$%1$s</string>
     <string name="format_cost_every_period">%1$s repeating every %2$s</string>
     <string name="format_cost_per_item">%1$s per Item</string>
+    <string name="format_deleted_name">Deleted %1$s</string>
+    <string name="format_deleting_series">Deleting %1$s</string>
     <string name="format_num_days">%1$d Days</string>
     <string name="format_num_items">%1$d Items</string>
     <string name="format_num_months">%1$d Months</string>

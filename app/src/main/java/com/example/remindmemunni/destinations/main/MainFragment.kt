@@ -17,6 +17,7 @@ import com.example.remindmemunni.R
 import com.example.remindmemunni.common.Action
 import com.example.remindmemunni.common.ActionViewModel
 import com.example.remindmemunni.common.ItemPagerAdapter
+import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.destinations.newseries.NewSeriesFragment
@@ -158,10 +159,10 @@ class MainFragment : Fragment() {
         pager!!.adapter = itemPagerAdapter
         TabLayoutMediator(pagerTabs, pager!!) { tab, position ->
             tab.text = when (position) {
-                ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
-                ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
-                ItemPagerAdapter.POS_SERIES -> "Series"
-                else -> "???"
+                ItemPagerAdapter.POS_PAST_ITEMS -> getString(R.string.overdue)
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> getString(R.string.upcoming)
+                ItemPagerAdapter.POS_SERIES -> getString(R.string.series)
+                else -> throw IllegalStateException("Pager set to an invalid page")
             }
         }.apply { attach() }
     }
@@ -193,16 +194,23 @@ class MainFragment : Fragment() {
             }
             is Action.ItemFinish -> {
                 view?.let {
-                    Snackbar.make(it, "Complete ${action.item.name}", Snackbar.LENGTH_LONG)
-                        .show()
+                    Snackbar.make(
+                        it,
+                        getString(R.string.format_completed_item, action.item.name),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
             is Action.ItemDelete -> {
                 view?.let {
                     val item = action.item
-                    Snackbar.make(it, "Item ${item.name} deleted.", Snackbar.LENGTH_LONG)
-                        .setAction("Undo") { actionViewModel.insert(item) }
-                        .show()
+                    Snackbar.make(
+                        it,
+                        getString(R.string.format_deleted_name, item.name)
+                        , Snackbar.LENGTH_LONG
+                    ).setAction(getString(R.string.undo)) {
+                        actionViewModel.insert(item)
+                    }.show()
                 }
             }
 
@@ -224,25 +232,28 @@ class MainFragment : Fragment() {
         val series = action.serie
         val view = view ?: return
         AlertDialog.Builder(requireContext())
-            .setTitle("Deleting ${series.series.name}")
-            .setMessage("Do you want to delete the items in this series?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.format_deleting_series, series.series.name))
+            .setMessage(getString(R.string.prompt_delete_items_in_series))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 actionViewModel.deleteSerieDeep(series)
-                Snackbar.make(
-                    view,
-                    "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
-                ).setAction("Undo") {
-                    actionViewModel.insert(series)
-                }.show()
-            }.setNegativeButton("No") { _, _ ->
+                showSeriesDeletedSnackbar(view, series)
+            }.setNegativeButton(getString(R.string.no)) { _, _ ->
                 actionViewModel.deleteSerieShallow(series)
-                Snackbar.make(
-                    view,
-                    "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
-                ).setAction("Undo") {
-                    actionViewModel.insert(series.series)
-                }.show()
-            }.setNeutralButton("Cancel") { _, _ ->
+                showSeriesDeletedSnackbar(view, series)
+            }.setNeutralButton(getString(R.string.cancel)) { _, _ ->
             }.create().show()
+    }
+
+    private fun showSeriesDeletedSnackbar(
+        view: View,
+        series: AggregatedSeries
+    ) {
+        Snackbar.make(
+            view,
+            getString(R.string.format_deleted_name, series.series.name),
+            Snackbar.LENGTH_LONG
+        ).setAction(getString(R.string.undo)) {
+            actionViewModel.insert(series)
+        }.show()
     }
 }

@@ -52,7 +52,7 @@ class NewSeriesFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = if (seriesId == 0) "New Series" else "Edit Series"
+        activity?.title = getString(if (seriesId == 0) R.string.new_series else R.string.edit_series)
         setupTypeSpinner(view.findViewById(R.id.cost_type_dropdown))
         setupRecurrenceEditText(view.findViewById(R.id.repeat))
         setupCategoryEditText(view.findViewById(R.id.category_input_field))

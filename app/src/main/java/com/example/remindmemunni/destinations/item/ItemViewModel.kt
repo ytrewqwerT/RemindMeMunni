@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.remindmemunni.R
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
+import com.example.remindmemunni.utils.Strings
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -44,22 +46,22 @@ class ItemViewModel(
 
     private suspend fun setSeries(seriesId: Int) {
         _series.value = if (seriesId != 0) {
-            "Series: ${itemRepository.getDirectSerie(seriesId).series.name}"
+            "${Strings.get(R.string.series)}: ${itemRepository.getDirectSerie(seriesId).series.name}"
         } else ""
     }
     private fun setCategory(categoryString: String) {
         _category.value = if (categoryString.isNotEmpty()) {
-            "Category: $categoryString"
+            "${Strings.get(R.string.category)}: $categoryString"
         } else ""
     }
     private fun setTime(timeString: String) {
         _time.value = if (timeString.isNotEmpty()) {
-            "Time: $timeString"
+            "${Strings.get(R.string.time)}: $timeString"
         } else ""
     }
     private fun setCost(costString: String) {
         _cost.value = if (costString.isNotEmpty()) {
-            "Cost: $costString"
+            "${Strings.get(R.string.cost)}: $costString"
         } else ""
     }
 }
