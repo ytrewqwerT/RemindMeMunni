@@ -51,4 +51,6 @@
     <string name="format_num_days">%1$d Days</string>
     <string name="format_num_items">%1$d Items</string>
     <string name="format_num_months">%1$d Months</string>
+
+    <string name="notification_alerts_id">NOTIFICATION_ALERTS</string>
 </resources>

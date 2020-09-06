@@ -12,7 +12,7 @@ class NotificationScheduler(context: Context) {
     private val appContext = context.applicationContext
 
     private fun createNotification(title: String): Notification {
-        val channelId = appContext.getString(R.string.alerts)
+        val channelId = appContext.getString(R.string.notification_alerts_id)
         return Notification.Builder(appContext, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
