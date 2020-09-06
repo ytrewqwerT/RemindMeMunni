@@ -56,29 +56,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listenForFragmentResults()
-
-        itemPagerAdapter = ItemPagerAdapter(this)
-        val pagerTabs = view.findViewById<TabLayout>(R.id.pager_tabs)
-        pager = view.findViewById(R.id.pager)
-        pager!!.adapter = itemPagerAdapter
-        TabLayoutMediator(pagerTabs, pager!!) { tab, position ->
-            tab.text = when (position) {
-                ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
-                ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
-                ItemPagerAdapter.POS_SERIES -> "Series"
-                else -> "???"
-            }
-        }.apply { attach() }
-
-        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
-            activity?.title = when(it) {
-                null -> MainViewModel.CATEGORY_ALL
-                "" -> MainViewModel.CATEGORY_NONE
-                else -> it
-            }
-        }
-
-        actionViewModel.oneTimeAction.observe(viewLifecycleOwner) { processAction(it) }
+        setupPager(view)
+        observeViewModels()
     }
 
     override fun onDestroyView() {
@@ -90,21 +69,19 @@ class MainFragment : Fragment() {
         inflater.inflate(R.menu.menu_main, menu)
 
         val searchView = menu.findItem(R.id.search_button).actionView as SearchView
-        searchView.isSubmitButtonEnabled = false
-        searchView.queryHint = getString(R.string.filter_items_series)
-        searchView.maxWidth = 900
+        searchView.apply {
+            isSubmitButtonEnabled = false
+            queryHint = getString(R.string.filter_items_series)
+            maxWidth = 900
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return onQueryTextChange(query)
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                mainViewModel.searchFilter.value = newText
-                return true
-            }
-
-        })
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = onQueryTextChange(query)
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    mainViewModel.searchFilter.value = newText
+                    return true
+                }
+            })
+        }
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -129,38 +106,78 @@ class MainFragment : Fragment() {
 
     private fun listenForFragmentResults() {
         setFragmentResultListener(NewSeriesFragment.REQUEST_RESULT) { _, result ->
-            val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
-            if (newSeriesId != 0) {
-                view?.findNavController()?.navigate(
-                    MainFragmentDirections.actionMainFragmentToSeriesFragment(newSeriesId)
-                )
-            }
+            processNewSeriesFragmentResult(result)
         }
         setFragmentResultListener(ItemFragment.REQUEST_RESULT) { _, result ->
-            result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
-                actionViewModel.deleteItem(it)
-            }
-            result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
-                actionViewModel.complete(it)
-            }
+            processItemFragmentResult(result)
         }
         setFragmentResultListener(SeriesFragment.REQUEST_RESULT) { _, result ->
-            val deepDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_DEEP, 0)
-            if (deepDeleteId != 0) {
-                lifecycleScope.launch {
-                    val serie = mainViewModel.getSerie(deepDeleteId)
-                    actionViewModel.deleteSerieDeep(serie)
-                }
+            processSeriesFragmentResult(result)
+        }
+    }
+
+    private fun processNewSeriesFragmentResult(result: Bundle) {
+        val newSeriesId = result.getInt(NewSeriesFragment.EXTRA_SERIES_ID, 0)
+        if (newSeriesId != 0) {
+            view?.findNavController()?.navigate(
+                MainFragmentDirections.actionMainFragmentToSeriesFragment(newSeriesId)
+            )
+        }
+    }
+
+    private fun processItemFragmentResult(result: Bundle) {
+        result.getParcelable<Item>(ItemFragment.RESULT_DELETE)?.let {
+            actionViewModel.deleteItem(it)
+        }
+        result.getParcelable<Item>(ItemFragment.RESULT_FINISH)?.let {
+            actionViewModel.complete(it)
+        }
+    }
+
+    private fun processSeriesFragmentResult(result: Bundle) {
+        val deepDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_DEEP, 0)
+        if (deepDeleteId != 0) {
+            lifecycleScope.launch {
+                val serie = mainViewModel.getSerie(deepDeleteId)
+                actionViewModel.deleteSerieDeep(serie)
             }
-            val shallowDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_SHALLOW, 0)
-            if (shallowDeleteId != 0) {
-                lifecycleScope.launch {
-                    val serie = mainViewModel.getSerie(shallowDeleteId)
-                    actionViewModel.deleteSerieShallow(serie)
-                }
+        }
+        val shallowDeleteId = result.getInt(SeriesFragment.RESULT_DELETE_SHALLOW, 0)
+        if (shallowDeleteId != 0) {
+            lifecycleScope.launch {
+                val serie = mainViewModel.getSerie(shallowDeleteId)
+                actionViewModel.deleteSerieShallow(serie)
             }
         }
     }
+
+    private fun setupPager(view: View) {
+        itemPagerAdapter = ItemPagerAdapter(this)
+        val pagerTabs = view.findViewById<TabLayout>(R.id.pager_tabs)
+        pager = view.findViewById(R.id.pager)
+        pager!!.adapter = itemPagerAdapter
+        TabLayoutMediator(pagerTabs, pager!!) { tab, position ->
+            tab.text = when (position) {
+                ItemPagerAdapter.POS_PAST_ITEMS -> "Overdue"
+                ItemPagerAdapter.POS_FUTURE_ITEMS -> "Upcoming"
+                ItemPagerAdapter.POS_SERIES -> "Series"
+                else -> "???"
+            }
+        }.apply { attach() }
+    }
+
+    private fun observeViewModels() {
+        mainViewModel.categoryFilter.observe(viewLifecycleOwner) {
+            activity?.title = when (it) {
+                null -> MainViewModel.CATEGORY_ALL
+                "" -> MainViewModel.CATEGORY_NONE
+                else -> it
+            }
+        }
+
+        actionViewModel.oneTimeAction.observe(viewLifecycleOwner) { processAction(it) }
+    }
+
 
     private fun processAction(action: Action) {
         when(action) {
@@ -199,32 +216,33 @@ class MainFragment : Fragment() {
                     MainFragmentDirections.actionMainFragmentToNewSeriesFragment(action.serie.id)
                 )
             }
-            is Action.SerieDelete -> {
-                val series = action.serie
-                view?.let { view ->
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Deleting ${series.series.name}")
-                        .setMessage("Do you want to delete the items in this series?")
-                        .setPositiveButton("Yes") { _, _ ->
-                            actionViewModel.deleteSerieDeep(series)
-                            Snackbar.make(
-                                view,
-                                "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
-                            ).setAction("Undo") {
-                                actionViewModel.insert(series)
-                            }.show()
-                        }.setNegativeButton("No") { _, _ ->
-                            actionViewModel.deleteSerieShallow(series)
-                            Snackbar.make(
-                                view,
-                                "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
-                            ).setAction("Undo") {
-                                actionViewModel.insert(series.series)
-                            }.show()
-                        }.setNeutralButton("Cancel") { _, _ -> }
-                        .create().show()
-                }
-            }
+            is Action.SerieDelete -> promptSerieDelete(action)
         }
+    }
+
+    private fun promptSerieDelete(action: Action.SerieDelete) {
+        val series = action.serie
+        val view = view ?: return
+        AlertDialog.Builder(requireContext())
+            .setTitle("Deleting ${series.series.name}")
+            .setMessage("Do you want to delete the items in this series?")
+            .setPositiveButton("Yes") { _, _ ->
+                actionViewModel.deleteSerieDeep(series)
+                Snackbar.make(
+                    view,
+                    "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                ).setAction("Undo") {
+                    actionViewModel.insert(series)
+                }.show()
+            }.setNegativeButton("No") { _, _ ->
+                actionViewModel.deleteSerieShallow(series)
+                Snackbar.make(
+                    view,
+                    "Series ${series.series.name} deleted.", Snackbar.LENGTH_LONG
+                ).setAction("Undo") {
+                    actionViewModel.insert(series.series)
+                }.show()
+            }.setNeutralButton("Cancel") { _, _ ->
+            }.create().show()
     }
 }

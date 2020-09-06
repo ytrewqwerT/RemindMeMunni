@@ -34,11 +34,13 @@
     <string name="current_munni">Current Munni: $</string>
     <string name="filter_items_series">Filter items/series</string>
     <string name="increment_series_counter">Increment series counter</string>
+    <string name="item_needs_name">Item needs a name!</string>
     <string name="one_day">1 Day</string>
     <string name="one_item">1 Item</string>
     <string name="one_month">1 Month</string>
     <string name="set_frequency">Set Frequency</string>
     <string name="show_hide">Show/Hide</string>
+    <string name="series_needs_name">Series needs a name!</string>
 
     <string-array name="credit_debit_array">
         <item>@string/credit</item>
@@ -47,10 +49,12 @@
 
     <string name="format_cost_credit">$%1$scr</string>
     <string name="format_cost_debit">$%1$s</string>
+    <string name="format_cost_every_period">%1$s repeating every %2$s</string>
     <string name="format_cost_per_item">%1$s per Item</string>
     <string name="format_num_days">%1$d Days</string>
     <string name="format_num_items">%1$d Items</string>
     <string name="format_num_months">%1$d Months</string>
+    <string name="format_repeat_every_period">Repeats every %1$s</string>
 
     <string name="notification_alerts_id">NOTIFICATION_ALERTS</string>
 </resources>

@@ -15,6 +15,7 @@ import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.destinations.item.ItemFragment
 import com.example.remindmemunni.itemslist.ItemsListFragment
 import com.example.remindmemunni.utils.InjectorUtils
+import com.example.remindmemunni.utils.Strings
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -52,17 +53,20 @@ class SeriesFragment : Fragment() {
 
         val recurrenceTextView = view.findViewById<TextView>(R.id.subtitle)
         viewModel.series.observe(viewLifecycleOwner) {
-            val series = it?.series
-            var text = series?.getCostString()
-            text += if (text?.isNotEmpty() == true) " repeating " else "Repeats "
+            val costText = it?.getCostPerItemString() ?: ""
+            val recurrenceText = it?.series?.getRecurrenceString() ?: ""
 
-            val recurrenceText = series?.getRecurrenceString()
-            text += if (recurrenceText?.isNotEmpty() == true) "every $recurrenceText" else "never"
-            recurrenceTextView.text = text
+            recurrenceTextView.text = when {
+                costText.isNotEmpty() && recurrenceText.isNotEmpty() ->
+                    Strings.get(R.string.format_cost_every_period, costText, recurrenceText)
+                recurrenceText.isNotEmpty() ->
+                    Strings.get(R.string.format_repeat_every_period, recurrenceText)
+                costText.isNotEmpty() -> costText
+                else -> ""
+            }
         }
 
         actionViewModel.oneTimeAction.observe(viewLifecycleOwner) { processAction(it) }
-
         childFragmentManager.commit { add(R.id.series_list_fragment, ItemsListFragment(seriesId)) }
     }
 

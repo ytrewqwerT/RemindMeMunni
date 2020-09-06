@@ -43,19 +43,23 @@ class ItemViewModel(
     }
 
     private suspend fun setSeries(seriesId: Int) {
-        _series.value = if (seriesId == 0) ""
-        else "Series: ${itemRepository.getDirectSerie(seriesId).series.name}"
+        _series.value = if (seriesId != 0) {
+            "Series: ${itemRepository.getDirectSerie(seriesId).series.name}"
+        } else ""
     }
     private fun setCategory(categoryString: String) {
-        _category.value = if (categoryString.isEmpty()) ""
-        else "Category: $categoryString"
+        _category.value = if (categoryString.isNotEmpty()) {
+            "Category: $categoryString"
+        } else ""
     }
     private fun setTime(timeString: String) {
-        _time.value = if (timeString.isEmpty()) ""
-        else "Time: $timeString"
+        _time.value = if (timeString.isNotEmpty()) {
+            "Time: $timeString"
+        } else ""
     }
     private fun setCost(costString: String) {
-        _cost.value = if (costString.isEmpty()) ""
-        else "Cost: $costString"
+        _cost.value = if (costString.isNotEmpty()) {
+            "Cost: $costString"
+        } else ""
     }
 }

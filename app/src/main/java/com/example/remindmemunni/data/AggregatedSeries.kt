@@ -18,19 +18,20 @@ data class AggregatedSeries (
 ) : ListItemViewable {
 
     override fun getListItemContents(): ListItemViewable.ListItemContents {
-        val costString = series.getCostString()
-        val itemCostString = if (costString.isNotEmpty()) {
-            Strings.get(R.string.format_cost_per_item, costString)
-        } else ""
         val numItemsString = if (items.size == 1) {
             Strings.get(R.string.one_item)
         } else Strings.get(R.string.format_num_items, items.size)
         return ListItemViewable.ListItemContents(
-            series.name, numItemsString, itemCostString
+            series.name, numItemsString, getCostPerItemString()
         )
     }
 
     override fun toString(): String = series.toString()
+
+    fun getCostPerItemString(): String {
+        val costString = series.getCostString().takeIf { it.isNotEmpty() } ?: return ""
+        return Strings.get(R.string.format_cost_per_item, costString)
+    }
 
     // Generates the next item in the series (curNum is NOT changed).
     fun generateNextInSeries(): Item {
