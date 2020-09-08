@@ -7,7 +7,7 @@
 
     <com.example.remindmemunni.common.ScrollSpinner
         android:id="@+id/days_list"
-        tools:listitem="@layout/fragment_item"
+        tools:listitem="@layout/fragment_list_item"
         android:layout_width="55dp"
         android:layout_height="170dp"
         android:layout_marginStart="16dp" />
@@ -22,7 +22,7 @@
 
     <com.example.remindmemunni.common.ScrollSpinner
         android:id="@+id/months_list"
-        tools:listitem="@layout/fragment_item"
+        tools:listitem="@layout/fragment_list_item"
         android:layout_width="55dp"
         android:layout_height="170dp"
         android:layout_marginStart="16dp" />

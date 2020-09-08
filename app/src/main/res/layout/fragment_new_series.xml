@@ -20,7 +20,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/name_input_layout"
-                android:hint="@string/new_series_name"
+                android:hint="@string/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -37,7 +37,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/cost_input_layout"
-                android:hint="@string/new_series_cost"
+                android:hint="@string/optional_cost"
                 app:prefixText="$ "
                 app:prefixTextAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:hint="@string/new_series_type"
+                android:hint="@string/type"
                 android:labelFor="@id/cost_type_dropdown"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/number_input_layout"
-                android:hint="@string/new_series_next_num"
+                android:hint="@string/optional_next_num_in_series"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -95,7 +95,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:hint="@string/new_series_num_prefix"
+                android:hint="@string/optional_next_num_prefix"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -133,7 +133,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/repeat_layout"
-                android:hint="@string/new_series_repeat"
+                android:hint="@string/repeat"
                 android:labelFor="@id/repeat"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
 
             <CheckBox
                 android:id="@+id/auto_create_items"
-                android:text="@string/item_auto_create"
+                android:text="@string/auto_create_subsequent_items"
                 android:checked="@={viewModel.autoCreateItems}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

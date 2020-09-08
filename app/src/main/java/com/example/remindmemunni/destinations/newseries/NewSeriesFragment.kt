@@ -52,30 +52,10 @@ class NewSeriesFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = if (seriesId == 0) "New Series" else "Edit Series"
-
-        val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
-        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
-            requireContext(), R.array.cost_types_array, R.layout.dropdown_menu_popup_item
-        )
-        typeSpinner.setAdapter(typeSpinnerAdapter)
-        typeSpinner.setOnItemClickListener { _, _, position, _ ->
-            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
-        }
-
-        val recurrenceEditText = view.findViewById<TextInputEditText>(R.id.repeat)
-        recurrenceEditText.setOnClickListener {
-            RecurrenceSelectFragment()
-                .show(childFragmentManager, "frequency_dialog")
-        }
-
-        val categoryEditText = view.findViewById<AutoCompleteTextView>(R.id.category_input_field)
-        val categoryEditTextAdapter = ArrayAdapter<String>(requireContext(), R.layout.dropdown_menu_popup_item)
-        categoryEditText.setAdapter(categoryEditTextAdapter)
-        viewModel.categories.observe(viewLifecycleOwner) {
-            categoryEditTextAdapter.clear()
-            categoryEditTextAdapter.addAll(it)
-        }
+        activity?.title = getString(if (seriesId == 0) R.string.new_series else R.string.edit_series)
+        setupTypeSpinner(view.findViewById(R.id.cost_type_dropdown))
+        setupRecurrenceEditText(view.findViewById(R.id.repeat))
+        setupCategoryEditText(view.findViewById(R.id.category_input_field))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -84,20 +64,7 @@ class NewSeriesFragment : Fragment()
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
         R.id.done_button -> {
-            lifecycleScope.launch {
-                val newSeriesId = viewModel.createSeries()
-                if (newSeriesId == 0) {
-                    Toast.makeText(
-                        requireContext(),
-                        viewModel.validateInput(),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    // Only return newSeriesId if a new series was created (rather than edited)
-                    if (seriesId == 0) setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to newSeriesId))
-                    view?.findNavController()?.popBackStack()
-                }
-            }
+            finishSerieCreation()
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
@@ -105,6 +72,48 @@ class NewSeriesFragment : Fragment()
 
     override fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int) {
         viewModel.setRecurrence(months, days)
+    }
+
+    private fun setupTypeSpinner(typeSpinner: AutoCompleteTextView) {
+        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
+            requireContext(), R.array.credit_debit_array, R.layout.dropdown_menu_popup_item
+        )
+        typeSpinner.setAdapter(typeSpinnerAdapter)
+        typeSpinner.setOnItemClickListener { _, _, position, _ ->
+            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
+        }
+    }
+
+    private fun setupRecurrenceEditText(recurrenceEditText: TextInputEditText) {
+        recurrenceEditText.setOnClickListener {
+            RecurrenceSelectFragment(this)
+                .show(childFragmentManager, "frequency_dialog")
+        }
+    }
+
+    private fun setupCategoryEditText(categoryEditText: AutoCompleteTextView) {
+        val categoryEditTextAdapter =
+            ArrayAdapter<String>(requireContext(), R.layout.dropdown_menu_popup_item)
+        categoryEditText.setAdapter(categoryEditTextAdapter)
+        viewModel.categories.observe(viewLifecycleOwner) {
+            categoryEditTextAdapter.clear()
+            categoryEditTextAdapter.addAll(it)
+        }
+    }
+
+    private fun finishSerieCreation() = lifecycleScope.launch {
+        val newSeriesId = viewModel.createSeries()
+        if (newSeriesId == 0) {
+            Toast.makeText(
+                requireContext(),
+                viewModel.validateInput(),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            // Only return newSeriesId if a new series was created (rather than edited)
+            if (seriesId == 0) setFragmentResult(REQUEST_RESULT, bundleOf(EXTRA_SERIES_ID to newSeriesId))
+            view?.findNavController()?.popBackStack()
+        }
     }
 
     companion object {

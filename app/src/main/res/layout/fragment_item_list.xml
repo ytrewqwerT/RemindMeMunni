@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".itemslist.ItemsFragment">
+    tools:context=".itemslist.ItemsListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:name="com.example.remindmemunni.ItemFragment"
-        tools:listitem="@layout/fragment_item"
+        tools:listitem="@layout/fragment_list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"

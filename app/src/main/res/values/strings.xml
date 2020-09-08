@@ -1,41 +1,80 @@
 <resources>
     <string name="app_name">RemindMeMunni</string>
-    <string name="new_object">New</string>
+
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
+    <string name="complete">Complete</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete">Delete</string>
     <string name="done">Done</string>
-    <string name="clear_field">Clear</string>
+    <string name="edit">Edit</string>
+    <string name="new_object">New</string>
+    <string name="no">No</string>
+    <string name="notify">Notify</string>
+    <string name="repeat">Repeat</string>
+    <string name="search">Search</string>
+    <string name="undo">Undo</string>
+    <string name="yes">Yes</string>
 
-    <string name="new_item_name">Name</string>
-    <string name="new_item_cost">Cost (Optional)</string>
-    <string name="new_item_type">Type</string>
-    <string name="new_item_time">Time (optional)</string>
-    <string name="new_item_series">Series (Optional)</string>
-
-    <string name="new_series_name">Name</string>
-    <string name="new_series_cost">Cost (Optional)</string>
-    <string name="new_series_type">Type</string>
-    <string name="new_series_next_num">Next # in Series (Optional)</string>
-    <string name="new_series_num_prefix">Next # Prefix (Optional)</string>
-    <string name="new_series_repeat">Repeat</string>
-
-    <string name="cost_debit">Debit</string>
-    <string name="cost_credit">Credit</string>
+    <string name="alerts">Alerts</string>
+    <string name="all">All</string>
+    <string name="category">Category</string>
+    <string name="categories">Categories</string>
+    <string name="cost">Cost</string>
+    <string name="credit">Credit</string>
+    <string name="debit">Debit</string>
     <string name="days">Days,</string>
     <string name="months">Months</string>
-    <string name="increment_series">Increment series counter</string>
-    <string name="edit">Edit</string>
-    <string name="complete">Complete</string>
-    <string name="delete">Delete</string>
-    <string name="item_auto_create">Automatically create subsequent items</string>
-    <string name="current_munni_field_label">Current Munni: $</string>
+    <string name="name">Name</string>
+    <string name="series">Series</string>
+    <string name="time">Time</string>
+    <string name="type">Type</string>
+    <string name="uncategorised">Uncategorised</string>
+
+    <string name="overdue">Overdue</string>
+    <string name="upcoming">Upcoming</string>
+
+    <string name="and_conjunctor">\u0020and\u0020</string>
+
+    <string name="optional_cost">Cost (Optional)</string>
+    <string name="optional_next_num_in_series">Next # in Series (Optional)</string>
+    <string name="optional_next_num_prefix">Next # Prefix (Optional)</string>
+    <string name="optional_series">Series (Optional)</string>
+    <string name="optional_time">Time (optional)</string>
+
+    <string name="auto_create_subsequent_items">Automatically create subsequent items</string>
+    <string name="current_munni">Current Munni: $</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="edit_series">Edit Series</string>
+    <string name="filter_items_series">Filter items/series</string>
+    <string name="increment_series_counter">Increment series counter</string>
+    <string name="item_needs_name">Item needs a name!</string>
+    <string name="new_item">New Item</string>
+    <string name="new_series">New Series</string>
+    <string name="one_day">1 Day</string>
+    <string name="one_item">1 Item</string>
+    <string name="one_month">1 Month</string>
+    <string name="prompt_delete_items_in_series">Do you want to delete the items in this series?</string>
+    <string name="set_frequency">Set Frequency</string>
     <string name="show_hide">Show/Hide</string>
-    <string name="category">Category</string>
-    <string name="search">Search</string>
-    <string name="filter_hint">Filter items/series</string>
-    <string name="notification_channel_name">Alerts</string>
-    <string name="notification_channel_id">alerts</string>
-    <string name="notify">Notify</string>
-    <string-array name="cost_types_array">
-        <item>@string/cost_credit</item>
-        <item>@string/cost_debit</item>
+    <string name="series_needs_name">Series needs a name!</string>
+
+    <string-array name="credit_debit_array">
+        <item>@string/credit</item>
+        <item>@string/debit</item>
     </string-array>
+
+    <string name="format_completed_item">Completed %1$s</string>
+    <string name="format_cost_credit">$%1$scr</string>
+    <string name="format_cost_debit">$%1$s</string>
+    <string name="format_cost_every_period">%1$s repeating every %2$s</string>
+    <string name="format_cost_per_item">%1$s per Item</string>
+    <string name="format_deleted_name">Deleted %1$s</string>
+    <string name="format_deleting_series">Deleting %1$s</string>
+    <string name="format_num_days">%1$d Days</string>
+    <string name="format_num_items">%1$d Items</string>
+    <string name="format_num_months">%1$d Months</string>
+    <string name="format_repeat_every_period">Repeats every %1$s</string>
+
+    <string name="notification_alerts_id">NOTIFICATION_ALERTS</string>
 </resources>

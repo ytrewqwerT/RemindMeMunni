@@ -3,7 +3,7 @@ package com.example.remindmemunni.common
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.remindmemunni.itemslist.ItemsFragment
+import com.example.remindmemunni.itemslist.ItemsListFragment
 import com.example.remindmemunni.serieslist.SeriesListFragment
 import com.example.remindmemunni.utils.PrimitiveDateTime
 import java.time.LocalDateTime
@@ -21,20 +21,18 @@ class ItemPagerAdapter(frag: Fragment) : FragmentStateAdapter(frag) {
         }
     }
 
-    private fun overdueItemsListFragment() = ItemsFragment().apply {
-        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-            .toEpoch()
-        val bundle = Bundle()
-        bundle.putLong(ItemsFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
-        arguments = bundle
+    private fun overdueItemsListFragment() = ItemsListFragment().apply {
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now()).toEpoch()
+        arguments = Bundle().apply {
+            putLong(ItemsListFragment.EXTRA_UPPER_TIME_BOUND, nowEpoch)
+        }
     }
 
-    private fun upcomingItemsListFragment() = ItemsFragment().apply {
-        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now())
-            .toEpoch()
-        val bundle = Bundle()
-        bundle.putLong(ItemsFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
-        arguments = bundle
+    private fun upcomingItemsListFragment() = ItemsListFragment().apply {
+        val nowEpoch = PrimitiveDateTime.fromLocalDateTime(LocalDateTime.now()).toEpoch()
+        arguments = Bundle().apply {
+            putLong(ItemsListFragment.EXTRA_LOWER_TIME_BOUND, nowEpoch)
+        }
     }
 
     private fun seriesListFragment() = SeriesListFragment()

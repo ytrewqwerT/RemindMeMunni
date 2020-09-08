@@ -1,12 +1,15 @@
 package com.example.remindmemunni.destinations.newitem
 
 import androidx.lifecycle.*
+import com.example.remindmemunni.R
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.data.Item
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import com.example.remindmemunni.utils.Strings
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
+import kotlin.math.absoluteValue
 
 class NewItemViewModel(
     private val itemRepository: ItemRepository,
@@ -34,37 +37,16 @@ class NewItemViewModel(
     val notify = MutableLiveData(false)
 
     init {
-        setCostType("Debit")
-
         viewModelScope.launch { setItem(templateItem) }
-        if (itemId != 0) {
-            viewModelScope.launch {
-                val item = itemRepository.getDirectItem(itemId)
-                setItem(item)
-                incSeriesNum.value = false
-            }
-        }
     }
 
     private fun setCost(newCost: Double) {
-        when {
-            newCost == 0.0 -> {
-                cost.value = ""
-                setCostType("Debit")
-            }
-            newCost < 0 -> {
-                cost.value = (-newCost).toString()
-                setCostType("Debit")
-            }
-            else -> {
-                setCostType("Credit")
-                cost.value = newCost.toString()
-            }
-        }
+        cost.value = if (newCost != 0.0) newCost.absoluteValue.toString() else ""
+        setCostType(Strings.get(if (newCost <= 0) R.string.debit else R.string.credit))
     }
 
     fun setCostType(type: CharSequence?) {
-        _costIsDebit = type == "Debit"
+        _costIsDebit = (type == Strings.get(R.string.debit))
         costType.value = type.toString()
     }
 
@@ -105,15 +87,15 @@ class NewItemViewModel(
     fun clearTime() { setTime(PrimitiveDateTime()) }
 
     suspend fun createItem(): String? {
-        if (name.value.isNullOrEmpty()) return "Item needs a name!"
+        if (name.value.isNullOrEmpty()) return Strings.get(R.string.item_needs_name)
 
-        var cc = if (cost.value?.isNotEmpty() == true) cost.value!!.toDouble() else 0.0
-        if (_costIsDebit) cc = -cc
+        val unsignedCost = cost.value?.toDoubleOrNull() ?: 0.0
+        val signedCost = if (_costIsDebit) -unsignedCost else unsignedCost
         val epochTime = _time.toEpoch()
 
         val item = Item(
             id = itemId, seriesId = seriesId, name = name.value!!,
-            cost = cc, time = epochTime, category = category.value!!, notify = notify.value!!
+            cost = signedCost, time = epochTime, category = category.value!!, notify = notify.value!!
         )
         itemRepository.insert(item)
 

@@ -10,7 +10,7 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
     <item
         android:id="@+id/add_button"
-        android:icon="@drawable/ic_action_add"
+        android:icon="@drawable/ic_baseline_add_24"
         android:title="@string/new_object"
         app:showAsAction="ifRoom" />
 </menu>

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.remindmemunni.MainActivityViewModel" />
+            type="com.example.remindmemunni.MainViewModel" />
     </data>
 
     <LinearLayout
@@ -35,7 +35,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:text="@string/current_munni_field_label"
+                android:text="@string/current_munni"
                 android:textColor="@android:color/white"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="center_vertical"

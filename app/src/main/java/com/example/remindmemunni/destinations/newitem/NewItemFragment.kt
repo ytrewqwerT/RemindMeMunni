@@ -57,50 +57,12 @@ class NewItemFragment : Fragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.title = if (isItemEdit) "Edit Item" else "New Item"
-
-        val typeSpinner = view.findViewById<AutoCompleteTextView>(R.id.cost_type_dropdown)
-        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
-            requireContext(), R.array.cost_types_array, R.layout.dropdown_menu_popup_item
-        )
-        typeSpinner.setAdapter(typeSpinnerAdapter)
-        typeSpinner.setOnItemClickListener { _, _, position, _ ->
-            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
-        }
-
-        val timeEditText = view.findViewById<EditText>(R.id.time_input_field)
-        timeEditText.setOnClickListener {
-            DatePickerFragment().show(childFragmentManager, "date_dialog")
-        }
-
-        val seriesSpinner = view.findViewById<AutoCompleteTextView>(R.id.series_dropdown)
-        val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
-            requireContext(), R.layout.dropdown_menu_popup_item, ArrayList()
-        )
-        val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
-        seriesSpinner.setAdapter(seriesSpinnerAdapter)
-        seriesSpinner.setOnItemClickListener { _, _, position, _ ->
-            viewModel.setSeries(seriesSpinnerAdapter.getItem(position))
-        }
-        viewModel.allSeries.observe(viewLifecycleOwner) {series ->
-            seriesSpinnerAdapter.clear()
-            seriesSpinnerAdapter.add(dummySeries)
-            seriesSpinnerAdapter.addAll(series)
-        }
-
-        val checkBox = view.findViewById<CheckBox>(R.id.series_increment)
-        viewModel.series.observe(viewLifecycleOwner) {
-            checkBox.isEnabled = it.isNotEmpty()
-            checkBox.isChecked = it.isNotEmpty()
-        }
-
-        val categoryEditText = view.findViewById<AutoCompleteTextView>(R.id.category_input_field)
-        val categoryEditTextAdapter = ArrayAdapter<String>(requireContext(), R.layout.dropdown_menu_popup_item)
-        categoryEditText.setAdapter(categoryEditTextAdapter)
-        viewModel.categories.observe(viewLifecycleOwner) {
-            categoryEditTextAdapter.clear()
-            categoryEditTextAdapter.addAll(it)
-        }
+        activity?.title = getString(if (isItemEdit) R.string.edit_item else R.string.new_item)
+        setupTypeSpinner(view.findViewById(R.id.cost_type_dropdown))
+        setupTimeEditText(view.findViewById(R.id.time_input_field))
+        setupSeriesSpinner(view.findViewById(R.id.series_dropdown))
+        setupCheckbox(view.findViewById(R.id.series_increment))
+        setupCategoryEditText(view.findViewById(R.id.category_input_field))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -109,19 +71,7 @@ class NewItemFragment : Fragment()
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean  = when (menuItem.itemId) {
         R.id.done_button -> {
-            lifecycleScope.launch {
-                val itemCreationResult = viewModel.createItem()
-                if (itemCreationResult != null) {
-                    Toast.makeText(
-                        requireContext(),
-                        itemCreationResult,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_SUCCESS to true))
-                    view?.findNavController()?.popBackStack()
-                }
-            }
+            finishItemCreation()
             true
         }
         else -> super.onOptionsItemSelected(menuItem)
@@ -140,6 +90,69 @@ class NewItemFragment : Fragment()
         time.mHour = hourOfDay
         time.mMinute = minute
         viewModel.setTime(time)
+    }
+
+    private fun setupTypeSpinner(typeSpinner: AutoCompleteTextView) {
+        val typeSpinnerAdapter = UnfilteredArrayAdapter.createFromResource(
+            requireContext(), R.array.credit_debit_array, R.layout.dropdown_menu_popup_item
+        )
+        typeSpinner.setAdapter(typeSpinnerAdapter)
+        typeSpinner.setOnItemClickListener { _, _, position, _ ->
+            viewModel.setCostType(typeSpinnerAdapter.getItem(position))
+        }
+    }
+
+    private fun setupTimeEditText(timeEditText: EditText) {
+        timeEditText.setOnClickListener {
+            DatePickerFragment().show(childFragmentManager, "date_dialog")
+        }
+    }
+
+    private fun setupSeriesSpinner(seriesSpinner: AutoCompleteTextView) {
+        val seriesSpinnerAdapter = UnfilteredArrayAdapter<AggregatedSeries>(
+            requireContext(), R.layout.dropdown_menu_popup_item, ArrayList()
+        )
+        val dummySeries = AggregatedSeries(Series(), emptyList()) // For no series selected option
+        seriesSpinner.setAdapter(seriesSpinnerAdapter)
+        seriesSpinner.setOnItemClickListener { _, _, position, _ ->
+            viewModel.setSeries(seriesSpinnerAdapter.getItem(position))
+        }
+        viewModel.allSeries.observe(viewLifecycleOwner) { series ->
+            seriesSpinnerAdapter.clear()
+            seriesSpinnerAdapter.add(dummySeries)
+            seriesSpinnerAdapter.addAll(series)
+        }
+    }
+
+    private fun setupCheckbox(checkBox: CheckBox) {
+        viewModel.series.observe(viewLifecycleOwner) {
+            checkBox.isEnabled = it.isNotEmpty()
+            checkBox.isChecked = it.isNotEmpty()
+        }
+    }
+
+    private fun setupCategoryEditText(categoryEditText: AutoCompleteTextView) {
+        val categoryEditTextAdapter =
+            ArrayAdapter<String>(requireContext(), R.layout.dropdown_menu_popup_item)
+        categoryEditText.setAdapter(categoryEditTextAdapter)
+        viewModel.categories.observe(viewLifecycleOwner) {
+            categoryEditTextAdapter.clear()
+            categoryEditTextAdapter.addAll(it)
+        }
+    }
+
+    private fun finishItemCreation() = lifecycleScope.launch {
+        val itemCreationResult = viewModel.createItem()
+        if (itemCreationResult != null) {
+            Toast.makeText(
+                requireContext(),
+                itemCreationResult,
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            setFragmentResult(REQUEST_RESULT, bundleOf(RESULT_SUCCESS to true))
+            view?.findNavController()?.popBackStack()
+        }
     }
 
     companion object {

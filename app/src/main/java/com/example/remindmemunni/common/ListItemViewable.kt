@@ -1,7 +1,6 @@
 package com.example.remindmemunni.common
 
 interface ListItemViewable {
-
     fun getListItemContents(): ListItemContents
 
     data class ListItemContents(

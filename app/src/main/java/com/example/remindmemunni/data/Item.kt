@@ -4,7 +4,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.remindmemunni.R
 import com.example.remindmemunni.common.ListItemViewable
+import com.example.remindmemunni.utils.Strings
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -31,13 +33,13 @@ data class Item(
         return "$id $name: ${getCostString()}, $date"
     }
 
-    private fun getCostString(): String = when {
-        cost < 0.0 -> "\$${-cost}"
-        cost > 0.0 -> "\$${cost}cr"
+    fun getCostString(): String = when {
+        cost < 0.0 -> Strings.get(R.string.format_cost_debit, -cost)
+        cost > 0.0 -> Strings.get(R.string.format_cost_credit, cost)
         else -> ""
     }
 
-    private fun getDateString(): String =
+    fun getDateString(): String =
         getDateString(DateTimeFormatter.ofPattern("EEEE, d MMMM - HH:mm"))
     private fun getDateString(formatter: DateTimeFormatter): String {
         if (time == 0L) return ""
@@ -50,7 +52,8 @@ data class Item(
         val lowerFilter = filter.toLowerCase(Locale.getDefault())
         if (name.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
         if (category.toLowerCase(Locale.getDefault()).contains(lowerFilter)) return true
-        if (notify && "notification".contains(lowerFilter)) return true
+        val notifyStr = Strings.get(R.string.notify).toLowerCase(Locale.getDefault())
+        if (notify && notifyStr.contains(lowerFilter)) return true
         return false
     }
 

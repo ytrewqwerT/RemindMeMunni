@@ -19,20 +19,17 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     private val indicatorPaint: Paint = Paint()
     private var items: List<T?> = emptyList()
     private var listPaddingSize = 1
-    private val customAdapter = CustomRecyclerViewAdapter<T>(null)
+    private val customAdapter = ListItemRecyclerViewAdapter<T>(null)
 
     private val snapHelper: SnapHelper = object : LinearSnapHelper() {
         override fun findTargetSnapPosition(
             layoutManager: LayoutManager?,
             velocityX: Int, velocityY: Int
         ): Int {
-            return when (
-                val position = super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
-            ) {
-                NO_POSITION -> NO_POSITION
-                else -> boundSize(position)
-            }
+            val position = super.findTargetSnapPosition(layoutManager, velocityX, velocityY)
+            return position.takeIf { it == NO_POSITION } ?: boundSize(position)
         }
+
         private fun boundSize(position: Int): Int = when {
             position < listPaddingSize -> listPaddingSize
             position > items.size - listPaddingSize -> items.size - listPaddingSize - 1
@@ -51,8 +48,7 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     override fun onDraw(c: Canvas?) {
         super.onDraw(c)
 
-        val itemView = snapHelper.findSnapView(layoutManager)
-        if (itemView != null) {
+        snapHelper.findSnapView(layoutManager)?.let { itemView ->
             itemViewHeight = itemView.height + (itemView.marginTop + itemView.marginBottom) / 2
         }
 
@@ -71,8 +67,9 @@ class ScrollSpinner<T: ListItemViewable>(context: Context, attrs: AttributeSet)
     fun setItems(items: List<T?>) {
         // TODO: Set paddingSize such that there is enough to allow all items to be selected
         val newItems = items.toMutableList()
+        // Pad the items with dummies to allow all items to be selected
         for (i in 1..listPaddingSize) newItems.add(0, null)
-        for (i in 1..listPaddingSize) newItems.add(null) // Separate for more efficient insertions
+        for (i in 1..listPaddingSize) newItems.add(null)
 
         this.items = newItems
         customAdapter.setItems(this.items)

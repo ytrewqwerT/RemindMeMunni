@@ -1,9 +1,13 @@
 package com.example.remindmemunni.destinations.newseries
 
 import androidx.lifecycle.*
+import com.example.remindmemunni.R
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.data.Series
+import com.example.remindmemunni.utils.Strings
+import com.example.remindmemunni.utils.toStringTrimmed
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 class NewSeriesViewModel(
     private val itemRepository: ItemRepository,
@@ -34,12 +38,8 @@ class NewSeriesViewModel(
             viewModelScope.launch {
                 val series = itemRepository.getDirectSerie(seriesId).series
                 name.value = series.name
-                cost.value = if (series.cost < 0) {
-                    (-series.cost).toString()
-                } else {
-                    setCostType("Credit")
-                    series.cost.toString()
-                }
+                cost.value = series.cost.absoluteValue.toStringTrimmed()
+                if (series.cost > 0) setCostType(Strings.get(R.string.credit))
                 nextNumInSeries.value = series.curNum.toString()
                 numInSeriesPrefix.value = series.numPrefix
                 category.value = series.category
@@ -50,7 +50,7 @@ class NewSeriesViewModel(
     }
 
     fun setCostType(type: CharSequence?) {
-        isDebit = type == "Debit"
+        isDebit = type == Strings.get(R.string.debit)
         costType.value = type.toString()
     }
 
@@ -64,7 +64,7 @@ class NewSeriesViewModel(
 
     fun validateInput(): String? {
         val name = name.value
-        if (name.isNullOrEmpty()) return "Series needs a name!"
+        if (name.isNullOrEmpty()) return Strings.get(R.string.series_needs_name)
         return null
     }
 

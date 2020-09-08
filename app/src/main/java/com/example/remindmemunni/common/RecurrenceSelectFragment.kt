@@ -1,62 +1,52 @@
 package com.example.remindmemunni.common
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.example.remindmemunni.R
 import com.example.remindmemunni.utils.NumberListItem
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-class RecurrenceSelectFragment: DialogFragment() {
-
-    private lateinit var listener: RecurrenceSelectListener
+class RecurrenceSelectFragment(
+    private val listener: RecurrenceSelectListener
+): DialogFragment() {
 
     interface RecurrenceSelectListener {
         fun onDialogConfirm(dialog: DialogFragment, months: Int, days: Int)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val inflater = it.layoutInflater
-            val view = inflater.inflate(R.layout.dialog_frequency, null)
+        return activity?.let { activity ->
+            val view = activity.layoutInflater.inflate(R.layout.dialog_frequency, null)
 
             val daysScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.days_list)
             daysScrollSpinner.setItems(
-                NumberListItem.createSequentialList(0, 31).asReversed()
+                NumberListItem.createSequentialList(0, DAYS_MAX).asReversed()
             )
 
             val monthsScrollSpinner =
                 view.findViewById<ScrollSpinner<NumberListItem>>(R.id.months_list)
             monthsScrollSpinner.setItems(
-                NumberListItem.createSequentialList(0, 24).asReversed()
+                NumberListItem.createSequentialList(0, MONTHS_MAX).asReversed()
             )
 
-            MaterialAlertDialogBuilder(it)
-                .setTitle("Set Frequency")
+            MaterialAlertDialogBuilder(activity)
+                .setTitle(getString(R.string.set_frequency))
                 .setView(view)
-                .setPositiveButton("Confirm") { _, _ ->
+                .setPositiveButton(getString(R.string.confirm)) { _, _ ->
                     val days = daysScrollSpinner.getSelectedItem()?.num ?: 0
                     val months = monthsScrollSpinner.getSelectedItem()?.num ?: 0
                     listener.onDialogConfirm(this, months, days)
                     dialog?.dismiss()
-                }.setNegativeButton("Cancel") { _, _ ->
+                }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
                     dialog?.cancel()
                 }.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        try {
-            listener = parentFragment as? RecurrenceSelectListener
-                ?: context as RecurrenceSelectListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(
-                "$context must implement ${RecurrenceSelectListener::class.simpleName}"
-            )
-        }
+    companion object {
+        private const val DAYS_MAX = 31
+        private const val MONTHS_MAX = 24
     }
 }
