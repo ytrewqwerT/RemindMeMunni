@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
         navMenu.add(MainViewModel.CATEGORY_NONE).isCheckable = true
 
-        val categoryMenu = navMenu.addSubMenu("Categories")
+        val categoryMenu = navMenu.addSubMenu(getString(R.string.categories))
         viewModel.categories.observe(this) { categories ->
             categoryMenu.clear()
             for (category in categories) categoryMenu.add(category).isCheckable = true

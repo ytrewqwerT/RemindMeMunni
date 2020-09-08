@@ -16,8 +16,7 @@ import com.example.remindmemunni.common.OnListItemInteractionListener
 import com.example.remindmemunni.data.AggregatedSeries
 import com.example.remindmemunni.utils.InjectorUtils
 
-class SeriesListFragment : Fragment(),
-    OnListItemInteractionListener<AggregatedSeries> {
+class SeriesListFragment : Fragment(), OnListItemInteractionListener<AggregatedSeries> {
 
     private val viewModel: SeriesListViewModel by viewModels {
         InjectorUtils.provideSeriesListViewModelFactory(requireActivity())
@@ -31,17 +30,7 @@ class SeriesListFragment : Fragment(),
     }
 
     private val recyclerViewAdapter by lazy {
-        @Suppress("RemoveExplicitTypeArguments")
-        ListItemRecyclerViewAdapter<AggregatedSeries>(this)
-    }
-    private lateinit var contentView: View
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.filteredSeries.observe(this) { series ->
-            series?.let { recyclerViewAdapter.setItems(it) }
-        }
+        ListItemRecyclerViewAdapter(this)
     }
 
     override fun onCreateView(
@@ -49,8 +38,8 @@ class SeriesListFragment : Fragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        contentView = inflater.inflate(R.layout.fragment_item_list, container, false)
-        val recyclerView = contentView.findViewById<RecyclerView>(R.id.list)
+        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
         if (recyclerView != null) with (recyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
@@ -59,6 +48,9 @@ class SeriesListFragment : Fragment(),
             registerForContextMenu(this)
         }
 
+        viewModel.filteredSeries.observe(viewLifecycleOwner) { series ->
+            series?.let { recyclerViewAdapter.setItems(it) }
+        }
         mainViewModel.searchFilter.observe(viewLifecycleOwner) {
             viewModel.filterStringChannel.offer(it ?: "")
         }
@@ -66,7 +58,7 @@ class SeriesListFragment : Fragment(),
             viewModel.filterCategoryChannel.offer(it)
         }
 
-        return contentView
+        return view
     }
 
     override fun onCreateContextMenu(

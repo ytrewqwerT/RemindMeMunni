@@ -35,14 +35,9 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
     private val recyclerViewAdapter by lazy {
         ListItemRecyclerViewAdapter(this)
     }
-    private lateinit var contentView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel.filteredItems.observe(this) { items ->
-            items?.let { recyclerViewAdapter.setItems(it) }
-        }
 
         val lowerBound = arguments?.getLong(EXTRA_LOWER_TIME_BOUND, 0L) ?: 0L
         val upperBound = arguments?.getLong(EXTRA_UPPER_TIME_BOUND, Long.MAX_VALUE) ?: Long.MAX_VALUE
@@ -55,8 +50,8 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        contentView = inflater.inflate(R.layout.fragment_item_list, container, false)
-        val recyclerView = contentView.findViewById<RecyclerView>(R.id.list)
+        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
         if (recyclerView != null) with (recyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
@@ -65,6 +60,9 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
             registerForContextMenu(this)
         }
 
+        viewModel.filteredItems.observe(viewLifecycleOwner) { items ->
+            items?.let { recyclerViewAdapter.setItems(it) }
+        }
         mainViewModel.searchFilter.observe(viewLifecycleOwner) {
             viewModel.filterStringChannel.offer(it ?: "")
         }
@@ -72,7 +70,7 @@ class ItemsListFragment(private val seriesId: Int = 0) : Fragment(),
             viewModel.filterCategoryChannel.offer(it)
         }
 
-        return contentView
+        return view
     }
 
     override fun onCreateContextMenu(

@@ -27,13 +27,14 @@ class SeriesListViewModel(itemRepository: ItemRepository) : ViewModel() {
         filterStringChannel.offer("")
         filterCategoryChannel.offer(null)
 
-        val filteredSeriesFlow = series.combine(filterStringChannel.receiveAsFlow()) { series, filterString ->
-            if (filterString.isBlank()) series
-            else series.filter { it.series.hasFilterText(filterString) }
-        }.combine(filterCategoryChannel.receiveAsFlow()) { series, filterCategory ->
-            if (filterCategory == null) series
-            else series.filter { it.series.category == filterCategory }
-        }
+        val filteredSeriesFlow =
+            series.combine(filterStringChannel.receiveAsFlow()) { series, filterString ->
+                if (filterString.isBlank()) series
+                else series.filter { it.series.hasFilterText(filterString) }
+            }.combine(filterCategoryChannel.receiveAsFlow()) { series, filterCategory ->
+                if (filterCategory == null) series
+                else series.filter { it.series.category == filterCategory }
+            }
         // Flow.asLiveData() doesn't seem to want to emit updates after changes to a series...
         // (Similar issue in [ItemsListViewModel])
         viewModelScope.launch {

@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class ItemsListViewModel(itemRepository: ItemRepository, seriesId: Int = 0)
-    : ViewModel() {
+class ItemsListViewModel(itemRepository: ItemRepository, seriesId: Int = 0) : ViewModel() {
 
     private val sourceItems: Flow<List<Item>> =
         if (seriesId == 0) itemRepository.allItems else itemRepository.getItemsInSeries(seriesId)
@@ -36,17 +35,18 @@ class ItemsListViewModel(itemRepository: ItemRepository, seriesId: Int = 0)
         filterStringChannel.offer("")
         filterCategoryChannel.offer(null)
 
-        val filteredItemsFlow = sourceItems.combine(lowerTimeBoundChannel.receiveAsFlow()) { items, lower ->
-            items.filter { it.time >= lower }
-        }.combine(upperTimeBoundChannel.receiveAsFlow()) { items, upper ->
-            items.filter { it.time <= upper }
-        }.combine(filterStringChannel.receiveAsFlow()) { items, filterString ->
-            if (filterString.isBlank()) items
-            else items.filter { it.hasFilterText(filterString) }
-        }.combine(filterCategoryChannel.receiveAsFlow()) { items, filterCategory ->
-            if (filterCategory == null) items
-            else items.filter { it.category == filterCategory }
-        }
+        val filteredItemsFlow =
+            sourceItems.combine(lowerTimeBoundChannel.receiveAsFlow()) { items, lower ->
+                items.filter { it.time >= lower }
+            }.combine(upperTimeBoundChannel.receiveAsFlow()) { items, upper ->
+                items.filter { it.time <= upper }
+            }.combine(filterStringChannel.receiveAsFlow()) { items, filterString ->
+                if (filterString.isBlank()) items
+                else items.filter { it.hasFilterText(filterString) }
+            }.combine(filterCategoryChannel.receiveAsFlow()) { items, filterCategory ->
+                if (filterCategory == null) items
+                else items.filter { it.category == filterCategory }
+            }
 
         // Using Flow.asLiveData() doesn't seem to update the LiveData after the creation of a new
         // Item with a non-zero time?!? (The combine() sequence above doesn't even execute?)

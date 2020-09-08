@@ -3,6 +3,7 @@ package com.example.remindmemunni
 import androidx.lifecycle.*
 import com.example.remindmemunni.data.ItemRepository
 import com.example.remindmemunni.utils.PrimitiveDateTime
+import com.example.remindmemunni.utils.Strings
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -39,6 +40,10 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
 
         viewModelScope.launch {
             _categories.collect { latestCategories = listOf(CATEGORY_ALL, CATEGORY_NONE) + it }
+        }
+
+        viewModelScope.launch {
+            itemRepository.allItems.collect { updateMunniCalc() }
         }
     }
 
@@ -80,7 +85,7 @@ class MainViewModel(private val itemRepository: ItemRepository) : ViewModel() {
     suspend fun getSerie(serieId: Int) = itemRepository.getDirectSerie(serieId)
 
     companion object {
-        const val CATEGORY_ALL = "All"
-        const val CATEGORY_NONE = "Uncategorised"
+        val CATEGORY_ALL = Strings.get(R.string.all)
+        val CATEGORY_NONE = Strings.get(R.string.uncategorised)
     }
 }

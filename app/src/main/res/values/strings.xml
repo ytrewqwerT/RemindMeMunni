@@ -17,7 +17,9 @@
     <string name="yes">Yes</string>
 
     <string name="alerts">Alerts</string>
+    <string name="all">All</string>
     <string name="category">Category</string>
+    <string name="categories">Categories</string>
     <string name="cost">Cost</string>
     <string name="credit">Credit</string>
     <string name="debit">Debit</string>
@@ -27,6 +29,7 @@
     <string name="series">Series</string>
     <string name="time">Time</string>
     <string name="type">Type</string>
+    <string name="uncategorised">Uncategorised</string>
 
     <string name="overdue">Overdue</string>
     <string name="upcoming">Upcoming</string>
