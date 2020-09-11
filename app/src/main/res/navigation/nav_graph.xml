@@ -70,6 +70,9 @@
             android:name="ITEM_ID"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_itemFragment_to_seriesFragment2"
+            app:destination="@id/seriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/newSeriesFragment"

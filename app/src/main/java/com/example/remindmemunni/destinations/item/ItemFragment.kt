@@ -46,6 +46,14 @@ class ItemFragment : Fragment() {
         hideWhenEmpty(view.findViewById(R.id.cost), viewModel.cost)
         hideWhenEmpty(view.findViewById(R.id.time), viewModel.time)
         hideWhenEmpty(view.findViewById(R.id.notify), viewModel.time)
+
+        view.findViewById<View>(R.id.series).setOnClickListener {
+            viewModel.item?.seriesId?.let {
+                view.findNavController().navigate(
+                    ItemFragmentDirections.actionItemFragmentToSeriesFragment2(it)
+                )
+            }
+        }
     }
 
     override fun onDestroyView() {
