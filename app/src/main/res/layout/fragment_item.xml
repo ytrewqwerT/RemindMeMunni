@@ -16,7 +16,7 @@
 
         <TextView
             android:id="@+id/series"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{viewModel.series}"
             android:textSize="20sp"
@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/category"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{viewModel.category}"
             android:textSize="20sp"
@@ -32,7 +32,7 @@
 
         <TextView
             android:id="@+id/cost"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{viewModel.cost}"
             android:textSize="20sp"
@@ -40,7 +40,7 @@
 
         <TextView
             android:id="@+id/time"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{viewModel.time}"
             android:textSize="20sp"
@@ -51,7 +51,7 @@
             android:text="@string/notify"
             android:checked="@{viewModel.notify}"
             android:enabled="false"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp" />
     </LinearLayout>

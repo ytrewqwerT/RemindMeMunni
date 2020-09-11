@@ -50,7 +50,7 @@ class ItemFragment : Fragment() {
         view.findViewById<View>(R.id.series).setOnClickListener {
             viewModel.item?.seriesId?.let {
                 view.findNavController().navigate(
-                    ItemFragmentDirections.actionItemFragmentToSeriesFragment2(it)
+                    ItemFragmentDirections.actionItemFragmentToSeriesFragment(it)
                 )
             }
         }
